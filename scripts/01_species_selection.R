@@ -8,19 +8,25 @@
 # ---------------------------------------------------------------------- #
 
 # Set working directory
-setwd("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
+setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
 
 # Required path 
-path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
+# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
 
 
 # Load needed packages
 library(foreach)
 library(doParallel)
 library(stringr)
+library(terra)
+library(sf)
+library(sfheaders)
+library(purrr)
+library(furrr)
+library(dplyr)
 
 # Load needed objects
-source("scripts/utils.R") # thin function
+source("scripts/functions.R") # thin function
 world_mask <- terra::rast('input_data/world_mask.tif') # mask with 1 km resolution 
 
 
@@ -48,7 +54,7 @@ load("input_data/occ_cleaned_slim.RData")
 # Subset the data frame to only contain species occurring on the Hawaiian Islands
 occurrences_coord_Hawaii <- occ_cleaned_slim[occ_cleaned_slim$species %in% species_Hawaii, ]
 
-# Merge the data frame into one that contains coordinate information and 
+# Merge the data frames into one that contains coordinate information and 
 # biogeographical status information
 occurrences_Hawaii <- merge(occurrences_coord_Hawaii[, c(1:4)], occurrences_biogeo_Hawaii[, c(1,15)], by = "occ_id", all.x = TRUE)
 
@@ -115,12 +121,14 @@ species_Hawaii_filtered <- as.character(occurrence_numbers_filtered$species)
 occurrence_numbers_thinned <- data.frame(expand.grid(species=c(paste(species_Hawaii_filtered))), global_occurrences=NA, native_occurrences=NA)
 
 # Start parallel computing
-cl <- makeCluster(5)
-registerDoParallel(cl)
+# cl <- makeCluster(5)
+# registerDoParallel(cl)
 
-foreach (sp = 1:length(species_Hawaii_filtered), .packages = c("terra", "sf", "sfheaders", "furrr", "purrr")) %dopar% {
+# foreach (sp = 1:length(species_Hawaii_filtered), .packages = c("terra", "sf", "sfheaders", "furrr", "purrr", "dplyr")) %dopar% {
   
-  try({ 
+  #try({ 
+
+for (sp in species_Hawaii_filtered) {
     
     # Create a subset for each species
     subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
@@ -136,10 +144,10 @@ foreach (sp = 1:length(species_Hawaii_filtered), .packages = c("terra", "sf", "s
     presences_coords_sf <- st_as_sf(presences_coords, coords = c("lon", "lat"), crs = crs(world_mask))
     
     # Spatial thinning with distance of 3 km using the thin function
-    presences_thinned <- thin(presences_coords_sf, thin_dist = 3000, runs = 10, ncores = 1)
+    presences_thinned <- thin(presences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
     
     # Combine the thinned presences with important species information based on the lon and lat information
-    species_presences_thinned <- merge(presences_thinned, occurrences_Hawaii, by = c("lon", "lat"))
+    species_presences_thinned <- merge(presences_thinned, occurrences_Hawaii, by = c("lon", "lat"), all.x = TRUE)
     
     # Save the thinned presence points
     save(species_presences_thinned, file = paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
@@ -155,11 +163,12 @@ foreach (sp = 1:length(species_Hawaii_filtered), .packages = c("terra", "sf", "s
     occurrence_numbers_thinned[occurrence_numbers_thinned$species == sp, "global_occurrences"] <- occurrences_global_thinned
     occurrence_numbers_thinned[occurrence_numbers_thinned$species == sp, "native_occurrences"] <- occurrences_native_thinned
     
-    
-})} # End of the foreach loop
+} # End of the loop
+   
+# })} # End of the foreach loop
 
     
-stopCluster(cl)
+# stopCluster(cl)
 
 # Save the thinned occurrence numbers of the species
 save(occurrence_numbers_thinned, file = "input_data/occurrence_numbers_thinned.RData")
@@ -171,6 +180,6 @@ occurrence_numbers_thinned_filtered <- subset(occurrence_numbers_thinned, occurr
 occurrence_numbers_thinned_filtered <- occurrence_numbers_thinned_filtered[occurrence_numbers_thinned_filtered$global_occurrences != occurrence_numbers_thinned_filtered$native_occurrences, ]
 
 # Save the data frame with study species that are suitable for analysis
-save(occurrence_numbers_thinned_filtered, file = "input_data/occurrence_numbers_thinned.RData")
+save(occurrence_numbers_thinned_filtered, file = "input_data/occurrence_numbers_thinned_filtered.RData")
 
 
