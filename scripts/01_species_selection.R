@@ -32,7 +32,6 @@ world_mask <- terra::rast('input_data/world_mask.tif') # mask with 1 km resoluti
 
 #-------------------------------------------------------------------------------
 
-
 # 1. Species data processing ---------------------------------------------------
 
 # Load in the list of the 120 plant species occurring as naturalized on the Hawaiian Islands
@@ -41,22 +40,13 @@ load("input_data/blacklist_final.RData")
 # Get all species names of the potential study species
 species_Hawaii <- unique(blacklist_final$species)
 
-# Load in cleaned the species occurrence data with their biogeographical status
-# of all naturalized plant species in the Pacific downloaded from GBIF and BIEN (2023)
-load("input_data/occ_status_resolved.RData")
+# Load in cleaned the species occurrence data with coordinate information 
+# (downloaded from GBIF and BIEN 2023) and their biogeographical status 
+# of all naturalized plant species in the Pacific
+load("input_data/occ_status_resolved_lonlat.RData")
 
 # Subset the data frame to only contain species occurring on the Hawaiian Islands
-occurrences_biogeo_Hawaii <- occ_status_resolved[occ_status_resolved$species %in% species_Hawaii, ]
-
-# Load in the species occurrence data downloaded with coordinate information
-load("input_data/occ_cleaned_slim.RData")
-
-# Subset the data frame to only contain species occurring on the Hawaiian Islands
-occurrences_coord_Hawaii <- occ_cleaned_slim[occ_cleaned_slim$species %in% species_Hawaii, ]
-
-# Merge the data frames into one that contains coordinate information and 
-# biogeographical status information
-occurrences_Hawaii <- merge(occurrences_coord_Hawaii[, c(1:4)], occurrences_biogeo_Hawaii[, c(1,15)], by = "occ_id", all.x = TRUE)
+occurrences_Hawaii <- occ_status_resolved[occ_status_resolved$species %in% species_Hawaii, ]
 
 # Insert a _ in species name
 occurrences_Hawaii$species <- str_replace_all(occurrences_Hawaii$species, " ", "_")
@@ -70,12 +60,14 @@ species_Hawaii <- unique(occurrences_Hawaii$species) # 118 species
 
 # 2. Species selection step 1: before spatial thinning -------------------------
 
-# As a threshold solely species with >= 40 native occurrences based on the criterion 2 are included
+# As a threshold solely species with >= 40 native occurrences based on the 
+# criterion 1 or 2 are included
 
 # Prepare a data frame to store the result of occurrence numbers
-occurrence_numbers <- data.frame(expand.grid(species=c(paste(species_Hawaii))), global_occurrences=NA, native_occurrences=NA)
+occurrence_numbers <- data.frame(expand.grid(species=c(paste(species_Hawaii))), global_occurrences=NA, 
+                                 native_occurrences_crit1=NA, native_occurrences_crit2=NA)
 
-# Loop over the species and retrieve numbers of native and global occurrences
+# Loop over the species and retrieve numbers of native and global occurrences based o
 for (sp in species_Hawaii) {
   
   # Create a subset for each species
@@ -84,33 +76,32 @@ for (sp in species_Hawaii) {
   # Get the number of all occurrences
   occurrences_global <- nrow(subset_species)
   
-  # Subset only native occurrences
-  subset_native <- subset(subset_species, subset_species$criterion_2 == "native")
+  # Subset only native occurrences using criteria 1 and 2
+  subset_native_crit1 <- subset(subset_species, subset_species$criterion_1 == "native")
+  subset_native_crit2 <- subset(subset_species, subset_species$criterion_2 == "native")
   
   # Get the number of native occurrences
-  occurrences_native <- nrow(subset_native)
+  occurrences_native_crit1 <- nrow(subset_native_crit1)
+  occurrences_native_crit2 <- nrow(subset_native_crit2)
   
   # Store the results in data frame
   occurrence_numbers[occurrence_numbers$species == sp, "global_occurrences"] <- occurrences_global
-  occurrence_numbers[occurrence_numbers$species == sp, "native_occurrences"] <- occurrences_native
+  occurrence_numbers[occurrence_numbers$species == sp, "native_occurrences_crit1"] <- occurrences_native_crit1
+  occurrence_numbers[occurrence_numbers$species == sp, "native_occurrences_crit2"] <- occurrences_native_crit2
   
 } 
   
 
-# Remove all species that have less than 40 native occurrences
-occurrence_numbers_filtered <- subset(occurrence_numbers, occurrence_numbers$native_occurrences >= 40) # 70 species excluded
+# Remove all species that have less than 40 native occurrences using the two different criteria
+occurrence_numbers_filtered_crit1 <- subset(occurrence_numbers, occurrence_numbers$native_occurrences_crit1 >= 40) # 7 species excluded
+occurrence_numbers_filtered_crit2 <- subset(occurrence_numbers, occurrence_numbers$native_occurrences_crit2 >= 40) # 7 species excluded
 
 # Get species names for further usage
-species_Hawaii_filtered <- as.character(occurrence_numbers_filtered$species)
+# As there is no difference between both criteria, the one that gives the same 
+# weight to all three sources is used (criterion 1)
+species_Hawaii_filtered <- as.character(occurrence_numbers_filtered_crit1$species)
 
 
-
-
-### Test
-#load("input_data/spp_pre_thinning.RData")
-
-
-#species_Anna <- occurrence_numbers[occurrence_numbers_filtered$species %in% spp_pre_thinning, ] # 0 species
 
 #-------------------------------------------------------------------------------
 
@@ -133,12 +124,12 @@ for (sp in species_Hawaii_filtered) {
     # Create a subset for each species
     subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
     
-    # Extract coordinate information
-    presences_coords <- subset_species[c("lon", "lat")]
-    
     # Remove rows with duplicate numbers at a 1 km resolution
-    cellnumbers <- terra::extract(world_mask, presences_coords, cells = TRUE)
-    presences_coords <- presences_coords[!duplicated(cellnumbers[, "cell"]), ]
+    cellnumbers <- terra::extract(world_mask, subset_species[c("lon", "lat")], cells = TRUE)
+    subset_species_wd <- subset_species[!duplicated(cellnumbers[, "cell"]), ]
+    
+    # Extract coordinate information
+    presences_coords <- subset_species_wd[c("lon", "lat")]
     
     # Transform the coordinate information into sf object
     presences_coords_sf <- st_as_sf(presences_coords, coords = c("lon", "lat"), crs = crs(world_mask))
@@ -147,7 +138,7 @@ for (sp in species_Hawaii_filtered) {
     presences_thinned <- thin(presences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
     
     # Combine the thinned presences with important species information based on the lon and lat information
-    species_presences_thinned <- merge(presences_thinned, occurrences_Hawaii, by = c("lon", "lat"), all.x = TRUE)
+    species_presences_thinned <- merge(subset_species_wd[,c(1, 2, 13, 15, 16)], presences_thinned, by = c("lon", "lat"))
     
     # Save the thinned presence points
     save(species_presences_thinned, file = paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
@@ -156,7 +147,7 @@ for (sp in species_Hawaii_filtered) {
     occurrences_global_thinned <- nrow(species_presences_thinned)
     
     # Get the number of native occurrences
-    subset_native <- subset(species_presences_thinned, species_presences_thinned$criterion2 == "native")
+    subset_native <- subset(species_presences_thinned, species_presences_thinned$criterion_1 == "native")
     occurrences_native_thinned <- nrow(subset_native)
     
     # Store results in data frame
