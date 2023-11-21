@@ -1,0 +1,117 @@
+# Uncertainty paper
+
+
+#-------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------- #
+#          02b. Background data based on global occurrences              #
+# ---------------------------------------------------------------------- #
+
+# Set working directory
+setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
+
+# Required path 
+# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
+
+# Load needed packages
+library(terra)
+library(sf)
+library(sfheaders)
+library(purrr)
+library(furrr)
+library(dplyr)
+
+# Load needed objects
+world_mask <- terra::rast("input_data/world_mask.tif") # mask with 1 km resolution
+load("input_data/occurrence_numbers_thinned_filtered.RData") # data frame that contains study species names
+load("input_data/occurrences_Hawaii.RData") # data frame that contains coordinate and biogeographical status information
+source("scripts/functions.R") # thin function
+
+#-------------------------------------------------------------------------------
+
+
+# 1. Background data generation ------------------------------------------------
+
+# Retrieve names of study species
+study_species <- unique(occurrence_numbers_thinned_filtered$species)
+
+# Loop over all species and generate background data
+for (sp in study_species) {
+  
+  # Load in the thinned occurrence data of the species
+  load(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+  
+  # Extract coordinate information
+  species_presences_thinned_global_coord <- species_presences_thinned[c("lon", "lat")]
+  
+  # Create a subset for each species based on all occurrences 
+  subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
+  
+  # Remove rows with duplicate numbers at a 1 km resolution
+  cellnumbers <- terra::extract(world_mask, subset_species[c("lon", "lat")], cells = TRUE)
+  subset_species_wd <- subset_species[!duplicated(cellnumbers[, "cell"]), ]
+  
+  # Extract the coordinates of the occurrences
+  presences_coords <- subset_species_wd[c("lon", "lat")]
+  
+  # Create a points vector from the coordinates
+  presences <- terra::vect(presences_coords, crs = '+proj=longlat +datum=WGS84')
+  
+  # Place a buffer of 200 km radius around our presence points to account for dispersal limitations
+  buf_200 <- buffer(presences, width = 200000)
+  
+  # Create a mask with target resolution of 1 km
+  mask_buf_200 <- crop(world_mask, ext(buf_200))
+  values(mask_buf_200)[!is.na(values(mask_buf_200))] <- 1
+  
+  # Rasterize the buffer with the created mask (raster is needed for later steps)
+  buf_200 <- rasterize(buf_200, mask_buf_200)
+  
+  # Set all raster cells outside the buffer to NA.
+  buf_200 <- terra::mask(mask_buf_200, buf_200, overwrite = TRUE)
+  
+  # Randomly select background data within the buffer, excluding presence locations 
+  # 10 times as many background data as there are thinned presences sampled
+  occ_cells_200 <- terra::extract(buf_200, presences, cells = TRUE)[,"cell"]
+  buf_cells_200 <- terra::extract(buf_200, crds(buf_200), cells = TRUE)[,"cell"]
+  diff_cells_200 <- setdiff(buf_cells_200, occ_cells_200)
+  
+  abs_indices_200 <- sample(diff_cells_200, ifelse(length(diff_cells_200) < nrow(species_presences_thinned)*10, length(diff_cells_200), nrow(species_presences_thinned)*10))
+  abs_coords_200 <- as.data.frame(xyFromCell(buf_200, abs_indices_200))
+  colnames(abs_coords_200) = c("lon", "lat")
+  
+  
+  #-------------------------------------------------------------------------------
+  
+  
+  # 2. Background data thinning --------------------------------------------------
+  
+  # Transform the coordinate information into sf object
+  absences_coords_sf <- st_as_sf(abs_coords_200, coords = c("lon", "lat"), crs = crs(world_mask))
+  
+  # Spatial thinning of background data with distance of 3 km using the thin function
+  species_absences_thinned_nglobal <- thin(absences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
+  
+  # Save the thinned background data for the species
+  save(species_absences_thinned_global, file = "output_data/absences_thinned/nglobal/species_absences_thinned_global_",sp,".RData")
+  
+  
+  #-------------------------------------------------------------------------------
+  
+  
+  # 3. Join thinned presence and absence data ------------------------------------
+  
+  # Prepare the thinned presences data to contain a column indicating 1 for presence
+  species_presences_thinned_global_coord <- data.frame(species_presences_thinned_global_coord, occ=1)
+  
+  # Prepare the thinned absence data to contain a  column indicating 0 for absence
+  species_absences_thinned_global$occ <- 0
+  
+  # Bind these two data sets
+  species_occ_global <- rbind(species_presences_thinned_global_coord, species_absences_thinned_global)
+  
+  # Save the distribution data set of the species
+  save(species_occ_global, file = "output_data/distribution_data/global/species_occ_global_",sp,".RData")
+  
+  
+}

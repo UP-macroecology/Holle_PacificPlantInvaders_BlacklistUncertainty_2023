@@ -27,7 +27,7 @@ library(dplyr)
 
 # Load needed objects
 source("scripts/functions.R") # thin function
-world_mask <- terra::rast('input_data/world_mask.tif') # mask with 1 km resolution 
+world_mask <- terra::rast("input_data/world_mask.tif") # mask with 1 km resolution 
 
 
 #-------------------------------------------------------------------------------
@@ -50,6 +50,9 @@ occurrences_Hawaii <- occ_status_resolved[occ_status_resolved$species %in% speci
 
 # Insert a _ in species name
 occurrences_Hawaii$species <- str_replace_all(occurrences_Hawaii$species, " ", "_")
+
+# and save the outcome
+save(occurrences_Hawaii, file = "input_data/occurrences_Hawaii.RData")
 
 # Get the species names that have occurrence data
 species_Hawaii <- unique(occurrences_Hawaii$species) # 118 species
@@ -99,8 +102,7 @@ occurrence_numbers_filtered_crit2 <- subset(occurrence_numbers, occurrence_numbe
 # Get species names for further usage
 # As there is no difference between both criteria, the one that gives the same 
 # weight to all three sources is used (criterion 1)
-species_Hawaii_filtered <- as.character(occurrence_numbers_filtered_crit1$species)
-
+species_Hawaii_filtered <- as.character(occurrence_numbers_filtered_crit1$species) # 41 of these species are included in Annas analysis
 
 
 #-------------------------------------------------------------------------------
@@ -134,7 +136,7 @@ for (sp in species_Hawaii_filtered) {
     # Transform the coordinate information into sf object
     presences_coords_sf <- st_as_sf(presences_coords, coords = c("lon", "lat"), crs = crs(world_mask))
     
-    # Spatial thinning with distance of 3 km using the thin function
+    # Spatial thinning of presences with distance of 3 km using the thin function
     presences_thinned <- thin(presences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
     
     # Combine the thinned presences with important species information based on the lon and lat information
