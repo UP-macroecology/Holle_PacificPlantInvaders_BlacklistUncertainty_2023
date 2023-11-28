@@ -20,6 +20,8 @@ library(sfheaders)
 library(purrr)
 library(furrr)
 library(dplyr)
+library(parallel)
+library(doParallel)
 
 # Load needed objects
 world_mask <- terra::rast("input_data/world_mask.tif") # mask with 1 km resolution
@@ -35,14 +37,16 @@ source("scripts/functions.R") # thin function
 # Retrieve names of study species
 study_species <- unique(occurrence_numbers_thinned_filtered$species)
 
+# Start parallel computing
+#no_cores <- 5
+#cl <- makeCluster(no_cores)
+#registerDoParallel(cl)
+
 # Loop over all species and generate background data
-for (sp in study_species) {
-  
-  # Load in the thinned occurrence data of the species
-  load(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
-  
-  # Extract coordinate information
-  species_presences_thinned_global_coord <- species_presences_thinned[c("lon", "lat")]
+#foreach(sp = 1:length(study_species), .packages = c("terra", "sf", "purrr", "furrr", "sfheaders")) %dopar% {
+  #try({
+    
+for (sp in study_species) { # Start of loop over species
   
   # Create a subset for each species based on all occurrences 
   subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
@@ -76,7 +80,7 @@ for (sp in study_species) {
   buf_cells_200 <- terra::extract(buf_200, crds(buf_200), cells = TRUE)[,"cell"]
   diff_cells_200 <- setdiff(buf_cells_200, occ_cells_200)
   
-  abs_indices_200 <- sample(diff_cells_200, ifelse(length(diff_cells_200) < nrow(species_presences_thinned)*10, length(diff_cells_200), nrow(species_presences_thinned)*10))
+  abs_indices_200 <- sample(diff_cells_200, ifelse(length(diff_cells_200) < nrow(subset_species_wd)*10, length(diff_cells_200), nrow(subset_species_wd)*10))
   abs_coords_200 <- as.data.frame(xyFromCell(buf_200, abs_indices_200))
   colnames(abs_coords_200) = c("lon", "lat")
   
@@ -93,13 +97,19 @@ for (sp in study_species) {
   species_absences_thinned_nglobal <- thin(absences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
   
   # Save the thinned background data for the species
-  save(species_absences_thinned_global, file = "output_data/absences_thinned/nglobal/species_absences_thinned_global_",sp,".RData")
+  save(species_absences_thinned_global, file = paste0("output_data/absences_thinned/global/species_absences_thinned_global_",sp,".RData"))
   
   
   #-------------------------------------------------------------------------------
   
   
   # 3. Join thinned presence and absence data ------------------------------------
+  
+  # Load in the thinned occurrence data of the species
+  load(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+  
+  # Extract coordinate information
+  species_presences_thinned_global_coord <- species_presences_thinned[c("lon", "lat")]
   
   # Prepare the thinned presences data to contain a column indicating 1 for presence
   species_presences_thinned_global_coord <- data.frame(species_presences_thinned_global_coord, occ=1)
@@ -111,7 +121,12 @@ for (sp in study_species) {
   species_occ_global <- rbind(species_presences_thinned_global_coord, species_absences_thinned_global)
   
   # Save the distribution data set of the species
-  save(species_occ_global, file = "output_data/distribution_data/global/species_occ_global_",sp,".RData")
+  save(species_occ_global, file = paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+  
+} # end of loop over species
   
   
-}
+#})} # end of foreach
+
+
+#stopCluster(cl)

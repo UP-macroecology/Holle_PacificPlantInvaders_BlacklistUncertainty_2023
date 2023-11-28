@@ -43,10 +43,10 @@ species_Hawaii <- unique(blacklist_final$species)
 # Load in cleaned the species occurrence data with coordinate information 
 # (downloaded from GBIF and BIEN 2023) and their biogeographical status 
 # of all naturalized plant species in the Pacific
-load("input_data/occ_status_resolved_lonlat.RData")
+load("input_data/occ_status_resolved_new.RData")
 
 # Subset the data frame to only contain species occurring on the Hawaiian Islands
-occurrences_Hawaii <- occ_status_resolved[occ_status_resolved$species %in% species_Hawaii, ]
+occurrences_Hawaii <- occ_status_resolved_new[occ_status_resolved_new$species %in% species_Hawaii, ]
 
 # Insert a _ in species name
 occurrences_Hawaii$species <- str_replace_all(occurrences_Hawaii$species, " ", "_")
