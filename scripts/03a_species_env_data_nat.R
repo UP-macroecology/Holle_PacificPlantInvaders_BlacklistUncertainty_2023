@@ -1,0 +1,138 @@
+# Uncertainty paper
+
+
+#-------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------- #
+#     03a. Relation of environmental data to native occurrence data      #
+# ---------------------------------------------------------------------- #
+
+# Set working directory
+setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
+
+# Required path 
+# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
+
+# Load needed packages
+library(terra)
+library(stringr)
+
+# Load needed objects
+load("input_data/occurrence_numbers_thinned_filtered.RData") # data frame that contains study species names
+
+Chelsa <- terra::rast(str_sort(list.files("input_data/environmental_data/Chelsa_V2", 
+                                          pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Climate variable rasters
+names(Chelsa) <- c(paste('bio',1:19, sep='_')) # Change climate variable names
+
+SoilGrids <- terra::rast(str_sort(list.files("input_data/environmental_data/SoilGrids_V2", 
+                                             pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Edaphic variable rasters
+
+#-------------------------------------------------------------------------------
+
+# 1. Data preparations ---------------------------------------------------------
+
+# Retrieve study species names
+study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species)) 
+
+# Change climate variable names
+names(Chelsa) <- c(paste('bio',1:19, sep='_'))
+
+# Stack climatic and edaphic data
+Chelsa_SoilGrids <- c(Chelsa, SoilGrids)
+
+
+#-------------------------------------------------------------------------------
+
+# 2. Climatic data -------------------------------------------------------------
+
+for (sp in study_species) {
+  
+  print(sp)
+  
+  print(clim)
+  
+  # Load data frame containing thinned native presences and absences
+  load(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
+  
+  # Join species and climate data
+  species_occ_clim_native <- cbind(species_occ_native, terra::extract(x = Chelsa, y = data.frame(species_occ_native[,c('lon','lat')])))
+  
+  # Drop NA for the environmental variables 
+  species_occ_clim_native <- species_occ_clim_native %>% drop_na()
+  
+  # Check for duplicates
+  duplicated(species_occ_clim_native$ID)
+  
+  # Only retain non-duplicated cells
+  species_occ_clim_native <- species_occ_clim_native[!duplicated(species_occ_clim_native$ID),]
+  
+  # Save the data frame used for model fitting
+  save(species_occ_clim_native, file = paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
+  
+} # End of loop
+
+
+#-------------------------------------------------------------------------------
+
+# 3. Climatic and edaphic data -------------------------------------------------
+
+for (sp in study_species) {
+  
+  print(sp)
+  
+  print(edaclim)
+  
+  # Load data frame containing thinned native presences and absences
+  load(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
+  
+  # Join species data with climatic and edaphic data
+  species_occ_edaclim_native <- cbind(species_occ_native, terra::extract(x = Chelsa_SoilGrids, y = data.frame(species_occ_native[,c('lon','lat')])))
+  
+  # Drop NA for the environmental variables 
+  species_occ_edaclim_native <- species_occ_edaclim_native %>% drop_na()
+  
+  # Check for duplicates
+  duplicated(species_occ_edaclim_native$ID)
+  
+  # Only retain non-duplicated cells
+  species_occ_edaclim_native <- species_occ_edaclim_native[!duplicated(species_occ_edaclim_native$ID),]
+  
+  # Save the data frame used for model fitting
+  save(species_occ_edaclim_native, file = paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  
+} # End of loop
+  
+  
+#-------------------------------------------------------------------------------
+
+# 4. Native occurrence numbers after environmental relation ---------------------------
+
+# Prepare a data frame to store the result of occurrence numbers
+occ_numbers_thinned_env_nat <- data.frame(expand.grid(species=c(paste(sudy_species))), native_occurrences=NA)
+
+for (sp in study_species) {
+  
+  # Load in the data frame with species occurrences and all environmental variables
+  load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  
+  # Subset by native presences
+  native_presences <- subset(species_occ_edaclim_native, species_occ_edaclim_native$occ == 1)
+  
+  # Sum up number of native presences
+  number_native_presences <- nrow(native_presences)
+  
+  # Store the results in data frame
+  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "native_occurrences"] <- number_native_occurrences
+  
+}
+
+# Remove the species with less than 40 occurrences
+occ_numbers_thinned_env_nat_filtered <- subset(occ_numbers_thinned_env_nat, occ_numbers_thinned_env_nat$native_occurrences >= 40)
+
+# Save the data frame
+save(occ_numbers_thinned_env_nat_filtered, file = "input_data/occ_numbers_thinned_env_nat_filtered.RData")
+
+
+  
+  
+  

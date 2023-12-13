@@ -20,8 +20,8 @@ library(sfheaders)
 library(purrr)
 library(furrr)
 library(dplyr)
-library(parallel)
 library(doParallel)
+library(foreach)
 
 
 # Load needed objects
@@ -37,17 +37,31 @@ source("scripts/functions.R") # thin function
 # 1. Background data generation ------------------------------------------------
 
 # Retrieve names of study species
-study_species <- unique(occurrence_numbers_thinned_filtered$species)
+study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
 
 # Start parallel computing
-#no_cores <- 5
+#no_cores <- 3
 #cl <- makeCluster(no_cores)
 #registerDoParallel(cl)
 
 # Loop over all species and generate background data
-#foreach(sp = 1:length(study_species), .packages = c("terra", "sf", "purrr", "furrr", "sfheaders")) %dopar% {
-    #try({
+#foreach(sp = study_species, .packages = c("terra", "sf", "purrr", "furrr", "sfheaders")) %dopar% {
+    
 for (sp in study_species) { # Start of loop over species
+  try({
+      
+  print(sp)
+      
+  # check if distribution data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
+  
+  # check the size of the file
+  file_size <- file.size(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+  
+  if (file_exists == FALSE && file_size <= 300000) { # just continue with background data if output distribution 
+  # data does not exist yet and file is under a certain size
+    
+  print("start of process")
   
   # Create a subset for each species based on all occurrences 
   subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
@@ -130,9 +144,13 @@ for (sp in study_species) { # Start of loop over species
   # Save the distribution data set of the species
   save(species_occ_native, file = paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
   
-} # end of loop over species
+  } else if (file_exists == TRUE) { print("already done")
+  } else if (file_size > 300000) { print("too large")
+  } # end of if conditions
   
-#})} # end of foreach
+})} # end of try and for loop over species
+  
+#})} # end of try and foreach
   
   
 #stopCluster(cl)  
