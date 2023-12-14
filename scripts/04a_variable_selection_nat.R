@@ -1,0 +1,104 @@
+# Uncertainty paper
+
+
+#-------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------- #
+#        04a. Variable selection based on native occurrence data         #
+# ---------------------------------------------------------------------- #
+
+# Set working directory
+setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
+
+# Required path 
+# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
+
+# Load needed packages
+
+# Load needed objects
+source("scripts/functions.R") # select07 function
+load("input_data/occ_numbers_thinned_env_nat_filtered.RData") # Contains names of study species
+
+# Retrieve species names
+study_species <- unique(as.character(occ_numbers_thinned_env_nat_filtered$species)) 
+
+#-------------------------------------------------------------------------------
+
+# 1. Climatic data -------------------------------------------------------------
+
+for (sp in study_species) { # Start the loop over all species
+  
+  # Load the data frame of native species occurrences joined with climate variables
+  load(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
+  
+  # Consideration of equal weights of presences and absences
+  weights_clim <- ifelse(species_occ_clim_native$occ==1, 1, sum(species_occ_clim_native$occ==1) / sum(species_occ_clim_native$occ==0))
+  
+  # Run the variable selection using the select07 function
+  var_sel_clim <- select07(X=species_occ_clim_native[,-c(1:4)], 
+                           y=species_occ_clim_native$occ, 
+                           threshold=0.7,
+                           weights = weights_clim)
+  
+  
+  # Extract the four most important and weakly correlated climate variables
+  pred_sel_clim <- var_sel_clim$pred_sel
+  pred_sel_clim_native <- pred_sel_clim[1:4]
+  
+  # Save the variables
+  save(pred_sel_clim_native, file = paste0("output_data/variable_selection/native/clim/pred_sel_clim_native",sp,".RData"))
+  
+  
+} # End of loop over all species
+
+
+#-------------------------------------------------------------------------------
+
+# 2. Climatic and edaphic data -------------------------------------------------
+
+for (sp in study_species) { # Start the loop over all species
+  
+  # Load the data frame of native species occurrences joined with climatic as well as edaphic variables
+  load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  
+  # Consideration of equal weights of presences and absences
+  weights_edaclim <- ifelse(species_occ_edaclim_native$occ==1, 1, sum(species_occ_edaclim_native$occ==1) / sum(species_occ_edaclim_native$occ==0))
+  
+  # Run the variable selection using the select07 function
+  var_sel_edaclim <- select07(X=species_occ_edaclim_native[,-c(1:4)], 
+                              y=species_occ_edaclim_native$occ, 
+                              threshold=0.7,
+                              weights = weights_edaclim)
+  
+  pred_sel_edaclim <- var_sel_edaclim$pred_sel
+  
+  # Get the names from all variables
+  variables <- colnames(species_occ_edaclim_native)
+  climatic_predictors <- variables[5:23] # Get the names from the climate variables
+  edaphic_predictors <- variables[24:37] # Get the names from the edaphic variables
+  
+  # Create an empty vector of type character 
+  pred_sel_edaclim_native <- character()
+  
+  # Loop through the selected predictors and identify the first two climate variables and store them
+  for (p in pred_sel_edaclim) {
+    answer1 <- any(p == climate_predictors)
+    if (answer1  == TRUE & length(pred_sel_edaclim_native) < 2) { pred_sel_edaclim_native <- append(pred_sel_edaclim_native, p)
+    } else {
+      next
+    }
+  }
+  
+  # Loop through the selected predictors and identify the first two edaphic variables and store them
+  for (p in pred_sel_edaclim) {
+    answer2 <- any(p == edaphic_predictors)
+    if (answer2  == TRUE & length(pred_sel_edaclim_native) < 4) { pred_sel_edaclim_native <- append(pred_sel_edaclim_native, p)
+    } else {
+      next
+    }
+  }
+  
+  # Save the variables
+  save(pred_sel_edaclim_native, file = paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native",sp,".RData"))
+  
+} # End of loop over all species
