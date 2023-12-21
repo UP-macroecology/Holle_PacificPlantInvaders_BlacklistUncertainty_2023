@@ -157,6 +157,60 @@ select07 <- function(X, y, family="binomial",univar="glm2", threshold=0.7, metho
 
 # 3. Function for cross-validation ---------------------------------------------
 
+#' predictSDM
+#'
+#' Make SDM predictions 
+#' @param model model object
+#' @param newdata a data frame in which to look for variables for which predictions should be made. 
+#' @return A numeric vector with predictions.
+#' @examples 
+#' data(Anguilla_train)
+#' data(Anguilla_test)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2), data=Anguilla_train, family='binomial')
+#' predictSDM(m1, Anguilla_test)
+#' @export
+predictSDM <- function(model, newdata) {
+  switch(class(model)[1],
+         Bioclim = predict(model, newdata),
+         Domain = predict(model, newdata),
+         glm = predict(model, newdata, type='response'),
+         Gam = predict(model, newdata, type='response'),
+         gam = predict(model, newdata, type='response'),
+         negbin = predict(model, newdata, type='response'),
+         rpart = predict(model, newdata),
+         randomForest.formula = switch(model$type,
+                                       regression = predict(model, newdata, type='response'),
+                                       classification = predict(model, newdata, type='prob')[,2]),
+         randomForest = switch(model$type,
+                               regression = predict(model, newdata, type='response'),
+                               classification = predict(model, newdata, type='prob')[,2]),
+         gbm = switch(ifelse(is.null(model$gbm.call),"GBM","GBM.STEP"), 
+                      GBM.STEP =  predict.gbm(model, newdata, 
+                                              n.trees=model$gbm.call$best.trees, type="response"),
+                      GBM = predict.gbm(model, newdata, 
+                                        n.trees=model$n.trees, type="response")),
+         maxnet = predict(model, newdata, type="logistic"))
+}
+
+
+
+#' crossvalSDM
+#'
+#' A function for deriving cross-validated predictions. The function partitions the data into k folds, determines the model algorithm, updates the model for the new training data and makes predictions to the hold-out data using this algorithm.
+#' @param model model object
+#' @param traindat a data frame holding the training data. 
+#' @param colname_species a character string indicating the name of the column holding the response data
+#' @param colname_pred a character vector indicating the names of the columns holding the predictor variables
+#' @param env_r a raster stack of the environmental predictors
+#' @param colname_coord a character vector indicating the names of the columns holding the species coordinates
+#' @param kfold a single numeric value indicating the number of folds that the data will be split in or a numeric vector holding the indices for the data partition
+#' @return A numeric vector with cross-validated predictions.
+#' @examples 
+#' data(Anguilla_train)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2), data=Anguilla_train, family='binomial')
+#' preds_cv <- crossvalSDM(m1, kfold=5, traindat=Anguilla_train, colname_species = 'Angaus', colname_pred = 'SegSumT')
+#' evalSDM(Anguilla_train$Angaus, preds_cv)
+#' @export
 crossvalSDM <- function(model, kfold=5, traindat, colname_species, colname_pred,
                         env_r=NULL, colname_coord=NULL, weights=NULL) {
   
@@ -212,9 +266,46 @@ crossvalSDM <- function(model, kfold=5, traindat, colname_species, colname_pred,
   cross_val_preds
 }
 
+
 #-------------------------------------------------------------------------------
 
-# 4. Function for cross-validation ---------------------------------------------
+# 4. Cross-validation function for GLMs with weights ---------------------------
+
+
+crossval_glm <- function(model, kfold=5, traindat, colname_species, colname_pred,
+                         env_r=NULL, colname_coord=NULL, weights=NULL) {
+  
+  # cross-validate GLM with weights - somehow the mecofun function doesn't work for weights in GLM although it works for GAM
+  
+  if (length(kfold)==1) {
+    # Make k-fold data partitions
+    ks <- dismo::kfold(traindat, k = kfold, by = traindat[,colname_species])
+  } else {
+    ks <- kfold
+    kfold <- length(unique(kfold))
+  }
+  
+  cross_val_preds = numeric(length = nrow(traindat))
+  
+  for(i in seq_len(kfold)){
+    cv_train <- traindat[ks!=i,]
+    cv_test <- traindat[ks==i,]
+    
+    data_final <- cv_train
+    data_final$weights <- weights[ks!=i]
+    
+    # We update the model for the new training data
+    modtmp <- update(model, data=cv_train, weights=data_final$weights)
+    
+    # We make predictions for k-fold:
+    cross_val_preds[ks==i] <- predictSDM(modtmp, cv_test[, colname_pred, drop=F])
+  }
+  cross_val_preds
+}
+
+#-------------------------------------------------------------------------------
+
+# 4. Function for evaluation of performance metrics ----------------------------
 
 #' evalSDM
 #'
@@ -249,4 +340,241 @@ evalSDM <- function(observation, predictions, thresh.method='MaxSens+Spec', req.
              PCC = PresenceAbsence::pcc(cmx.opt, st.dev=F),
              D2 = expl_deviance(observation, predictions),
              thresh = thresh[thresh$Method==thresh.method,2])
+}
+
+#' TSS
+#'
+#' Calculates the true skill statistic (sensitivity+specificity-1) \insertCite{allouche2006}{mecofun}.
+#' 
+#' @importFrom Rdpack reprompt
+#' 
+#' @param cmx a confusion matrix
+#' 
+#' @return A numeric value.
+#' 
+#' @examples  TSS()
+#' 
+#' @references
+#' \insertAllCited{}
+#' 
+#' @export
+TSS = function(cmx){
+  PresenceAbsence::sensitivity(cmx, st.dev=F) + 
+    PresenceAbsence::specificity(cmx, st.dev=F) - 1
+}
+
+
+#' expl_deviance
+#'
+#' Calculates the explained deviance based on the dismo package.
+#' 
+#' @param obs a numeric vector of observations
+#' @param pred a numeric vector of predictions
+#' @param family a description of the error distribution and link function to be used in the model.
+#' 
+#' @return A numeric value.
+#' 
+#' @examples 
+#' data(Anguilla_train)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2), data=Anguilla_train, family='binomial')
+#' expl_deviance(Anguilla_train$Angaus, m1$fitted)
+#' 
+#' @seealso [calc.deviance()]
+#' 
+#' @export
+expl_deviance <- function(obs, pred, family='binomial'){
+  if (family=='binomial') {pred <- ifelse(pred<.00001,.00001,ifelse(pred>.9999,.9999,pred))}
+  
+  null_pred <- rep(mean(obs), length(obs))
+  
+  1 - (dismo::calc.deviance(obs, pred, family=family) / 
+         dismo::calc.deviance(obs, null_pred, family=family))
+}
+
+
+#-------------------------------------------------------------------------------
+
+# 5. Function for response plot ------------------------------------------------
+
+#' inflated_response
+#'
+#' plot inflated response curves - inflated partial dependence plots \insertCite{Zurell2012}{mecofun}. Plot effect of one variable on response variable over the range (min,mean,median,max and quartiles) of other predictors. As the number of combinations increases exponentially, the maximum number of combinations can be set with lhsample. Whenever lhsample is exceeded, candidate combinations are drawn by latin hypercube sampling.
+#' 
+#' @importFrom Rdpack reprompt
+#' 
+#' @param object model object.
+#' @param predictors a data frame with predictor variables. 
+#' @param select.columns optional character vector indicating subset of predictors to plot
+#' @param label optional character vector indicating alternative names of predictors for labelling plots
+#' @param len a numeric value indicating the number of intervals for drawing the environmental gradients
+#' @param lhsample a numeric value indicating the number of latin hypercube samples to draw
+#' @param lwd line width
+#' @param method character indicating at which values the other predictors are held constant. Needs to take a value of "mean", "stat3" (default), or "stat6". "stat3" considers minimum, mean and maximum values of predictors. "stat6" considers min,mean,median,max and quartiles.
+#' @param disp can take options "all" (default) or "eo.mask" - in the latter case, eo.mask() is used to distinguish between areas of the estimated environmental niche / plotting areas that are supported by data and those that require extrapolation.
+#' @param overlay.mean logical value. If true, then the mean response curve is overlaid on the inflated plot
+#' @param ylab y axis label
+#' @param col.curves colour of response curves
+#' @param col.novel colour of novel environments
+#' @param col.mean colour of mean response
+#' @param lwd.known line width for known environments
+#' @param lwd.mean line width of mean response
+#' @param ... further plotting parameters
+#' 
+#' @return A numeric vector with predictions.
+#' 
+#' @references
+#' \insertAllCited{}
+#' 
+#' @examples 
+#' data(Anguilla_train)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2) + poly(SegTSeas,2) + poly(DSDist,2), data=Anguilla_train, family='binomial')
+#' par(mfrow=c(1,3))
+#' inflated_response(m1,Anguilla_train[,c('SegSumT','SegTSeas','DSDist')])
+#' 
+#' @export
+inflated_response=function(object,predictors,select.columns=NULL,label=NULL,
+                           len=50,lhsample=100, lwd=1, ylab=NULL,
+                           method="stat3",disp="all",overlay.mean=T,
+                           col.curves='grey',col.novel='grey',col.mean='black',lwd.known=2,lwd.mean=2,ylim=c(0,1),...){
+  
+  if (is.null(select.columns)) select.columns=seq_len(ncol(predictors))
+  
+  for (i in select.columns)
+  {
+    summaries=data.frame(matrix(0,6,ncol(predictors)))
+    for (iz in 1:ncol(predictors)) {
+      summaries[,iz]=summary(predictors[,iz])
+    }
+    if (method=="stat3") {
+      summaries.j=as.matrix(summaries[c(1,4,6),-i],ncol=(ncol(predictors)-1));comb=min(lhsample,3^(ncol(predictors)-1));nc=3
+    } else
+      if (method=="stat6") {
+        summaries.j=as.matrix(summaries[,-i],ncol=(ncol(predictors)-1));comb=min(lhsample,6^(ncol(predictors)-1));nc=6
+      } else
+        if (method=="mean") {
+          summaries.j=as.matrix(summaries[4,-i],ncol=(ncol(predictors)-1));comb=1;nc=1;overlay.mean=F
+        }
+    
+    dummy.j=as.matrix(predictors[1:len,-i],ncol=(ncol(predictors)-1))
+    
+    if (comb<lhsample) {
+      mat=vector("list",ncol(dummy.j))
+      for (m in 1:ncol(dummy.j)) mat[[m]]=1:nc
+      mat=expand.grid(mat)
+    } else {
+      mat=round(qunif(lhs::randomLHS(lhsample,ncol(dummy.j)),1,nrow(summaries.j)),0)
+    }
+    
+    if (is.null(label)) {
+      label=names(predictors)
+    }
+    
+    for (r in 1:nrow(mat))
+    {
+      for (j in 1:ncol(dummy.j))
+      {
+        dummy.j[,j]=as.vector(rep(summaries.j[mat[r,j],j],len))
+      }
+      
+      dummy=data.frame(seq(min(predictors[,i]),max(predictors[,i]),length=len),dummy.j)
+      names(dummy)[-1]=names(predictors)[-i]
+      names(dummy)[1]=names(predictors)[i]
+      
+      curves <- predictSDM(object, dummy)
+      
+      # display all lines in same type
+      if (disp=='all')
+      {
+        if (r==1)
+        {
+          if (i==1) plot(dummy[,names(predictors)[i]],
+                         curves,type="l",ylim=ylim,xlab=label[i],
+                         lwd=lwd,col=col.curves,ylab=ylab, ...)
+          else plot(dummy[,names(predictors)[i]],
+                    curves,type="l",ylim=ylim,xlab=label[i],lwd=lwd,col=col.curves,
+                    ylab='', ...)
+        }
+        else lines(dummy[,names(predictors)[i]],
+                   curves,lwd=lwd,col=col.curves,...)
+      }
+      
+      # highlight extrapolation to novel environmental conditions
+      if (disp=='eo.mask')
+      {
+        novel=eo.mask(predictors,dummy)
+        curves.known=curves
+        curves.known[novel==1]=NA
+        curves.novel=curves
+        curves.novel[novel==0]=NA
+        
+        if (r==1)
+        {
+          if (i==1) {plot(dummy[,names(predictors)[i]],
+                          curves.known,type="l",ylim=ylim,xlab=label[i],
+                          lwd=lwd.known,col=col.curves,ylab=ylab,...)
+            lines(dummy[,names(predictors)[i]],
+                  curves.novel,lwd=lwd,col=col.novel,lty='dotted',...)}
+          else {plot(dummy[,names(predictors)[i]],
+                     curves.known,type="l",ylim=ylim,xlab=label[i],lwd=lwd.known,
+                     col=col.curves,ylab='',...)
+            lines(dummy[,names(predictors)[i]],
+                  curves.novel,lwd=lwd,col=col.novel,lty='dotted',...)}
+        }
+        else {lines(dummy[,names(predictors)[i]],
+                    curves.known,lwd=lwd.known,col=col.curves,...)
+          lines(dummy[,names(predictors)[i]],
+                curves.novel,lwd=lwd,col=col.novel,lty='dotted',...)}
+      }
+    }
+    
+    #-------------------------------------------------
+    # now, this is for overlaying mean response curve
+    if (overlay.mean==T)
+    {
+      dummy=predictors[1:len,]
+      dummy[,i]=seq(min(predictors[,i]),max(predictors[,i]),length=len)
+      for (j in 1:ncol(predictors))
+      {
+        if (j!=i) 
+        {
+          dummy[,j]=rep(mean(predictors[,j]),len)
+        }
+      }
+      
+      curves <- predictSDM(object, dummy)
+      
+      lines(dummy[,names(predictors)[i]],
+            curves,lwd=lwd.mean,col=col.mean,...)
+    }    
+  }}
+
+#' partial_response
+#'
+#' plot partial response curves. Plot effect of one variable on response variable while keeping the other predictors constant at their mean.
+#' 
+#' @param object model object
+#' @param predictors a data frame with predictor variables. 
+#' @param select.columns optional character vector indicating subset of predictors to plot
+#' @param label optional character vector indicating alternative names of predictors for labelling plots
+#' @param ylab y axis label
+#' @param len a numeric value indicating the number of intervals for drawing the environmental gradients
+#' @param lwd line width
+#' @param col colour of response curves
+#' @param lwd line width
+#' @param ... further plotting parameters
+#' 
+#' @return A numeric vector with predictions.
+#' 
+#' @examples 
+#' data(Anguilla_train)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2) + poly(SegTSeas,2) + poly(DSDist,2), data=Anguilla_train, family='binomial')
+#' par(mfrow=c(1,3))
+#' partial_response(m1,Anguilla_train[,c('SegSumT','SegTSeas','DSDist')])
+#' 
+#' @export
+partial_response=function(object,predictors,select.columns=NULL, label=NULL, len=50,
+                          col='black',ylab=NULL, ...){
+  
+  inflated_response(object,predictors,select.columns,label,len,method='mean',
+                    col.curves=col, ylab=ylab,...)
 }

@@ -35,7 +35,7 @@ source("scripts/functions.R") # thin function
 # 1. Background data generation ------------------------------------------------
 
 # Retrieve names of study species
-study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
+#study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
 
 # Start parallel computing
 #no_cores <- 5
@@ -44,6 +44,9 @@ study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species
 
 # Loop over all species and generate background data
 #foreach(sp = study_species, .packages = c("terra", "sf", "purrr", "furrr", "sfheaders")) %dopar% {
+
+study_species <- c("Picris_hieracioides", "Olea_europaea", "Lolium_arundinaceum", 
+                   "Arrhenatherum_elatius", "Tanacetum_parthenium")
   
 for (sp in study_species) { # Start of loop over species
   try({

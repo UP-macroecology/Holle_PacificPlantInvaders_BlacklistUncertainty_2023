@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#     03a. Relation of environmental data to global occurrence data      #
+#     03b. Relation of environmental data to global occurrence data      #
 # ---------------------------------------------------------------------- #
 
 # Set working directory
@@ -22,7 +22,6 @@ load("input_data/occurrence_numbers_thinned_filtered.RData") # data frame that c
 
 Chelsa <- terra::rast(str_sort(list.files("input_data/environmental_data/Chelsa_V2", 
                                           pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Climate variable rasters
-names(Chelsa) <- c(paste('bio',1:19, sep='_')) # Change climate variable names
 
 SoilGrids <- terra::rast(str_sort(list.files("input_data/environmental_data/SoilGrids_V2", 
                                              pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Edaphic variable rasters
@@ -46,10 +45,19 @@ Chelsa_SoilGrids <- c(Chelsa, SoilGrids)
 # 2. Climatic data -------------------------------------------------------------
 
 for (sp in study_species) {
+  try({
   
   print(sp)
   
   print(clim)
+  
+  # check if joined distribution and climatic data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
+  
+  if (file_exists == FALSE) { # just continue with joining climatic data if output 
+  # of joined distribution and climatic data does not exist yet
+    
+  print("start of process")
   
   # Load data frame containing thinned native presences and absences
   load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
@@ -69,7 +77,12 @@ for (sp in study_species) {
   # Save the data frame used for model fitting
   save(species_occ_clim_global, file = paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
   
-} # End of loop
+  
+  } else if (file_exists == TRUE) { print("already done")
+  } # End of if condition
+  
+  
+})} # end of try and for loop over species
 
 
 #-------------------------------------------------------------------------------
@@ -77,10 +90,19 @@ for (sp in study_species) {
 # 3. Climatic and edaphic data -------------------------------------------------
 
 for (sp in study_species) {
+  try({
   
   print(sp)
   
   print(edaclim)
+  
+  # check if joined distribution and climatic and edaphic data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  
+  if (file_exists == FALSE) { # just continue with joining climatic and edaphic data if output 
+  # of joined distribution and climatic and edaphic data does not exist yet
+    
+  print("start of process")
   
   # Load data frame containing thinned native presences and absences
   load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
@@ -100,4 +122,40 @@ for (sp in study_species) {
   # Save the data frame used for model fitting
   save(species_occ_edaclim_global, file = paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
   
-} # End of loop
+  
+  } else if (file_exists == TRUE) { print("already done")
+  } # End of if condition
+  
+  
+})} # end of try and for loop over species
+
+
+
+#-------------------------------------------------------------------------------
+
+# 4. Global occurrence numbers after environmental relation --------------------
+
+# Prepare a data frame to store the result of occurrence numbers
+occ_numbers_thinned_env_glob <- data.frame(expand.grid(species=c(paste(study_species))), global_occurrences=NA)
+
+for (sp in study_species) {
+  
+  # Load in the data frame with species occurrences and all environmental variables
+  load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  
+  # Subset by native presences
+  global_presences <- subset(species_occ_edaclim_global, species_occ_edaclim_global$occ == 1)
+  
+  # Sum up number of native presences
+  number_global_presences <- nrow(global_presences)
+  
+  # Store the results in data frame
+  occ_numbers_thinned_env_glob[occ_numbers_thinned_env_glob$species == sp, "global_occurrences"] <- number_global_occurrences
+  
+}
+
+# Remove the species with less than 40 occurrences
+occ_numbers_thinned_env_glob_filtered <- subset(occ_numbers_thinned_env_glob, occ_numbers_thinned_env_glob$global_occurrences >= 40)
+
+# Save the data frame
+save(occ_numbers_thinned_env_glob_filtered, file = "input_data/occ_numbers_thinned_env_glob_filtered.RData")

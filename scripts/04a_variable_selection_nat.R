@@ -27,6 +27,19 @@ study_species <- unique(as.character(occ_numbers_thinned_env_nat_filtered$specie
 # 1. Climatic data -------------------------------------------------------------
 
 for (sp in study_species) { # Start the loop over all species
+  try({ 
+    
+  print(sp)
+    
+  print(clim)
+  
+  # check if variable selection data file already exists
+  file_exists <- file.exists(paste0("output_data/variable_selection/native/clim/pred_sel_clim_native_",sp,".RData"))
+  
+  if (file_exists == FALSE) { # just continue with variable selection if output 
+  # of variable selection data does not exist yet
+    
+  print("start of process")
   
   # Load the data frame of native species occurrences joined with climate variables
   load(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
@@ -35,9 +48,9 @@ for (sp in study_species) { # Start the loop over all species
   weights_clim <- ifelse(species_occ_clim_native$occ==1, 1, sum(species_occ_clim_native$occ==1) / sum(species_occ_clim_native$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_clim <- select07(X=species_occ_clim_native[,-c(1:4)], 
-                           y=species_occ_clim_native$occ, 
-                           threshold=0.7,
+  var_sel_clim <- select07(X = species_occ_clim_native[,-c(1:4)], 
+                           y = species_occ_clim_native$occ, 
+                           threshold = 0.7,
                            weights = weights_clim)
   
   
@@ -46,10 +59,14 @@ for (sp in study_species) { # Start the loop over all species
   pred_sel_clim_native <- pred_sel_clim[1:4]
   
   # Save the variables
-  save(pred_sel_clim_native, file = paste0("output_data/variable_selection/native/clim/pred_sel_clim_native",sp,".RData"))
+  save(pred_sel_clim_native, file = paste0("output_data/variable_selection/native/clim/pred_sel_clim_native_",sp,".RData"))
   
   
-} # End of loop over all species
+  } else if (file_exists == TRUE) { print("already done")
+  } # End of if condition
+  
+  
+})} # end of try and for loop over species
 
 
 #-------------------------------------------------------------------------------
@@ -57,6 +74,19 @@ for (sp in study_species) { # Start the loop over all species
 # 2. Climatic and edaphic data -------------------------------------------------
 
 for (sp in study_species) { # Start the loop over all species
+  try({ 
+    
+  print(sp)
+    
+  print(edaclim)
+  
+  # check if variable selection data file already exists
+  file_exists <- file.exists(paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData"))
+  
+  if (file_exists == FALSE) { # just continue with variable selection if output 
+  # of variable selection data does not exist yet
+    
+  print("start of process")
   
   # Load the data frame of native species occurrences joined with climatic as well as edaphic variables
   load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
@@ -65,9 +95,9 @@ for (sp in study_species) { # Start the loop over all species
   weights_edaclim <- ifelse(species_occ_edaclim_native$occ==1, 1, sum(species_occ_edaclim_native$occ==1) / sum(species_occ_edaclim_native$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_edaclim <- select07(X=species_occ_edaclim_native[,-c(1:4)], 
-                              y=species_occ_edaclim_native$occ, 
-                              threshold=0.7,
+  var_sel_edaclim <- select07(X = species_occ_edaclim_native[,-c(1:4)], 
+                              y = species_occ_edaclim_native$occ, 
+                              threshold = 0.7,
                               weights = weights_edaclim)
   
   pred_sel_edaclim <- var_sel_edaclim$pred_sel
@@ -82,7 +112,7 @@ for (sp in study_species) { # Start the loop over all species
   
   # Loop through the selected predictors and identify the first two climate variables and store them
   for (p in pred_sel_edaclim) {
-    answer1 <- any(p == climate_predictors)
+    answer1 <- any(p == climatic_predictors)
     if (answer1  == TRUE & length(pred_sel_edaclim_native) < 2) { pred_sel_edaclim_native <- append(pred_sel_edaclim_native, p)
     } else {
       next
@@ -99,6 +129,11 @@ for (sp in study_species) { # Start the loop over all species
   }
   
   # Save the variables
-  save(pred_sel_edaclim_native, file = paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native",sp,".RData"))
+  save(pred_sel_edaclim_native, file = paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData"))
   
-} # End of loop over all species
+  
+  } else if (file_exists == TRUE) { print("already done")
+  } # End of if condition
+  
+  
+})} # end of try and for loop over species

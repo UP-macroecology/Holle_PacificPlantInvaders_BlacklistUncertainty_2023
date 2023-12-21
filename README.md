@@ -21,15 +21,14 @@ For each study species, the occurrence information was related to the environmen
 ### 4 - Variable selection
 For each of the four SDM input datasets, the four most important and weakly correlated variables were extracted from the ranked predictor output that were then considered in the upcoming model-building process. For the models that used both predictor types, the two climatic and edaphic variables that were ranked first in the predictor output were considered.
 
-### 5 - SDM fitting
+### 5 - SDM fitting and validation
+Based on each of the four SDM input datasets, four different model algorithms were applied to fit the models: GLM, GAM, RF, and BRT. For each model, the performance was assessed using the 5-fold cross validation based on four different performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity and specificity. Additionally, the ensemble performance of the four different models using the same niche in the input occurrence data and environmental data was assessed.
 
-### 6 - Model validation
+### 6 - Model predictions
 
-### 7 - Model predictions
+### 7 - Blacklist construction
 
-### 8 - Blacklist construction
-
-### 9 - Uncertainty analysis
+### 8 - Uncertainty analysis
 
 ### References
 
