@@ -25,6 +25,7 @@ For each of the four SDM input datasets, the four most important and weakly corr
 Based on each of the four SDM input datasets, four different model algorithms were applied to fit the models: GLM, GAM, RF, and BRT. For each model, the performance was assessed using the 5-fold cross validation based on four different performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity and specificity. Additionally, the ensemble performance of the four different models using the same niche in the input occurrence data and environmental data was assessed.
 
 ### 6 - Model predictions
+For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms per SDM input dataset. Moreover, an ensemble model was established by combining the continuous predictions of each algorithm using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
 
 ### 7 - Blacklist construction
 
