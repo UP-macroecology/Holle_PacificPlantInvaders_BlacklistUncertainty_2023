@@ -243,7 +243,7 @@ for (sp in study_species) { # Start the loop over all species
       # Combine predictions from all algorithms into one data frame
       preds_all_clim_global <- data.frame(glm = preds_glm_cv_clim_global, gam = preds_gam_cv_clim_global, rf = preds_rf_cv_clim_global, brt = preds_brt_cv_clim_global)
       
-      # Get the binary predictions of all algorithms (using the "thresh" value for thresholding)
+      # Get the binary predictions of all algorithms (using the MaxSSS "thresh" value for thresholding)
       binpred_all_clim_global <- sapply(names(preds_all_clim_global), 
                                         FUN=function(alg){
                                           ifelse(preds_all_clim_global[,alg] >= comp_perf_clim_global[comp_perf_clim_global$alg==alg,'thresh'],1,0)
