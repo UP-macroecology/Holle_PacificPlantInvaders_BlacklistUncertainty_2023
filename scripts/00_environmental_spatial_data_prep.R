@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#             00. Environmental and spatial data preparation            #
+#             00. Environmental and spatial data preparation             #
 # ---------------------------------------------------------------------- #
 
 # Set working directory
@@ -317,7 +317,7 @@ island_group_results <- c(island_group_results, "Fiji")
 # Get environmental variable names
 names(Chelsa) <- c(paste('bio',1:19, sep='_')) # Change climate variable names
 
-environmental_var_rasterstack <- c(Chelsa, SoilGrids) # Stack the climate and edaphic rasterstacks
+environmental_var_rasterstack <- c(Chelsa, SoilGrids) # Stack the climate and edaphic rasters
 
 environmental_var <- names(environmental_var_rasterstack) # Extract the variable names
 
@@ -357,7 +357,7 @@ for (e in environmental_var) { # Start the loop over all environmental rasters
                          env_var_crop <- crop(raster_variable, island_extent)
                          
                          # Rasterize the island shape based on the cropped variable raster
-                         island_group_raster <- terra::rasterize(fiji_1, env_var_crop, touches = TRUE)
+                         island_group_raster <- terra::rasterize(fiji_1, env_var_crop)
                          
                          # Create a mask of the island group based on the variable
                          island_group_mask <- mask(env_var_crop, island_group_raster)
@@ -394,7 +394,7 @@ for (e in environmental_var) { # Start the loop over all environmental rasters
                                 env_var_crop <- crop(raster_variable, island_extent)
                                 
                                 # Rasterize the island shape based on the cropped variable raster
-                                island_group_raster <- terra::rasterize(fiji_2, env_var_crop, touches = TRUE)
+                                island_group_raster <- terra::rasterize(fiji_2, env_var_crop)
                                 
                                 # Create a mask of the island group based on the variable
                                 island_group_mask <- mask(env_var_crop, island_group_raster)
@@ -441,7 +441,7 @@ for (e in environmental_var) { # Start the loop over all environmental rasters
              env_var_crop <- crop(raster_variable, island_extent)
                 
              # Rasterize the island shape based on the cropped variable raster
-             island_group_raster <- terra::rasterize(island_shape, env_var_crop, touches = TRUE)
+             island_group_raster <- terra::rasterize(island_shape, env_var_crop)
                 
              # Create a mask of the island group based on the variable
              island_group_mask <- mask(env_var_crop, island_group_raster)
@@ -479,13 +479,13 @@ save(data_coverage_islandgroups, file = "input_data/spatial_data/data_coverage_i
 # >= 50 % based on purely climatic and combined climatic and edaphic data
 
 # Climatic data
-rows_remove_clim <- apply(data_coverage_islandgroups[, c(3:21)], 1, function(x) any(x < 50))
+rows_remove_clim <- apply(data_coverage_islandgroups[, c(3:21)], 1, function(x) any(x < 50 | is.na(x)))
 islandgroups_clim <- data_coverage_islandgroups[!rows_remove_clim,]
 
 save(islandgroups_clim, file = "input_data/spatial_data/islandgroups_clim.RData")
 
 # Climatic and edaphic data
-rows_remove_edaclim <- apply(data_coverage_islandgroups[, c(3:35)], 1, function(x) any(x < 50))
+rows_remove_edaclim <- apply(data_coverage_islandgroups[, c(3:35)], 1, function(x) any(x < 50 | is.na(x)))
 islandgroups_edaclim <- data_coverage_islandgroups[!rows_remove_edaclim,]
 
 save(islandgroups_edaclim, file = "input_data/spatial_data/islandgroups_edaclim.RData")

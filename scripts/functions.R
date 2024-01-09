@@ -62,14 +62,15 @@ thin <- function(sf, thin_dist = 3000, runs = 10, ncores = 10){
 
 # 2. Function for variable selection -------------------------------------------
 
-#' select07
+#' select07_cv
 #'
-#' Select weakly correlated variables based on univariate importance based on \insertCite{Dormann2013}{mecofun}. Univariate variable importance is based on AIC. Variable importance can also be pre-defined by hand.
+#' Select weakly correlated variables based on cross-validated univariate variable importance \insertCite{Zurell2020}{mecofun}. Extension of select07() function described in \insertCite{Dormann2013}{mecofun}. In contrast to select07(), the univariate variable importance is estimated as explained deviance obtained on cross-validated predictions. Variable importance can also be pre-defined by hand.
 #' 
 #' @importFrom Rdpack reprompt
 #' 
 #' @param X Matrix or data.frame containing the predictor variables
 #' @param y vector of response variable
+#' @param kfold number of folds for random cross-validation or vector with group assignments (indexing which data point belongs to which fold)
 #' @param family a description of the error distribution and link function to be used in the model.
 #' @param univar a character string indicating the regression method to be used for estimating univariate importance. Must be one of the strings "glm1", "glm2" (default), or "gam". "glm1" will estimate a generalised linear model (GLM) with a linear predictor, "glm2" a GLM with a second order polynomial, and "gam" a generalised additive model (GAM) with smooting splines 
 #' @param threshold a numeric value indicating the absolute value of the correlation coefficient above which the paired correlation are judged as problematic.
@@ -77,17 +78,19 @@ thin <- function(sf, thin_dist = 3000, runs = 10, ncores = 10){
 #' @param sequence an optional character vector providing the order of importance of the predictors. This overrides the univar method.
 #' @param weights an optional vector of prior weights to be used in univariate GLMs or GAMs
 #' 
-#' @return A list with three objects: "AIC" a numeric vector containing the AIC for the univariate models, "cor_mat" containing the correlation matrix, and "pred_sel" a character vector with the names of the remaining, weakly correlated variables. The variables are ordered according to their univariate variable importance (starting with most important variable).
+#' @return A list with three objects: "D2" a numeric vector containing the explained deviance for the univariate models, "cor_mat" containing the correlation matrix, and "pred_sel" a character vector with the names of the remaining, weakly correlated variables. The variables are ordered according to their univariate variable importance (starting with most important variable).
 #' 
 #' @examples 
 #' data(Anguilla_train)
-#' select07(X=Anguilla_train[,3:10], y=Anguilla_train[,2])
+#' select07_cv(X=Anguilla_train[,3:10], y=Anguilla_train[,2])
+#' 
+#' @seealso [select07()]
 #' 
 #' @references
 #' \insertAllCited{}
 #' 
 #' @export
-select07 <- function(X, y, family="binomial",univar="glm2", threshold=0.7, method="spearman",sequence=NULL, weights=NULL)
+select07_cv <- function(X, y, kfold=5, family="binomial",univar="glm2", threshold=0.7, method="spearman", sequence=NULL, weights=NULL)
 {
   # selects variables based on removing correlations > 0.7, retaining those
   # variables more important with respect to y
@@ -99,41 +102,41 @@ select07 <- function(X, y, family="binomial",univar="glm2", threshold=0.7, metho
   # 4. step: in order of importance: remove collinear less important variable,
   #           recalculate correlation matrix a.s.f.
   
-  var.imp <- function (variable, response, univar,family, weights)
-  {
-    # calculates the univariate (=marginal) importance of a variable for a response
-    # if(univar=="glm1")
-    # {
-    #   fm.glm <- glm(response ~ variable, family=family, weights=weights)
-    #   summary(fm.glm)$aic
-    # } else
-    # if(univar=="glm2")
-    # {
-    #   fm.glm <- glm(response ~ poly(variable,2), family=family, weights=weights)
-    #   summary(fm.glm)$aic
-    # } else  
-    # if(univar=="gam")
-    # {
-    #   fm.gam <- mgcv::gam(response ~ s(variable,k=4), family=family, weights=weights)
-    #   AIC(fm.gam)
-    # } else return(F)
-    m1 <- switch(univar,
-                 glm1 = glm(response ~ variable, family=family, weights=weights),
-                 glm2 = glm(response ~ poly(variable,2), family=family, weights=weights),
-                 gam = mgcv::gam(response ~ s(variable,k=4), family=family, weights=weights))
-    AIC(m1)
+  # Make k-fold data partitions
+  if (length(kfold)==1) {
+    ks <- dismo::kfold(y, k = kfold)
+  } else {
+    ks <- kfold
   }
+  
+  compute.univar.cv <- function(variable, response, family,univar,ks,weights){
+    preds <- numeric(length(response))
+    
+    for (n in unique(ks)) {
+      df <- data.frame(occ=response,env=variable)
+      train_df <- df[!ks ==n,]
+      test_df <-  df[ks==n, ]
+      
+      m1 <- switch(univar,
+                   glm1 = glm(occ ~ env, data=train_df, family=family, weights=weights[!ks ==n]),
+                   glm2 = glm(occ ~ poly(env,2), data=train_df, family=family, weights=weights[!ks ==n]),
+                   gam = mgcv::gam(occ ~ s(env,k=4), data=train_df, family=family, weights=weights[!ks ==n]))
+      
+      preds[ks==n] <- predict(m1,newdata=test_df,type='response')
+    }
+    d2 <- expl_deviance(response,preds)
+    ifelse(d2<0,0,d2)
+  }
+  
+  imp <- apply(X, 2, compute.univar.cv, response=y, family=family, univar=univar, ks=ks,weights=weights)
   
   cm <- cor(X, method=method)
   
   if (is.null(sequence)) {
-    a<-try(var.imp(X[,1],y,univar=univar, family=family, weights=weights))
-    if (is.numeric(a)!=1) {stop("invalid univar method")}
-    
-    imp <- apply(X, 2, var.imp, response=y, family=family,univar=univar, weights=weights) #importance as AIC: the lower the better!
-    sort.imp<-names(sort(imp)) 
-  } else
-  { sort.imp <- sequence }
+    sort.imp <- colnames(X)[order(imp,decreasing=T)]
+  } else { 
+    sort.imp <- sequence 
+  }
   
   pairs <- which(abs(cm)>= threshold, arr.ind=T) # identifies correlated variable pairs
   index <- which(pairs[,1]==pairs[,2])           # removes entry on diagonal
@@ -150,8 +153,10 @@ select07 <- function(X, y, family="binomial",univar="glm2", threshold=0.7, metho
   }
   
   pred_sel <- sort.imp[!(sort.imp %in% unique(exclude)),drop=F]
-  return(list(AIC=sort(imp), cor_mat=cm, pred_sel=pred_sel))
+  return(list(D2=sort(imp, decreasing = T), cor_mat=cm, pred_sel=pred_sel))
 }
+
+
 
 #-------------------------------------------------------------------------------
 

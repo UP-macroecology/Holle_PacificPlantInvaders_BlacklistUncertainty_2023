@@ -16,6 +16,7 @@ setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUnce
 # Load needed packages
 library(terra)
 library(stringr)
+library(tidyr)
 
 # Load needed objects
 load("input_data/occurrence_numbers_thinned_filtered.RData") # data frame that contains study species names
@@ -49,13 +50,16 @@ for (sp in study_species) {
   
   print(sp)
   
-  print(clim)
+  print("clim")
+  
+  # Check if distribution file already exists
+  file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
   
   # check if joined distribution and climatic data file already exists
-  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
+  file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
   
-  if (file_exists == FALSE) { # just continue with joining climatic data if output 
-  # of joined distribution and climatic data does not exist yet
+  if (file_exists_1 == TRUE && file_exists_2 == FALSE) { # just continue with joining climatic data if output 
+  # of joined distribution and climatic data does not exist yet but the distribution dataset exists
     
   print("start of process")
   
@@ -78,7 +82,8 @@ for (sp in study_species) {
   save(species_occ_clim_global, file = paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
   
   
-  } else if (file_exists == TRUE) { print("already done")
+  } else if (file_exists_2 == TRUE) { print("already done")
+  } else if (file_exists_1 == FALSE) { print("input file not available yet")
   } # End of if condition
   
   
@@ -94,13 +99,16 @@ for (sp in study_species) {
   
   print(sp)
   
-  print(edaclim)
+  print("edaclim")
+  
+  # Check if distribution file already exists
+  file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
   
   # check if joined distribution and climatic and edaphic data file already exists
-  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
   
-  if (file_exists == FALSE) { # just continue with joining climatic and edaphic data if output 
-  # of joined distribution and climatic and edaphic data does not exist yet
+  if (file_exists_1 == TRUE && file_exists_2 == FALSE) { # just continue with joining climatic and edaphic data if output 
+  # of joined distribution and climatic and edaphic data does not exist yet but the distribution dataset exists
     
   print("start of process")
   
@@ -123,7 +131,8 @@ for (sp in study_species) {
   save(species_occ_edaclim_global, file = paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
   
   
-  } else if (file_exists == TRUE) { print("already done")
+  } else if (file_exists_2 == TRUE) { print("already done")
+  } else if (file_exists_1 == FALSE) { print("input file not available yet")
   } # End of if condition
   
   
@@ -139,6 +148,16 @@ for (sp in study_species) {
 occ_numbers_thinned_env_glob <- data.frame(expand.grid(species=c(paste(study_species))), global_occurrences=NA)
 
 for (sp in study_species) {
+  try({
+    
+  print(sp)
+    
+  # check if joined distribution and climatic and edaphic data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  
+  if (file_exists == TRUE) { # Just continue with the species if file exists
+    
+  print("file available")
   
   # Load in the data frame with species occurrences and all environmental variables
   load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
@@ -150,9 +169,13 @@ for (sp in study_species) {
   number_global_presences <- nrow(global_presences)
   
   # Store the results in data frame
-  occ_numbers_thinned_env_glob[occ_numbers_thinned_env_glob$species == sp, "global_occurrences"] <- number_global_occurrences
+  occ_numbers_thinned_env_glob[occ_numbers_thinned_env_glob$species == sp, "global_occurrences"] <- number_global_presences
   
-}
+  } else if (file_exists == FALSE) { print("file not available")
+    next # If file does not exist, skip to the next species
+  }
+  
+})}
 
 # Remove the species with less than 40 occurrences
 occ_numbers_thinned_env_glob_filtered <- subset(occ_numbers_thinned_env_glob, occ_numbers_thinned_env_glob$global_occurrences >= 40)

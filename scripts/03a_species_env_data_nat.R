@@ -50,13 +50,17 @@ for (sp in study_species) {
     
   print(sp)
   
-  print(clim)
+  print("clim")
   
-  # check if joined distribution and climatic data file already exists
-  file_exists <- file.exists(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
+  # Check if distribution file already exists
+  file_exists_1 <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
   
-  if (file_exists == FALSE) { # just continue with joining climatic data if output 
-  # of joined distribution and climatic data does not exist yet
+  # Check if joined distribution and climatic data file already exists
+  file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
+  
+  
+  if (file_exists_1 == TRUE && file_exists_2 == FALSE) { # just continue with joining climatic data if output 
+  # of joined distribution and climatic data does not exist yet but the distribution dataset exists
   
   print("start of process")
   
@@ -79,7 +83,8 @@ for (sp in study_species) {
   save(species_occ_clim_native, file = paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
   
   
-  } else if (file_exists == TRUE) { print("already done")
+  } else if (file_exists_2 == TRUE) { print("already done")
+  } else if (file_exists_1 == FALSE) { print("input file not available yet")
   } # End of if condition
   
   
@@ -95,13 +100,16 @@ for (sp in study_species) {
   
   print(sp)
   
-  print(edaclim)
+  print("edaclim")
+  
+  # Check if distribution file already exists
+  file_exists_1 <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
   
   # check if joined distribution and climatic and edaphic data file already exists
-  file_exists <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
   
-  if (file_exists == FALSE) { # just continue with joining climatic and edaphic data if output 
-  # of joined distribution and climatic and edaphic data does not exist yet
+  if (file_exists_1 == TRUE && file_exists_2 == FALSE) { # just continue with joining climatic and edaphic data if output 
+  # of joined distribution and climatic and edaphic data does not exist yet but the distribution dataset exists
     
   print("start of process")
   
@@ -124,7 +132,8 @@ for (sp in study_species) {
   save(species_occ_edaclim_native, file = paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
   
   
-  } else if (file_exists == TRUE) { print("already done")
+  } else if (file_exists_2 == TRUE) { print("already done")
+  } else if (file_exists_1 == FALSE) { print("input file not available yet")
   } # End of if condition
   
   
@@ -139,6 +148,17 @@ for (sp in study_species) {
 occ_numbers_thinned_env_nat <- data.frame(expand.grid(species=c(paste(study_species))), native_occurrences=NA)
 
 for (sp in study_species) {
+  try({
+    
+  print(sp)
+  
+  # check if joined distribution and climatic and edaphic data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  
+  
+  if (file_exists == TRUE) { # Just continue with the species if file exists
+    
+  print("file available")
   
   # Load in the data frame with species occurrences and all environmental variables
   load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
@@ -150,9 +170,13 @@ for (sp in study_species) {
   number_native_presences <- nrow(native_presences)
   
   # Store the results in data frame
-  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "native_occurrences"] <- number_native_occurrences
+  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "native_occurrences"] <- number_native_presences
   
-}
+  } else if (file_exists == FALSE) { print("file not available")
+    next # If file does not exist, skip to the next species
+  }
+  
+})} 
 
 # Remove the species with less than 40 occurrences
 occ_numbers_thinned_env_nat_filtered <- subset(occ_numbers_thinned_env_nat, occ_numbers_thinned_env_nat$native_occurrences >= 40)

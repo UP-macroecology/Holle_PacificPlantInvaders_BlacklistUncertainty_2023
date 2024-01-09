@@ -36,7 +36,7 @@ for (sp in study_species) { # Start the loop over all species
     
     print(sp)
     
-    print(clim)
+    print("clim")
     
     # check if models already exist
     file_exists_models <- file.exists(paste0("output_data/models/global/clim/models_clim_global_",sp,".RData"))

@@ -24,21 +24,27 @@ library(sfheaders)
 library(purrr)
 library(furrr)
 library(dplyr)
+library(readr)
 
 # Load needed objects
 source("scripts/functions.R") # thin function
-world_mask <- terra::rast("input_data/world_mask.tif") # mask with 1 km resolution 
+world_mask <- terra::rast("input_data/spatial_data/world_mask.tif") # mask with 1 km resolution 
 
 
 #-------------------------------------------------------------------------------
 
 # 1. Species data processing ---------------------------------------------------
 
-# Load in the list of the 120 plant species occurring as naturalized on the Hawaiian Islands
-load("input_data/blacklist_final.RData")
+# Retrieve the plant species occurring as naturalized on the Hawaiian Islands
+# Pacific_Invaders_GIFT_22_01.csv = Wohlwends Pacific invaders list
+# (author of: Wohlwend, MR, Craven, D, Weigelt, P, et al. Anthropogenic and environmental drivers shape diversity of naturalized plants across the Pacific. Divers Distrib. 2021; 27: 1120–1133)
+# Species names are based on LCVP (Leipzig Catalogue of Vascular Plants; Freiberg et al. 2020), but don’t include author information
+Wohlwend_data <- read_delim("input_data/Pacific_Invaders_GIFT_22_01.csv", 
+                            delim = ";", locale = locale(decimal_mark = ",")) %>%
+                 filter(inva_stat == "T", Islandgroup == "Hawaiian") %>%
+                 distinct(Species)
 
-# Get all species names of the potential study species
-species_Hawaii <- unique(blacklist_final$species)
+species_Hawaii <- Wohlwend_data$Species
 
 # Load in cleaned the species occurrence data with coordinate information 
 # (downloaded from GBIF and BIEN 2023) and their biogeographical status 
@@ -55,9 +61,10 @@ occurrences_Hawaii$species <- str_replace_all(occurrences_Hawaii$species, " ", "
 save(occurrences_Hawaii, file = "input_data/occurrences_Hawaii.RData")
 
 # Get the species names that have occurrence data
-species_Hawaii <- unique(occurrences_Hawaii$species) # 118 species
+species_Hawaii <- unique(occurrences_Hawaii$species) # 120 species
 
-
+species_Hawaii_comp[43] # Ficus_religiosa
+species_Hawaii_comp[111] # Eugenia uniflora
 #-------------------------------------------------------------------------------
 
 
@@ -100,8 +107,9 @@ occurrence_numbers_filtered_crit1 <- subset(occurrence_numbers, occurrence_numbe
 occurrence_numbers_filtered_crit2 <- subset(occurrence_numbers, occurrence_numbers$native_occurrences_crit2 >= 40) # 7 species excluded
 
 # Get species names for further usage
-# As there is no difference between both criteria, the one that gives the same 
-# weight to all three sources is used (criterion 1)
+# There is no difference between both criteria, the one that gives the same 
+# weight to all three sources after checking if the sources refer to the same
+# area size is used (criterion 1)
 species_Hawaii_filtered <- as.character(occurrence_numbers_filtered_crit1$species) # 41 of these species are included in Annas analysis
 
 
@@ -122,6 +130,15 @@ occurrence_numbers_thinned <- data.frame(expand.grid(species=c(paste(species_Haw
   #try({ 
 
 for (sp in species_Hawaii_filtered) {
+  
+    print(sp)
+  
+    # Check if file with thinned occurrence data already exists
+    file_exists <- file.exists(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+    
+    if (file_exists == FALSE) { # If file does not exist, continue with thinning of occurrences
+  
+    print("start of occurrence thinning")
     
     # Create a subset for each species
     subset_species <- subset(occurrences_Hawaii, occurrences_Hawaii$species == sp)
@@ -144,6 +161,13 @@ for (sp in species_Hawaii_filtered) {
     
     # Save the thinned presence points
     save(species_presences_thinned, file = paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+    
+    } else if (file_exists == TRUE) { # If the file exists, load it
+      
+      print("occurrence thinning already done")
+      load(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
+      
+    } # End of if condition
     
     # Get the number of all occurrences
     occurrences_global_thinned <- nrow(species_presences_thinned)

@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                06a. Model predictions based on native                  #
+#                06a. Model predictions based on global                  #
 #                occurrences and purely climatic data                    #
 # ---------------------------------------------------------------------- #
 
@@ -64,10 +64,10 @@ for (sp in study_species) { # Start of the loop over all species
     
     print(sp)
     
-    print("clim")
+    print(clim)
     
     # Check if prediction results already exist
-    file_exists <- file.exists(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
+    file_exists <- file.exists(paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
     
     if (file_exists == FALSE) { # just continue with model predictions if output 
       # with prediction results does not exist yet
@@ -75,15 +75,15 @@ for (sp in study_species) { # Start of the loop over all species
       print("start of model predictions")
       
       # Load the needed objects for each species
-      load(paste0("output_data/models/native/clim/models_clim_native_",sp,".RData")) # the four different models
-      load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData")) # validation outcomes
-      load(paste0("output_data/variable_selection/native/clim/pred_sel_clim_native_",sp,".RData")) # predictor variables
+      load(paste0("output_data/models/global/clim/models_clim_global_",sp,".RData")) # the four different models
+      load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData")) # validation outcomes
+      load(paste0("output_data/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData")) # predictor variables
       
       
       
       # Create a data frame to store the results for each species
-      islandgroups_results_clim_native_spec <- data.frame(matrix(ncol = 8, nrow = 0))
-      colnames(islandgroups_results_clim_native_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+      islandgroups_results_clim_global_spec <- data.frame(matrix(ncol = 8, nrow = 0))
+      colnames(islandgroups_results_clim_global_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
       
       
       
@@ -119,7 +119,7 @@ for (sp in study_species) { # Start of the loop over all species
           }
           
           # Create a data frame with the coordinates and their environmental predictor values
-          bio_curr_df_islandgroup <- data.frame(crds(islandgroup_mask[[pred_sel_clim_native]]),as.points(islandgroup_mask[[pred_sel_clim_native]]))
+          bio_curr_df_islandgroup <- data.frame(crds(islandgroup_mask[[pred_sel_clim_global]]),as.points(islandgroup_mask[[pred_sel_clim_global]]))
           
           
           
@@ -127,11 +127,11 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make predictions
           env_preds_glm <- data.frame(bio_curr_df_islandgroup[,1:2], 
-                                      glm = predict(m_glm_clim_native, bio_curr_df_islandgroup[, pred_sel_clim_native], type='response'))
+                                      glm = predict(m_glm_clim_global, bio_curr_df_islandgroup[, pred_sel_clim_global], type='response'))
           
           # Binarise predictions
           env_preds_glm_bin <- data.frame(bio_curr_df_islandgroup[,1:2], 
-                                          glm = ifelse(env_preds_glm[,"glm"]>=comp_perf_clim_native[comp_perf_clim_native$alg=="glm",'thresh'],1,0))
+                                          glm = ifelse(env_preds_glm[,"glm"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="glm",'thresh'],1,0))
           
           
           # Make a raster from binarised predictions
@@ -143,11 +143,11 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make predictions
           env_preds_gam <- data.frame(bio_curr_df_islandgroup[,1:2], 
-                                      gam = predict(m_gam_clim_native, bio_curr_df_islandgroup[, pred_sel_clim_native], type='response'))
+                                      gam = predict(m_gam_clim_global, bio_curr_df_islandgroup[, pred_sel_clim_global], type='response'))
           
           # Binarise predictions
           env_preds_gam_bin <- data.frame(bio_curr_df_islandgroup[,1:2], 
-                                          gam = ifelse(env_preds_gam[,"gam"]>=comp_perf_clim_native[comp_perf_clim_native$alg=="gam",'thresh'],1,0))
+                                          gam = ifelse(env_preds_gam[,"gam"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="gam",'thresh'],1,0))
           
           # Make a raster from binarised predictions
           r_env_preds_gam_bin <- terra::rast(env_preds_gam_bin, crs=crs(Chelsa$bio_1))
@@ -158,14 +158,14 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make predictions of all 10 RF models
           env_preds_rf_all <- data.frame(bio_curr_df_islandgroup[, 1:2], 
-                                         lapply(1:10, FUN=function(m) {rf = predict(m_rf_clim_native[[m]], bio_curr_df_islandgroup[, pred_sel_clim_native], type='response')}))
+                                         lapply(1:10, FUN=function(m) {rf = predict(m_rf_clim_global[[m]], bio_curr_df_islandgroup[, pred_sel_clim_global], type='response')}))
           
           # Average the predictions into one RF prediction
           env_preds_rf <- data.frame(bio_curr_df_islandgroup[,1:2], rf = rowMeans(env_preds_rf_all[,-c(1:2)]))
           
           # Binarise predictions
           env_preds_rf_bin <- data.frame(bio_curr_df_islandgroup[,1:2],
-                                         rf = ifelse(env_preds_rf[,"rf"]>=comp_perf_clim_native[comp_perf_clim_native$alg=="rf",'thresh'],1,0))
+                                         rf = ifelse(env_preds_rf[,"rf"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="rf",'thresh'],1,0))
           
           # Make a raster from binarised predictions
           r_env_preds_rf_bin <- terra::rast(env_preds_rf_bin, crs=crs(Chelsa$bio_1))
@@ -176,8 +176,8 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make predictions of all 10 BRT models
           env_preds_brt_all <- data.frame(bio_curr_df_islandgroup[, 1:2],
-                                          lapply(1:10, FUN=function(m) {brt = predict.gbm(m_brt_clim_native[[m]], bio_curr_df_islandgroup[, pred_sel_clim_native],
-                                                                                          n.trees=m_brt_clim_native$gbm.call$best.trees, type='response')}))
+                                          lapply(1:10, FUN=function(m) {brt = predict.gbm(m_brt_clim_global[[m]], bio_curr_df_islandgroup[, pred_sel_clim_global],
+                                                                                          n.trees=m_brt_clim_global$gbm.call$best.trees, type='response')}))
           
           
           # Average the predictions into one RF prediction
@@ -185,7 +185,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Binarise predictions
           env_preds_brt_bin <- data.frame(bio_curr_df_islandgroup[,1:2],
-                                          brt = ifelse(env_preds_brt[,"brt"]>=comp_perf_clim_native[comp_perf_clim_native$alg=="brt",'thresh'],1,0))
+                                          brt = ifelse(env_preds_brt[,"brt"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="brt",'thresh'],1,0))
           
           # Make a raster from binarised predictions
           r_env_preds_brt_bin <- terra::rast(env_preds_brt_bin, crs=crs(Chelsa$bio_1))
@@ -204,7 +204,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Binarise predictions
           env_preds_ensemble_bin <- data.frame(bio_curr_df_islandgroup[,1:2], 
-                                               ensemble = ifelse(env_preds_ensemble[,"mean_prob"]>= ensemble_perf_clim_native["mean_prob",'thresh'],1,0))
+                                               ensemble = ifelse(env_preds_ensemble[,"mean_prob"]>= ensemble_perf_clim_global["mean_prob",'thresh'],1,0))
           
           
           # Make a raster from binarised predictions
@@ -212,9 +212,9 @@ for (sp in study_species) { # Start of the loop over all species
           
           
           
-#-------------------------------------------------------------------------------
+          #-------------------------------------------------------------------------------
           
-# 3. Area calculations ---------------------------------------------------------   
+          # 3. Area calculations ---------------------------------------------------------   
           
           # (a) Area of each island group covered by data ----------------------
           
@@ -346,35 +346,35 @@ for (sp in study_species) { # Start of the loop over all species
             suitable_islandgroup_fraction_ensemble <- round(((area_islandgroup_suitable_ensemble/area_islandgroup_raster_ensemble)*100), 2)
             
             # Write a vector with the results
-            results_glm_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_glm), as.numeric(area_islandgroup_suitable_glm), as.numeric(suitable_islandgroup_fraction_glm), "GLM", "clim", "native", sp)
-            results_gam_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_gam), as.numeric(area_islandgroup_suitable_gam), as.numeric(suitable_islandgroup_fraction_gam), "GAM", "clim", "native", sp)
-            results_rf_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_rf), as.numeric(area_islandgroup_suitable_rf), as.numeric(suitable_islandgroup_fraction_rf), "RF", "clim", "native", sp)
-            results_brt_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_brt), as.numeric(area_islandgroup_suitable_brt), as.numeric(suitable_islandgroup_fraction_brt), "BRT", "clim", "native", sp)
-            results_ensemble_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_ensemble), as.numeric(area_islandgroup_suitable_ensemble), as.numeric(suitable_islandgroup_fraction_ensemble), "Ensemble", "clim", "native", sp) 
+            results_glm_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_glm), as.numeric(area_islandgroup_suitable_glm), as.numeric(suitable_islandgroup_fraction_glm), "GLM", "clim", "global", sp)
+            results_gam_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_gam), as.numeric(area_islandgroup_suitable_gam), as.numeric(suitable_islandgroup_fraction_gam), "GAM", "clim", "global", sp)
+            results_rf_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_rf), as.numeric(area_islandgroup_suitable_rf), as.numeric(suitable_islandgroup_fraction_rf), "RF", "clim", "global", sp)
+            results_brt_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_brt), as.numeric(area_islandgroup_suitable_brt), as.numeric(suitable_islandgroup_fraction_brt), "BRT", "clim", "global", sp)
+            results_ensemble_Fiji <- c("Fiji", as.numeric(area_islandgroup_raster_ensemble), as.numeric(area_islandgroup_suitable_ensemble), as.numeric(suitable_islandgroup_fraction_ensemble), "Ensemble", "clim", "global", sp) 
             
             # Add results to the results data frame
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_glm_Fiji)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_gam_Fiji)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_rf_Fiji)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_brt_Fiji)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_ensemble_Fiji)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_glm_Fiji)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_gam_Fiji)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_rf_Fiji)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_brt_Fiji)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_ensemble_Fiji)
             
             
           } else {
             
             # Write a vector with the results
-            results_glm <- c(i, as.numeric(area_islandgroup_raster_glm), as.numeric(area_islandgroup_suitable_glm), as.numeric(suitable_islandgroup_fraction_glm), "GLM", "clim", "native", sp)
-            results_gam <- c(i, as.numeric(area_islandgroup_raster_gam), as.numeric(area_islandgroup_suitable_gam), as.numeric(suitable_islandgroup_fraction_gam), "GAM", "clim", "native", sp)
-            results_rf <- c(i, as.numeric(area_islandgroup_raster_rf), as.numeric(area_islandgroup_suitable_rf), as.numeric(suitable_islandgroup_fraction_rf), "RF", "clim", "native", sp)
-            results_brt <- c(i, as.numeric(area_islandgroup_raster_brt), as.numeric(area_islandgroup_suitable_brt), as.numeric(suitable_islandgroup_fraction_brt), "BRT", "clim", "native", sp)
-            results_ensemble <- c(i, as.numeric(area_islandgroup_raster_ensemble), as.numeric(area_islandgroup_suitable_ensemble), as.numeric(suitable_islandgroup_fraction_ensemble), "Ensemble", "clim", "native", sp) 
+            results_glm <- c(i, as.numeric(area_islandgroup_raster_glm), as.numeric(area_islandgroup_suitable_glm), as.numeric(suitable_islandgroup_fraction_glm), "GLM", "clim", "global", sp)
+            results_gam <- c(i, as.numeric(area_islandgroup_raster_gam), as.numeric(area_islandgroup_suitable_gam), as.numeric(suitable_islandgroup_fraction_gam), "GAM", "clim", "global", sp)
+            results_rf <- c(i, as.numeric(area_islandgroup_raster_rf), as.numeric(area_islandgroup_suitable_rf), as.numeric(suitable_islandgroup_fraction_rf), "RF", "clim", "global", sp)
+            results_brt <- c(i, as.numeric(area_islandgroup_raster_brt), as.numeric(area_islandgroup_suitable_brt), as.numeric(suitable_islandgroup_fraction_brt), "BRT", "clim", "global", sp)
+            results_ensemble <- c(i, as.numeric(area_islandgroup_raster_ensemble), as.numeric(area_islandgroup_suitable_ensemble), as.numeric(suitable_islandgroup_fraction_ensemble), "Ensemble", "clim", "global", sp) 
             
             # Add results to the results data frame
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_glm)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_gam)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_rf)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_brt)
-            islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, results_ensemble)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_glm)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_gam)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_rf)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_brt)
+            islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, results_ensemble)
             
             
             
@@ -382,10 +382,10 @@ for (sp in study_species) { # Start of the loop over all species
           } # End the if conditions due to Fiji Islands
           
           # Make sure the data frame contains the correct column names 
-          colnames(islandgroups_results_clim_native_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+          colnames(islandgroups_results_clim_global_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
           
           # Make sure that the column containing calculations are numeric
-          islandgroups_results_clim_native_spec[, 2:4] <- apply(islandgroups_results_clim_native_spec[, 2:4], 2, as.numeric)
+          islandgroups_results_clim_global_spec[, 2:4] <- apply(islandgroups_results_clim_global_spec[, 2:4], 2, as.numeric)
           
         })} # end of try and for loop over all island groups
       
@@ -394,63 +394,63 @@ for (sp in study_species) { # Start of the loop over all species
       # (d) Pacific-wide suitable habitat fraction in % ------------------------
       
       # GLM
-      glm_alg_subset <- subset(islandgroups_results_clim_native_spec, islandgroups_results_clim_native_spec$algorithm == "GLM") # subset GLM algorithm results
+      glm_alg_subset <- subset(islandgroups_results_clim_global_spec, islandgroups_results_clim_global_spec$algorithm == "GLM") # subset GLM algorithm results
       pacific_total_area_glm <- round(sum(glm_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_glm <- round(sum(glm_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_glm <- round(((pacific_suitable_area_glm/pacific_total_area_glm)*100), 2)
       
-      total_results_glm <- c("Pacific", as.numeric(pacific_total_area_glm), as.numeric(pacific_suitable_area_glm), as.numeric(pacific_suitable_fraction_glm), "GLM", "clim", "native", sp) # Write results in a vector
+      total_results_glm <- c("Pacific", as.numeric(pacific_total_area_glm), as.numeric(pacific_suitable_area_glm), as.numeric(pacific_suitable_fraction_glm), "GLM", "clim", "global", sp) # Write results in a vector
       
       # GAM
-      gam_alg_subset <- subset(islandgroups_results_clim_native_spec, islandgroups_results_clim_native_spec$algorithm == "GAM") # subset GAM algorithm results
+      gam_alg_subset <- subset(islandgroups_results_clim_global_spec, islandgroups_results_clim_global_spec$algorithm == "GAM") # subset GAM algorithm results
       pacific_total_area_gam <- round(sum(gam_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_gam <- round(sum(gam_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_gam <- round(((pacific_suitable_area_gam/pacific_total_area_gam)*100), 2)
       
-      total_results_gam <- c("Pacific", as.numeric(pacific_total_area_gam), as.numeric(pacific_suitable_area_gam), as.numeric(pacific_suitable_fraction_gam), "GAM", "clim", "native", sp) # Write results in a vector
+      total_results_gam <- c("Pacific", as.numeric(pacific_total_area_gam), as.numeric(pacific_suitable_area_gam), as.numeric(pacific_suitable_fraction_gam), "GAM", "clim", "global", sp) # Write results in a vector
       
       # RF
-      rf_alg_subset <- subset(islandgroups_results_clim_native_spec, islandgroups_results_clim_native_spec$algorithm == "RF") # subset RF algorithm results
+      rf_alg_subset <- subset(islandgroups_results_clim_global_spec, islandgroups_results_clim_global_spec$algorithm == "RF") # subset RF algorithm results
       pacific_total_area_rf <- round(sum(rf_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_rf <- round(sum(rf_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_rf <- round(((pacific_suitable_area_rf/pacific_total_area_rf)*100), 2)
       
-      total_results_rf <- c("Pacific", as.numeric(pacific_total_area_rf), as.numeric(pacific_suitable_area_rf), as.numeric(pacific_suitable_fraction_rf), "RF", "clim", "native", sp) # Write results in a vector
+      total_results_rf <- c("Pacific", as.numeric(pacific_total_area_rf), as.numeric(pacific_suitable_area_rf), as.numeric(pacific_suitable_fraction_rf), "RF", "clim", "global", sp) # Write results in a vector
       
       # BRT
-      brt_alg_subset <- subset(islandgroups_results_clim_native_spec, islandgroups_results_clim_native_spec$algorithm == "BRT") # subset BRT algorithm results
+      brt_alg_subset <- subset(islandgroups_results_clim_global_spec, islandgroups_results_clim_global_spec$algorithm == "BRT") # subset BRT algorithm results
       pacific_total_area_brt <- round(sum(brt_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_brt <- round(sum(brt_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_brt <- round(((pacific_suitable_area_brt/pacific_total_area_brt)*100), 2)
       
-      total_results_brt <- c("Pacific", as.numeric(pacific_total_area_brt), as.numeric(pacific_suitable_area_brt), as.numeric(pacific_suitable_fraction_brt), "BRT", "clim", "native", sp) # Write results in a vector
+      total_results_brt <- c("Pacific", as.numeric(pacific_total_area_brt), as.numeric(pacific_suitable_area_brt), as.numeric(pacific_suitable_fraction_brt), "BRT", "clim", "global", sp) # Write results in a vector
       
       # Ensemble
-      ensemble_alg_subset <- subset(islandgroups_results_clim_native_spec, islandgroups_results_clim_native_spec$algorithm == "Ensemble") # subset ensemble algorithm results
+      ensemble_alg_subset <- subset(islandgroups_results_clim_global_spec, islandgroups_results_clim_global_spec$algorithm == "Ensemble") # subset ensemble algorithm results
       pacific_total_area_ensemble <- round(sum(ensemble_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_ensemble <- round(sum(ensemble_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_ensemble <- round(((pacific_suitable_area_ensemble/pacific_total_area_ensemble)*100), 2)
       
-      total_results_ensemble <- c("Pacific", as.numeric(pacific_total_area_ensemble), as.numeric(pacific_suitable_area_ensemble), as.numeric(pacific_suitable_fraction_ensemble), "Ensemble", "clim", "native", sp) # Write results in a vector
+      total_results_ensemble <- c("Pacific", as.numeric(pacific_total_area_ensemble), as.numeric(pacific_suitable_area_ensemble), as.numeric(pacific_suitable_fraction_ensemble), "Ensemble", "clim", "global", sp) # Write results in a vector
       
       # Bind the result vectors to the existing results data frame
-      islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, total_results_glm)
-      islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, total_results_gam)
-      islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, total_results_rf)
-      islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, total_results_brt)
-      islandgroups_results_clim_native_spec <- rbind(islandgroups_results_clim_native_spec, total_results_ensemble)
+      islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, total_results_glm)
+      islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, total_results_gam)
+      islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, total_results_rf)
+      islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, total_results_brt)
+      islandgroups_results_clim_global_spec <- rbind(islandgroups_results_clim_global_spec, total_results_ensemble)
       
       
       # (e) Save results for each species --------------------------------------
       
       # Make sure the data frame contains the correct column names 
-      colnames(islandgroups_results_clim_native_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+      colnames(islandgroups_results_clim_global_spec) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
       
       # Make sure that the column containing calculations are numeric
-      islandgroups_results_clim_native_spec[, 2:4] <- apply(islandgroups_results_clim_native_spec[, 2:4], 2, as.numeric)
+      islandgroups_results_clim_global_spec[, 2:4] <- apply(islandgroups_results_clim_global_spec[, 2:4], 2, as.numeric)
       
       # Save the results data frame per species
-      save(islandgroups_results_clim_native_spec, file = paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
+      save(islandgroups_results_clim_global_spec, file = paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
       
       
       
@@ -458,45 +458,45 @@ for (sp in study_species) { # Start of the loop over all species
     } # End of if condition
     
     
-})} # end of try and for loop over species
+  })} # end of try and for loop over species
 
 
 # (f) Save results of all species together -------------------------------------
 
 # Create a data frame to store the results of area calculations for all species
-islandgroups_results_clim_native <- data.frame(matrix(ncol = 8, nrow = 0))
-colnames(islandgroups_results_clim_native) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+islandgroups_results_clim_global <- data.frame(matrix(ncol = 8, nrow = 0))
+colnames(islandgroups_results_clim_global) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
 
 for (sp in study_species) {
   try({
     
     # Check if prediction results already exist
-    file_exists <- file.exists(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
+    file_exists <- file.exists(paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
     
     if (file_exists == TRUE) { # just continue with model predictions if output 
       # with prediction results exists
       
       # Load the file with predictions results
-      load(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
+      load(paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
       
       # Add the data frame for each species to the data frame containing all results for all species
-      islandgroups_results_clim_native <- rbind(islandgroups_results_clim_native, islandgroups_results_clim_native_spec)
+      islandgroups_results_clim_global <- rbind(islandgroups_results_clim_global, islandgroups_results_clim_global_spec)
       
     } else if (file_exists == FALSE) { next
     } # End of if condition
-      
     
-  
-})} # end of try and for loop over species
+    
+    
+  })} # end of try and for loop over species
 
 # Make sure the data frame contains the correct column names
-colnames(islandgroups_results_clim_native) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+colnames(islandgroups_results_clim_global) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
 
 # Make sure that the column containing calculations are numeric
-islandgroups_results_clim_native[, 2:4] <- apply(islandgroups_results_clim_native[, 2:4], 2, as.numeric)
+islandgroups_results_clim_global[, 2:4] <- apply(islandgroups_results_clim_global[, 2:4], 2, as.numeric)
 
 # Save the data frame containing all prediction results
-save(islandgroups_results_clim_native, file = "output_data/model_predictions/native/clim/islandgroups_results_clim_native.RData")
+save(islandgroups_results_clim_global, file = "output_data/model_predictions/global/clim/islandgroups_results_clim_global.RData")
 
 
 
@@ -505,7 +505,7 @@ save(islandgroups_results_clim_native, file = "output_data/model_predictions/nat
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                06a. Model predictions based on native                  #
+#                06a. Model predictions based on global                  #
 #                occurrences and purely climatic data                    #
 # (only considering island groups that are covered by edaphic data       #
 # for a reasonable comparison)                                           #
@@ -535,123 +535,123 @@ for (sp in study_species) { # Start of the loop over all species
   try({
     
     # Check if prediction results based on only 25 island groups already exist
-    file_exists <- file.exists(paste0("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_spec_comp_",sp,".RData"))
+    file_exists <- file.exists(paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
     
     if (file_exists == FALSE) { # just continue with new area calculations if output 
       # with prediction results based on 25 island groups does not exist yet
       
       # Load the data file containing the area calculations of predictions
-      load(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
+      load(paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
       
       # Only retain the entries of island groups that are included in the analysis
       # including edaphic data
-      islandgroups_results_clim_native_spec_comp <- islandgroups_results_clim_native_spec[islandgroups_results_clim_native_spec$islandgroup %in% islandgroup_climate_soil, ]
+      islandgroups_results_clim_global_spec_comp <- islandgroups_results_clim_global_spec[islandgroups_results_clim_global_spec$islandgroup %in% islandgroup_climate_soil, ]
       
       # Make sure that the column containing calculations are numeric
-      islandgroups_results_clim_native_spec_comp[, 2:4] <- apply(islandgroups_results_clim_native_spec_comp[, 2:4], 2, as.numeric)
+      islandgroups_results_clim_global_spec_comp[, 2:4] <- apply(islandgroups_results_clim_global_spec_comp[, 2:4], 2, as.numeric)
       
       # Make new Pacific-wide area calculations of suitable habitat as a lower
       # number of island groups is considered now
       # GLM
-      glm_alg_subset <- subset(islandgroups_results_clim_native_spec_comp, islandgroups_results_clim_native_spec_comp$algorithm == "GLM") # subset GLM algorithm results
+      glm_alg_subset <- subset(islandgroups_results_clim_global_spec_comp, islandgroups_results_clim_global_spec_comp$algorithm == "GLM") # subset GLM algorithm results
       pacific_total_area_glm <- round(sum(glm_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_glm <- round(sum(glm_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_glm <- round(((pacific_suitable_area_glm/pacific_total_area_glm)*100), 2)
       
-      total_results_glm <- c("Pacific", as.numeric(pacific_total_area_glm), as.numeric(pacific_suitable_area_glm), as.numeric(pacific_suitable_fraction_glm), "GLM", "clim", "native", sp) # Write results in a vector
+      total_results_glm <- c("Pacific", as.numeric(pacific_total_area_glm), as.numeric(pacific_suitable_area_glm), as.numeric(pacific_suitable_fraction_glm), "GLM", "clim", "global", sp) # Write results in a vector
       
       # GAM
-      gam_alg_subset <- subset(islandgroups_results_clim_native_spec_comp, islandgroups_results_clim_native_spec_comp$algorithm == "GAM") # subset GAM algorithm results
+      gam_alg_subset <- subset(islandgroups_results_clim_global_spec_comp, islandgroups_results_clim_global_spec_comp$algorithm == "GAM") # subset GAM algorithm results
       pacific_total_area_gam <- round(sum(gam_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_gam <- round(sum(gam_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_gam <- round(((pacific_suitable_area_gam/pacific_total_area_gam)*100), 2)
       
-      total_results_gam <- c("Pacific", as.numeric(pacific_total_area_gam), as.numeric(pacific_suitable_area_gam), as.numeric(pacific_suitable_fraction_gam), "GAM", "clim", "native", sp) # Write results in a vector
+      total_results_gam <- c("Pacific", as.numeric(pacific_total_area_gam), as.numeric(pacific_suitable_area_gam), as.numeric(pacific_suitable_fraction_gam), "GAM", "clim", "global", sp) # Write results in a vector
       
       # RF
-      rf_alg_subset <- subset(islandgroups_results_clim_native_spec_comp, islandgroups_results_clim_native_spec_comp$algorithm == "RF") # subset RF algorithm results
+      rf_alg_subset <- subset(islandgroups_results_clim_global_spec_comp, islandgroups_results_clim_global_spec_comp$algorithm == "RF") # subset RF algorithm results
       pacific_total_area_rf <- round(sum(rf_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_rf <- round(sum(rf_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_rf <- round(((pacific_suitable_area_rf/pacific_total_area_rf)*100), 2)
       
-      total_results_rf <- c("Pacific", as.numeric(pacific_total_area_rf), as.numeric(pacific_suitable_area_rf), as.numeric(pacific_suitable_fraction_rf), "RF", "clim", "native", sp) # Write results in a vector
+      total_results_rf <- c("Pacific", as.numeric(pacific_total_area_rf), as.numeric(pacific_suitable_area_rf), as.numeric(pacific_suitable_fraction_rf), "RF", "clim", "global", sp) # Write results in a vector
       
       # BRT
-      brt_alg_subset <- subset(islandgroups_results_clim_native_spec_comp, islandgroups_results_clim_native_spec_comp$algorithm == "BRT") # subset BRT algorithm results
+      brt_alg_subset <- subset(islandgroups_results_clim_global_spec_comp, islandgroups_results_clim_global_spec_comp$algorithm == "BRT") # subset BRT algorithm results
       pacific_total_area_brt <- round(sum(brt_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_brt <- round(sum(brt_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_brt <- round(((pacific_suitable_area_brt/pacific_total_area_brt)*100), 2)
       
-      total_results_brt <- c("Pacific", as.numeric(pacific_total_area_brt), as.numeric(pacific_suitable_area_brt), as.numeric(pacific_suitable_fraction_brt), "BRT", "clim", "native", sp) # Write results in a vector
+      total_results_brt <- c("Pacific", as.numeric(pacific_total_area_brt), as.numeric(pacific_suitable_area_brt), as.numeric(pacific_suitable_fraction_brt), "BRT", "clim", "global", sp) # Write results in a vector
       
       # Ensemble
-      ensemble_alg_subset <- subset(islandgroups_results_clim_native_spec_comp, islandgroups_results_clim_native_spec_comp$algorithm == "Ensemble") # subset ensemble algorithm results
+      ensemble_alg_subset <- subset(islandgroups_results_clim_global_spec_comp, islandgroups_results_clim_global_spec_comp$algorithm == "Ensemble") # subset ensemble algorithm results
       pacific_total_area_ensemble <- round(sum(ensemble_alg_subset$area_islandgroup_raster, na.rm = TRUE), 2)
       pacific_suitable_area_ensemble <- round(sum(ensemble_alg_subset$area_islandgroup_suitable, na.rm = TRUE), 2)
       pacific_suitable_fraction_ensemble <- round(((pacific_suitable_area_ensemble/pacific_total_area_ensemble)*100), 2)
       
-      total_results_ensemble <- c("Pacific", as.numeric(pacific_total_area_ensemble), as.numeric(pacific_suitable_area_ensemble), as.numeric(pacific_suitable_fraction_ensemble), "Ensemble", "clim", "native", sp) # Write results in a vector
+      total_results_ensemble <- c("Pacific", as.numeric(pacific_total_area_ensemble), as.numeric(pacific_suitable_area_ensemble), as.numeric(pacific_suitable_fraction_ensemble), "Ensemble", "clim", "global", sp) # Write results in a vector
       
       # Bind the result vectors to the existing results data frame
-      islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_glm)
-      islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_gam)
-      islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_rf)
-      islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_brt)
-      islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_ensemble)
+      islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_glm)
+      islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_gam)
+      islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_rf)
+      islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_brt)
+      islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_ensemble)
       
       
     } else if (file_exists == TRUE) { next
     } # End of if condition
     
     
-})} # end of try and for loop over species
+  })} # end of try and for loop over species
 
 
-      # Make sure the data frame contains the correct column names 
-      colnames(islandgroups_results_clim_native_spec_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
-      
-      # Make sure that the column containing calculations are numeric
-      islandgroups_results_clim_native_spec_comp[, 2:4] <- apply(islandgroups_results_clim_native_spec_comp[, 2:4], 2, as.numeric)
-      
-      # Save the results data frame per species
-      save(islandgroups_results_clim_native_spec_comp, file = paste0("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_spec_comp_",sp,".RData"))
+# Make sure the data frame contains the correct column names 
+colnames(islandgroups_results_clim_global_spec_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
 
-      
+# Make sure that the column containing calculations are numeric
+islandgroups_results_clim_global_spec_comp[, 2:4] <- apply(islandgroups_results_clim_global_spec_comp[, 2:4], 2, as.numeric)
+
+# Save the results data frame per species
+save(islandgroups_results_clim_global_spec_comp, file = paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
+
+
 #-------------------------------------------------------------------------------
-      
+
 # 3. Save results of all species together --------------------------------------
 
 # Create a data frame to store the results of area calculations for all species
-islandgroups_results_clim_native_comp <- data.frame(matrix(ncol = 8, nrow = 0))
-colnames(islandgroups_results_clim_native_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
-      
+islandgroups_results_clim_global_comp <- data.frame(matrix(ncol = 8, nrow = 0))
+colnames(islandgroups_results_clim_global_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+
 for (sp in study_species) {
   try({
-          
+    
     # Check if prediction results already exist
-    file_exists <- file.exists(paste0("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_spec_comp_",sp,".RData"))
-          
+    file_exists <- file.exists(paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
+    
     if (file_exists == TRUE) { # just continue with model predictions if output 
       # with prediction results exists
-            
+      
       # Load the file with predictions results
-      load(paste0("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_spec_comp_",sp,".RData"))
-            
+      load(paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
+      
       # Add the data frame for each species to the data frame containing all results for all species
-      islandgroups_results_clim_native_comp <- rbind(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_spec_comp)
-            
+      islandgroups_results_clim_global_comp <- rbind(islandgroups_results_clim_global_comp, islandgroups_results_clim_global_spec_comp)
+      
     } else if (file_exists == FALSE) { next
     } # End of if condition
-          
-          
-          
-})} # end of try and for loop over species
-      
+    
+    
+    
+  })} # end of try and for loop over species
+
 # Make sure the data frame contains the correct column names
-colnames(islandgroups_results_clim_native_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
-      
+colnames(islandgroups_results_clim_global_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+
 # Make sure that the column containing calculations are numeric
-islandgroups_results_clim_native_comp[, 2:4] <- apply(islandgroups_results_clim_native_comp[, 2:4], 2, as.numeric)
-      
+islandgroups_results_clim_global_comp[, 2:4] <- apply(islandgroups_results_clim_global_comp[, 2:4], 2, as.numeric)
+
 # Save the data frame containing all prediction results
-save(islandgroups_results_clim_native_comp, file = "output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_comp.RData")
+save(islandgroups_results_clim_global_comp, file = "output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_comp.RData")

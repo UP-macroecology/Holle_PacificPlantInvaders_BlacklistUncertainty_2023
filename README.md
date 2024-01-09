@@ -1,4 +1,4 @@
-# Holle_PacificPlantInvaders_BlacklistUncertainty_2023
+# Holle_PacificPlantInvaders_BlacklistUncertainty_2023/24
 
 Blacklisting potential Pacific plant invaders using species distribution models - uncertainties through species and environmental inputs
 
@@ -28,6 +28,7 @@ Based on each of the four SDM input datasets, four different model algorithms we
 For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms per SDM input dataset. Moreover, an ensemble model was established by combining the continuous predictions of each algorithm using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
 
 ### 7 - Blacklist construction
+Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different approaches: The Pacific-wide fraction of predicted suitable habitat, the number of island groups with suitable habitats, and the mean rank over all island groups. This was done considering the predictions of the different predictor sets as well as the applied algorithms and their ensemble, resulting in 20 blacklists each based on unique information.
 
 ### 8 - Uncertainty analysis
 
