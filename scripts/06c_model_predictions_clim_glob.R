@@ -25,7 +25,7 @@ library(stringr)
 library(dismo)
 
 # Load needed objects
-load("input_data/occ_numbers_thinned_env_nat_filtered.RData") # Contains names of study species
+load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
 load("input_data/spatial_data/islandgroups_clim.RData") # Contains names of island groups suitable for the analysis using purely climatic data
 load("input_data/spatial_data/pacific_islands_extent.RData") # Contains the spatial extents of the island groups
 Chelsa <- terra::rast(str_sort(list.files("input_data/environmental_data/Chelsa_V2", 
@@ -41,7 +41,7 @@ fiji_2 <- terra::vect("input_data/spatial_data/fiji_2.shp") # Modified shapefile
 # 1. Data preparations ---------------------------------------------------------
 
 # Retrieve species names
-study_species <- unique(as.character(occ_numbers_thinned_env_nat_filtered$species))
+study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species))
 
 # Retrieve island group names (change Fiji Islands for the two divided parts)
 islandgroup_climate <- islandgroups_clim[islandgroups_clim$island_group != "Fiji",]

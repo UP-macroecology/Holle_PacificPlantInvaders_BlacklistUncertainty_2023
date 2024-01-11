@@ -142,7 +142,7 @@ for (sp in study_species) {
 
 #-------------------------------------------------------------------------------
 
-# 4. Global occurrence numbers after environmental relation --------------------
+# 4. FInal species selection after environmental relation ----------------------
 
 # Prepare a data frame to store the result of occurrence numbers
 occ_numbers_thinned_env_glob <- data.frame(expand.grid(species=c(paste(study_species))), global_occurrences=NA)
@@ -182,3 +182,15 @@ occ_numbers_thinned_env_glob_filtered <- subset(occ_numbers_thinned_env_glob, oc
 
 # Save the data frame
 save(occ_numbers_thinned_env_glob_filtered, file = "input_data/occ_numbers_thinned_env_glob_filtered.RData")
+
+# Load the data frame of native occurrence numbers after environmental relation
+load("input_data/occ_numbers_thinned_env_nat_filtered.RData")
+
+# Merge the two data frames based on the species that are left in the native occurrence numbers
+occ_numbers_thinned_env_filtered <- merge(occ_numbers_thinned_env_nat_filtered, occ_numbers_thinned_env_glob_filtered, by = "species")
+
+# Remove species with equal native and global occurrences
+occ_numbers_thinned_env_filtered <- occ_numbers_thinned_env_filtered[occ_numbers_thinned_env_filtered$global_occurrences != occ_numbers_thinned_env_filtered$native_occurrences, ]
+
+# Save data frame with final species selection
+save(occ_numbers_thinned_env_filtered, file = "input_data/occ_numbers_thinned_env_nat_filtered.RData")

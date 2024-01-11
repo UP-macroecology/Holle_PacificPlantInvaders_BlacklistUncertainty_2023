@@ -139,10 +139,11 @@ for (sp in study_species) {
   
 })} # end of try and for loop over species
   
+
   
 #-------------------------------------------------------------------------------
 
-# 4. Native occurrence numbers after environmental relation --------------------
+# 4. Final species selection after environmental relation ----------------------
 
 # Prepare a data frame to store the result of occurrence numbers
 occ_numbers_thinned_env_nat <- data.frame(expand.grid(species=c(paste(study_species))), native_occurrences=NA)

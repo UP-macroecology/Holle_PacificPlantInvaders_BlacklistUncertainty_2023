@@ -37,7 +37,7 @@ source("scripts/functions.R") # thin function
 # 1. Background data generation ------------------------------------------------
 
 # Retrieve names of study species
-study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
+# study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
 
 # Start parallel computing
 #no_cores <- 3
@@ -46,6 +46,8 @@ study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species
 
 # Loop over all species and generate background data
 #foreach(sp = study_species, .packages = c("terra", "sf", "purrr", "furrr", "sfheaders")) %dopar% {
+
+study_species <- c("Arrhenatherum_elatius", "Tanacetum_parthenium")
 
     
 for (sp in study_species) { # Start of loop over species
@@ -59,7 +61,7 @@ for (sp in study_species) { # Start of loop over species
   # check the size of the file
   file_size <- file.size(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
   
-  if (file_exists == FALSE && file_size <= 100000) { # just continue with background data if output distribution 
+  if (file_exists == FALSE && file_size <= 300000) { # just continue with background data if output distribution 
   # data does not exist yet and file is under a certain size
     
   print("start of process")
@@ -146,7 +148,7 @@ for (sp in study_species) { # Start of loop over species
   save(species_occ_native, file = paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
   
   } else if (file_exists == TRUE) { print("already done")
-  } else if (file_size > 100000) { print("too large")
+  } else if (file_size > 300000) { print("too large")
   } # end of if conditions
   
 })} # end of try and for loop over species
@@ -164,31 +166,34 @@ for (sp in study_species) { # Start of loop over species
 # 4. Plot thinned presence and absence data ------------------------------------
 
 for (sp in study_species) {
-  try({ 
-  
+  try({
+
     print(sp)
+
+    file_exists_1 <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
     
-    file_exists <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
-    
-    if (file_exists == TRUE) { 
-      
+    file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_native_",sp,".svg"))
+
+    if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
+
       print("plot presence-absence points")
-      
+
       load(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
-      
+
       presences <- subset(species_occ_native, species_occ_native$occ == 1)
       absences <- subset(species_occ_native, species_occ_native$occ == 0)
-      
+
       dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
-      
+
       svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_native_",sp,".svg"))
       plot(world_mask,col='grey',legend=F, main = sp)
       points(absences$lon, absences$lat, col = "black", pch = 20)
       points(presences$lon, presences$lat, col = "red", pch = 20)
 
       dev.off()
-      
-      } else if (file_exists == FALSE) { print("file not available yet")
+
+      } else if (file_exists_1 == FALSE) { print("file not available yet")
+      } else if (file_exists_2 == TRUE) { print("plot already generated")
       }
-  
-})}
+
+  })}

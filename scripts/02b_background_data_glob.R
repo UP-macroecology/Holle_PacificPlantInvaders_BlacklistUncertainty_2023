@@ -160,9 +160,11 @@ for (sp in study_species) {
     
     print(sp)
     
-    file_exists <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+    file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
     
-    if (file_exists == TRUE) { 
+    file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
+    
+    if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
       
       print("plot presence-absence points")
       
@@ -180,7 +182,8 @@ for (sp in study_species) {
       
       dev.off()
       
-    } else if (file_exists == FALSE) { print("file not available yet")
+    } else if (file_exists_1 == FALSE) { print("file not available yet")
+    } else if (file_exists_2 == TRUE) { print("plot already generated")
     }
     
-})}
+  })}

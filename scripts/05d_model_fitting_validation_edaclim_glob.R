@@ -21,11 +21,11 @@ library(gbm)
 library(dismo)
 
 # Load needed objects
-load("input_data/occ_numbers_thinned_env_nat_filtered.RData") # Contains names of study species
+load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
 source("scripts/functions.R") # partial_response,cross-validation and evaluation metrics function
 
 # Retrieve species names
-study_species <- unique(as.character(occ_numbers_thinned_env_nat_filtered$species)) 
+study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
 #-------------------------------------------------------------------------------
 
