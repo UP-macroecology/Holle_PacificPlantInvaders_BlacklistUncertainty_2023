@@ -63,8 +63,8 @@ save(occurrences_Hawaii, file = "input_data/occurrences_Hawaii.RData")
 # Get the species names that have occurrence data
 species_Hawaii <- unique(occurrences_Hawaii$species) # 120 species
 
-species_Hawaii_comp[43] # Ficus_religiosa
-species_Hawaii_comp[111] # Eugenia uniflora
+
+
 #-------------------------------------------------------------------------------
 
 
