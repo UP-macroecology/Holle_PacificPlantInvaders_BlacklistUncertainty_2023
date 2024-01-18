@@ -124,8 +124,34 @@ select07_cv <- function(X, y, kfold=5, family="binomial",univar="glm2", threshol
       
       preds[ks==n] <- predict(m1,newdata=test_df,type='response')
     }
-    d2 <- expl_deviance(response,preds)
+    
+    # Get a data frame with species occurrences
+    y_new <- data.frame(occ = y)
+    
+    # Filter the presences
+    obs_subset_1 <- y_new %>%
+      filter(occ == 1)
+    # Extract the number of presences
+    number_presences <- nrow(obs_subset_1)
+    
+    # Filter the absences and make a random subset of rows qual to the number of presences
+    obs_subset_0 <- y_new %>%
+      filter(occ == 0) %>%
+      slice_sample(n = number_presences, replace = FALSE)
+    
+    # Bind presences and subset absences
+    response <- bind_rows(obs_subset_1, obs_subset_0)
+    
+    # Get the row numbers of the presences and absences
+    available_row_numbers <- rownames(response)
+    
+    # Subset the cross-validated predictions to the rows that were subset
+    preds <- preds[as.numeric(available_row_numbers)]
+    
+    # Calculate explained deviance
+    d2 <- expl_deviance(response$occ,preds)
     ifelse(d2<0,0,d2)
+    
   }
   
   imp <- apply(X, 2, compute.univar.cv, response=y, family=family, univar=univar, ks=ks,weights=weights)

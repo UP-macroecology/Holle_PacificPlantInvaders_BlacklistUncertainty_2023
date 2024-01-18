@@ -14,6 +14,7 @@ setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUnce
 # path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
 
 # Load needed packages
+library(dplyr)
 
 # Load needed objects
 source("scripts/functions.R") # select07_cv function
@@ -52,10 +53,10 @@ for (sp in study_species) { # Start the loop over all species
   weights_clim <- ifelse(species_occ_clim_native$occ==1, 1, sum(species_occ_clim_native$occ==1) / sum(species_occ_clim_native$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_clim <- select07(X = species_occ_clim_native[,-c(1:4)], 
-                           y = species_occ_clim_native$occ, 
-                           threshold = 0.7,
-                           weights = weights_clim)
+  var_sel_clim <- select07_cv(X = species_occ_clim_native[,-c(1:4)], 
+                              y = species_occ_clim_native$occ, 
+                              threshold = 0.7,
+                              weights = weights_clim)
   
   
   # Extract the four most important and weakly correlated climate variables
@@ -104,10 +105,10 @@ for (sp in study_species) { # Start the loop over all species
   weights_edaclim <- ifelse(species_occ_edaclim_native$occ==1, 1, sum(species_occ_edaclim_native$occ==1) / sum(species_occ_edaclim_native$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_edaclim <- select07(X = species_occ_edaclim_native[,-c(1:4)], 
-                              y = species_occ_edaclim_native$occ, 
-                              threshold = 0.7,
-                              weights = weights_edaclim)
+  var_sel_edaclim <- select07_cv(X = species_occ_edaclim_native[,-c(1:4)], 
+                                 y = species_occ_edaclim_native$occ, 
+                                 threshold = 0.7,
+                                 weights = weights_edaclim)
   
   pred_sel_edaclim <- var_sel_edaclim$pred_sel
   

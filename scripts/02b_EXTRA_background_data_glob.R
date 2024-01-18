@@ -54,7 +54,7 @@ lon_ranges_df$lon_2 <- lon_2_values
 # minimum overlap between the bands to make sure that the generated absences are
 # also thinned at the band edges
 
-# Use a latitude of 70 for calculations as the longitudinal distance per degree is
+# Use a latitude of 80 for calculations as the longitudinal distance per degree is
 # lower than at the equator
 longitudinal_distance_per_degree <- (40075 * cos(80 * pi / 180)) / 360
 degrees_longitude_9km <- round((9 / longitudinal_distance_per_degree), 2)

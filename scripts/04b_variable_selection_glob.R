@@ -52,10 +52,10 @@ for (sp in study_species) { # Start the loop over all species
   weights_clim <- ifelse(species_occ_clim_global$occ==1, 1, sum(species_occ_clim_global$occ==1) / sum(species_occ_clim_global$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_clim <- select07(X=species_occ_clim_global[,-c(1:4)], 
-                           y=species_occ_clim_global$occ, 
-                           threshold=0.7,
-                           weights = weights_clim)
+  var_sel_clim <- select07_cv(X=species_occ_clim_global[,-c(1:4)], 
+                              y=species_occ_clim_global$occ, 
+                              threshold=0.7,
+                              weights = weights_clim)
   
   
   # Extract the four most important and weakly correlated climate variables
@@ -106,10 +106,10 @@ for (sp in study_species) { # Start the loop over all species
   weights_edaclim <- ifelse(species_occ_edaclim_global$occ==1, 1, sum(species_occ_edaclim_global$occ==1) / sum(species_occ_edaclim_global$occ==0))
   
   # Run the variable selection using the select07 function
-  var_sel_edaclim <- select07(X=species_occ_edaclim_global[,-c(1:4)], 
-                              y=species_occ_edaclim_global$occ, 
-                              threshold=0.7,
-                              weights = weights_edaclim)
+  var_sel_edaclim <- select07_cv(X=species_occ_edaclim_global[,-c(1:4)], 
+                                 y=species_occ_edaclim_global$occ, 
+                                 threshold=0.7,
+                                 weights = weights_edaclim)
   
   pred_sel_edaclim <- var_sel_edaclim$pred_sel
   
