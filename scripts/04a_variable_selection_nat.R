@@ -52,7 +52,8 @@ for (sp in study_species) { # Start the loop over all species
   # Consideration of equal weights of presences and absences
   weights_clim <- ifelse(species_occ_clim_native$occ==1, 1, sum(species_occ_clim_native$occ==1) / sum(species_occ_clim_native$occ==0))
   
-  # Run the variable selection using the select07 function
+  # Run the variable selection using the select07_cv function but using an equal
+  # amount of presences and absences to calculate the explained deviance
   var_sel_clim <- select07_cv(X = species_occ_clim_native[,-c(1:4)], 
                               y = species_occ_clim_native$occ, 
                               threshold = 0.7,
@@ -104,8 +105,9 @@ for (sp in study_species) { # Start the loop over all species
   # Consideration of equal weights of presences and absences
   weights_edaclim <- ifelse(species_occ_edaclim_native$occ==1, 1, sum(species_occ_edaclim_native$occ==1) / sum(species_occ_edaclim_native$occ==0))
   
-  # Run the variable selection using the select07 function
-  var_sel_edaclim <- select07_cv(X = species_occ_edaclim_native[,-c(1:4)], 
+  # Run the variable selection using the select07_cv function but using an equal
+  # amount of presences and absences to calculate the explained deviance
+  var_sel_edaclim <- select07_cv_eq(X = species_occ_edaclim_native[,-c(1:4)], 
                                  y = species_occ_edaclim_native$occ, 
                                  threshold = 0.7,
                                  weights = weights_edaclim)

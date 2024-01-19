@@ -66,7 +66,10 @@ degrees_longitude_9km <- round((9 / longitudinal_distance_per_degree), 2)
 # 2. Background data generation ------------------------------------------------
 
 # Retrieve names of study species
-study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
+# study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
+
+study_species <- c("Olea_europea", "Lolium_arundinaceum", "Arrhenatherum_elatius", 
+                   "Tanacetum_parthenium", "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare")
 
 # Loop over all species and generate background data
 for (sp in study_species) { # Start of loop over species
@@ -75,13 +78,14 @@ for (sp in study_species) { # Start of loop over species
     print(sp)
     
     # check if distribution data file already exists
-    file_exists <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+    file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
     
     
-    if (file_exists == FALSE) { # just continue with background data if output distribution 
+    if (file_exists_1 == FALSE) { # just continue with background data if output distribution 
     # data does not exist yet due to memory problems of large file size
       
       print("start of process")
+      print("absence data generation")
       
       # Load in the thinned occurrence data of the species
       load(paste0("output_data/presences_thinned/species_presences_thinned_",sp,".RData"))
@@ -138,18 +142,23 @@ for (sp in study_species) { # Start of loop over species
 # 3. Background data thinning --------------------------------------------------
     
       for (l in 1:11) { # Start of the loop over all defined latitudinal bands + one extra band
-        
+        try({
+          
+        # Check if file of the latitudinal band already 
+        file_exists_2 <- file.exists(paste0("output_data/absences_thinned/native_EXTRA/",l,"_species_absences_thinned_native_",sp,".RData"))
+      
         # Just retrieve the absences in the considered latitudinal band
         abs_coords_200_block <- abs_coords_200[abs_coords_200$lon >= lon_ranges_df[l,1] & abs_coords_200$lon <= lon_ranges_df[l,2], ]
         
         
-        if (nrow(abs_coords_200_block) >= 1) { # Just continue with thinning if there
-          # are absences in the considered latitudinal block
+        if (nrow(abs_coords_200_block) >= 1 && file_exists_2 == FALSE) { # Just continue with thinning if there
+        # are absences in the considered latitudinal block and if the file does not exist yet
         
           
           if (l == 1) { # When considering the first latitudinal band
             
             print(l)
+            print("thinning absences")
             
             # Transform the coordinate information into sf object
             absences_coords_sf <- st_as_sf(abs_coords_200_block, coords = c("lon", "lat"), crs = crs(world_mask))
@@ -158,7 +167,7 @@ for (sp in study_species) { # Start of loop over species
             species_absences_thinned_global <- thin(absences_coords_sf, thin_dist = 3000, runs = 1, ncores = 1)
             
             # Save the thinned background data for the species
-            save(species_absences_thinned_global, file = paste0("output_data/absences_thinned/global_EXTRA/species_absences_thinned_global_EXTRA_",sp,".RData"))
+            save(species_absences_thinned_global, file = paste0("output_data/absences_thinned/global_EXTRA/",l,"_species_absences_thinned_global_EXTRA_",sp,".RData"))
             
             # Find the longitudinal coordinate that lays ~ 9 km away from the next block coordinate
             lon_coord_9km <- lon_ranges_df[l,2] - degrees_longitude_9km
@@ -170,6 +179,7 @@ for (sp in study_species) { # Start of loop over species
          } else if (l >= 2 && l <= 10) { # If the latitudinal band is number 2 to 10
             
             print(l)
+            print("thinning absences")
             
             # Add the thinned absences of 9 km distance within the previous block 
             # to the current block to make sure that absence are also thinned to 3 km 
@@ -197,10 +207,14 @@ for (sp in study_species) { # Start of loop over species
             # Bind the thinned presences with thinned absences of each block
             species_occ_global_raw <- rbind(species_occ_global_raw, species_absences_thinned_global)
             
+            # Save the file with the thinned absences in between
+            save(species_occ_global_raw, file = paste0("output_data/distribution_data/global_EXTRA/species_occ_global_raw_",sp,".RData"))
+            
             
           } else if (l == 11) { # When considering the extra block
             
             print(l)
+            print("thinning absences")
             
             # Load the thinned absences from the first block
             load(paste0("output_data/absences_thinned/global_EXTRA/species_absences_thinned_global_EXTRA_",sp,".RData"))
@@ -224,19 +238,30 @@ for (sp in study_species) { # Start of loop over species
             # Bind the thinned presences with thinned absences of each block
             species_occ_global_raw <- rbind(species_occ_global_raw, species_absences_thinned_global)
             
+            # Save the file with the thinned absences in between
+            save(species_occ_global_raw, file = paste0("output_data/distribution_data/global_EXTRA/species_occ_global_raw_",sp,".RData"))
+            
           } # End of if conditions depending on the considered latitudinal band
           
-        } else if (nrow(abs_coords_200_block) == 0) { species_absences_thinned_block_9km = NULL
+          
+        } else if (nrow(abs_coords_200_block) == 0) { print(l)
+                                                      print("no absences for thinning")
+                                                      species_absences_thinned_block_9km = NULL
+        } else if (file_exists_2 == TRUE) { print(l)
+                                            print("already done")
         } # End of if condition
-          
-          
-      } # End the loop over all latitudinal blocks
+        
+        
+      })} # End the loop over all latitudinal blocks
 
           
 #-------------------------------------------------------------------------------
       
       
 # 4. Process joined thinned presence and absence data --------------------------
+    
+    # Load the data frame with presences and thinned absences 
+    load(paste0("output_data/distribution_data/global_EXTRA/species_occ_global_raw_",sp,".RData"))
       
     # Remove duplicate absences as these may occur in the overlapping areas
     check_dup <- terra::extract(world_mask, species_occ_global_raw[c("lon", "lat")], cells = TRUE)
@@ -247,7 +272,7 @@ for (sp in study_species) { # Start of loop over species
     save(species_occ_global, file = paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
     
     
-    } else if (file_exists == TRUE) { print("already done")
+    } else if (file_exists_1 == TRUE) { print("already done")
     } # end of if conditions
 
         
@@ -260,37 +285,37 @@ for (sp in study_species) { # Start of loop over species
 
 # 4. Plot thinned presence and absence data ------------------------------------
 
-for (sp in study_species) {
-  try({ 
-    
-    print(sp)
-    
-    file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
-    
-    file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
-    
-    if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
-      
-      print("plot presence-absence points")
-      
-      load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
-      
-      presences <- subset(species_occ_global, species_occ_global$occ == 1)
-      absences <- subset(species_occ_global, species_occ_global$occ == 0)
-      
-      dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
-      
-      svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
-      plot(world_mask,col='grey',legend=F, main = sp)
-      points(absences$lon, absences$lat, col = "black", pch = 20)
-      points(presences$lon, presences$lat, col = "red", pch = 20)
-      
-      dev.off()
-      
-    } else if (file_exists_1 == FALSE) { print("file not available yet")
-    } else if (file_exists_2 == TRUE) { print("plot already generated")
-    }
-    
-  })}
+# for (sp in study_species) {
+#   try({ 
+#     
+#     print(sp)
+#     
+#     file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+#     
+#     file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
+#     
+#     if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
+#       
+#       print("plot presence-absence points")
+#       
+#       load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+#       
+#       presences <- subset(species_occ_global, species_occ_global$occ == 1)
+#       absences <- subset(species_occ_global, species_occ_global$occ == 0)
+#       
+#       dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
+#       
+#       svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
+#       plot(world_mask,col='grey',legend=F, main = sp)
+#       points(absences$lon, absences$lat, col = "black", pch = 20)
+#       points(presences$lon, presences$lat, col = "red", pch = 20)
+#       
+#       dev.off()
+#       
+#     } else if (file_exists_1 == FALSE) { print("file not available yet")
+#     } else if (file_exists_2 == TRUE) { print("plot already generated")
+#     }
+#     
+# })}
 
 
