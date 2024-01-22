@@ -253,6 +253,12 @@ for (sp in study_species) { # Start of loop over species
                                                       species_absences_thinned_block_9km = NULL
         } else if (file_exists_2 == TRUE) { print(l)
                                             print("already done")
+                                            load(paste0("output_data/absences_thinned/native_EXTRA/",l,"_species_absences_thinned_native_EXTRA_",sp,".RData"))
+                                            
+                                            # Extract the thinned absences in a maximum 9 km distance to add it to next thinning band
+                                            lon_coord_9km <- lon_ranges_df[l,2] - degrees_longitude_9km
+                                            species_absences_thinned_block_9km <- species_absences_thinned_native[species_absences_thinned_native$lon >= lon_coord_9km & species_absences_thinned_native$lon <= lon_ranges_df[l,2],]
+                                            
         } # End of if condition
         
         

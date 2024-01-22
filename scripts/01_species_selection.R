@@ -63,6 +63,11 @@ save(occurrences_Hawaii, file = "input_data/occurrences_Hawaii.RData")
 # Get the species names that have occurrence data
 species_Hawaii <- unique(occurrences_Hawaii$species) # 120 species
 
+# Exclude 4 species that are occurring as native on the Hawaiian Islands according 
+# to the status assignment as this speaks against the initial criterion of
+# species selection
+species_Hawaii <- species_Hawaii[!species_Hawaii %in% c("Tribulus_cistoides", "Guaiacum_sanctum", "Piper_aduncum", "Solanum americanum" )]
+
 
 
 #-------------------------------------------------------------------------------
@@ -193,8 +198,8 @@ save(occurrence_numbers_thinned, file = "input_data/occurrence_numbers_thinned.R
 # Remove the species with less than 40 occurrences
 occurrence_numbers_thinned_filtered <- subset(occurrence_numbers_thinned, occurrence_numbers_thinned$native_occurrences >= 40)
 
-# Remove species with equal native and global occurrences
-occurrence_numbers_thinned_filtered <- occurrence_numbers_thinned_filtered[occurrence_numbers_thinned_filtered$global_occurrences != occurrence_numbers_thinned_filtered$native_occurrences, ]
+# Remove species where the minimum difference between native and global occurrences is below 40
+occurrence_numbers_thinned_filtered <- subset(occurrence_numbers_thinned_filtered, (global_occurrences - native_occurrences) >= 40) 
 
 # Save the data frame with study species that are suitable for analysis
 save(occurrence_numbers_thinned_filtered, file = "input_data/occurrence_numbers_thinned_filtered.RData")

@@ -68,7 +68,7 @@ degrees_longitude_9km <- round((9 / longitudinal_distance_per_degree), 2)
 # Retrieve names of study species
 # study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
 
-study_species <- c("Olea_europea", "Lolium_arundinaceum", "Arrhenatherum_elatius", 
+study_species <- c("Lolium_arundinaceum", "Arrhenatherum_elatius", 
                    "Tanacetum_parthenium", "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare")
 
 # Loop over all species and generate background data
@@ -145,7 +145,7 @@ for (sp in study_species) { # Start of loop over species
         try({
           
         # Check if file of the latitudinal band already 
-        file_exists_2 <- file.exists(paste0("output_data/absences_thinned/native_EXTRA/",l,"_species_absences_thinned_native_",sp,".RData"))
+        file_exists_2 <- file.exists(paste0("output_data/absences_thinned/global_EXTRA/",l,"_species_absences_thinned_global_EXTRA_",sp,".RData"))
       
         # Just retrieve the absences in the considered latitudinal band
         abs_coords_200_block <- abs_coords_200[abs_coords_200$lon >= lon_ranges_df[l,1] & abs_coords_200$lon <= lon_ranges_df[l,2], ]
@@ -249,11 +249,20 @@ for (sp in study_species) { # Start of loop over species
                                                       species_absences_thinned_block_9km = NULL
         } else if (file_exists_2 == TRUE) { print(l)
                                             print("already done")
+                                            load(paste0("output_data/absences_thinned/global_EXTRA/",l,"_species_absences_thinned_global_EXTRA_",sp,".RData"))
+                                            
+                                            # Extract the thinned absences in a maximum 9 km distance of the band to add it to next thinning band
+                                            lon_coord_9km <- lon_ranges_df[l,2] - degrees_longitude_9km
+                                            species_absences_thinned_block_9km <- species_absences_thinned_global[species_absences_thinned_global$lon >= lon_coord_9km & species_absences_thinned_global$lon <= lon_ranges_df[l,2],]
+                                            
+                                            
+                                            
         } # End of if condition
         
         
       })} # End the loop over all latitudinal blocks
 
+    
           
 #-------------------------------------------------------------------------------
       

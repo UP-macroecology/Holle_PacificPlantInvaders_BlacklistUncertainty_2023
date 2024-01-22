@@ -53,19 +53,26 @@ for (sp in study_species) { # Start the loop over all species
   
   # Run the variable selection using the select07_cv function but using an equal
   # amount of presences and absences to calculate the explained deviance
-  var_sel_clim <- select07_cv(X=species_occ_clim_global[,-c(1:4)], 
-                              y=species_occ_clim_global$occ, 
-                              threshold=0.7,
-                              weights = weights_clim)
+  var_sel_clim_expldev <- select07_cv_eq(X=species_occ_clim_global[,-c(1:4)], 
+                                         y=species_occ_clim_global$occ, 
+                                         threshold=0.7,
+                                         weights = weights_clim)
   
+  var_sel_clim_boyce <- select07_cv_boyce(X=species_occ_clim_global[,-c(1:4)], 
+                                          y=species_occ_clim_global$occ, 
+                                          threshold=0.7,
+                                          weights = weights_clim)
   
   # Extract the four most important and weakly correlated climate variables
-  pred_sel_clim <- var_sel_clim$pred_sel
-  pred_sel_clim_global <- pred_sel_clim[1:4]
+  pred_sel_clim_expldev <- var_sel_clim_expldev$pred_sel
+  pred_sel_clim_global_expldev <- pred_sel_clim_expldev[1:4]
+  
+  pred_sel_clim_boyce <- var_sel_clim_boyce$pred_sel
+  pred_sel_clim_global_boyce <- pred_sel_clim_boyce[1:4]
   
   # Save the variables
-  save(pred_sel_clim_global, file = paste0("output_data/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData"))
-  
+  save(pred_sel_clim_global_expldev, file = paste0("output_data/variable_selection/global/clim/expl_dev/pred_sel_clim_global_",sp,".RData"))
+  save(pred_sel_clim_global_boyce, file = paste0("output_data/variable_selection/global/clim/boyce/pred_sel_clim_global_",sp,".RData"))
   
   } else if (file_exists_2 == TRUE) { print("already done")
   } else if (file_exists_1 == FALSE) { print("input file not available yet")
@@ -108,12 +115,18 @@ for (sp in study_species) { # Start the loop over all species
   
   # Run the variable selection using the select07_cv function but using an equal
   # amount of presences and absences to calculate the explained deviance
-  var_sel_edaclim <- select07_cv(X=species_occ_edaclim_global[,-c(1:4)], 
-                                 y=species_occ_edaclim_global$occ, 
-                                 threshold=0.7,
-                                 weights = weights_edaclim)
+  var_sel_edaclim_expldev <- select07_cv_eq(X=species_occ_edaclim_global[,-c(1:4)], 
+                                            y=species_occ_edaclim_global$occ, 
+                                            threshold=0.7,
+                                            weights = weights_edaclim)
   
-  pred_sel_edaclim <- var_sel_edaclim$pred_sel
+  var_sel_edaclim_boyce <- select07_cv_boyce(X=species_occ_edaclim_global[,-c(1:4)], 
+                                             y=species_occ_edaclim_global$occ, 
+                                             threshold=0.7,
+                                             weights = weights_edaclim)
+  
+  pred_sel_edaclim_expldev <- var_sel_edaclim_expldev$pred_sel
+  pred_sel_edaclim_boyce <- var_sel_edaclim_boyce$pred_sel
   
   # Get the names from all variables
   variables <- colnames(species_occ_edaclim_global)
@@ -121,28 +134,48 @@ for (sp in study_species) { # Start the loop over all species
   edaphic_predictors <- variables[24:37] # Get the names from the edaphic variables
   
   # Create an empty vector of type character 
-  pred_sel_edaclim_global <- character()
+  pred_sel_edaclim_global_expldev <- character()
+  pred_sel_edaclim_global_boyce <- character()
   
   # Loop through the selected predictors and identify the first two climate variables and store them
-  for (p in pred_sel_edaclim) {
+  for (p in pred_sel_edaclim_expldev) {
     answer1 <- any(p == climatic_predictors)
-    if (answer1  == TRUE & length(pred_sel_edaclim_global) < 2) { pred_sel_edaclim_global <- append(pred_sel_edaclim_global, p)
+    if (answer1  == TRUE & length(pred_sel_edaclim_global_expldev) < 2) { pred_sel_edaclim_global_expldev <- append(pred_sel_edaclim_global_expldev, p)
+    } else {
+      next
+    }
+  }
+  
+  for (p in pred_sel_edaclim_boyce) {
+    answer1 <- any(p == climatic_predictors)
+    if (answer1  == TRUE & length(pred_sel_edaclim_global_boyce) < 2) { pred_sel_edaclim_global_boyce <- append(pred_sel_edaclim_global_boyce, p)
     } else {
       next
     }
   }
   
   # Loop through the selected predictors and identify the first two edaphic variables and store them
-  for (p in pred_sel_edaclim) {
+  for (p in pred_sel_edaclim_expldev) {
     answer2 <- any(p == edaphic_predictors)
-    if (answer2  == TRUE & length(pred_sel_edaclim_global) < 4) { pred_sel_edaclim_global <- append(pred_sel_edaclim_global, p)
+    if (answer2  == TRUE & length(pred_sel_edaclim_global_expldev) < 4) { pred_sel_edaclim_global_expldev <- append(pred_sel_edaclim_global_expldev, p)
     } else {
       next
     }
   }
   
+  for (p in pred_sel_edaclim_boyce) {
+    answer2 <- any(p == edaphic_predictors)
+    if (answer2  == TRUE & length(pred_sel_edaclim_global_boyce) < 4) { pred_sel_edaclim_global_boyce <- append(pred_sel_edaclim_global_boyce, p)
+    } else {
+      next
+    }
+  }
+  
+  
+  
   # Save the variables
-  save(pred_sel_edaclim_global, file = paste0("output_data/variable_selection/global/edaclim/pred_sel_edaclim_global_",sp,".RData"))
+  save(pred_sel_edaclim_global_expldev, file = paste0("output_data/variable_selection/global/edaclim/expl_dev/pred_sel_edaclim_global_",sp,".RData"))
+  save(pred_sel_edaclim_global_boyce, file = paste0("output_data/variable_selection/global/edaclim/boyce/pred_sel_edaclim_global_",sp,".RData"))
   
   
   } else if (file_exists_2 == TRUE) { print("already done")
