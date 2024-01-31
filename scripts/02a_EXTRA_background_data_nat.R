@@ -253,11 +253,27 @@ for (sp in study_species) { # Start of loop over species
                                                       species_absences_thinned_block_9km = NULL
         } else if (file_exists_2 == TRUE) { print(l)
                                             print("already done")
+                                            
+                                            # Load the thinned absences of that band
                                             load(paste0("output_data/absences_thinned/native_EXTRA/",l,"_species_absences_thinned_native_EXTRA_",sp,".RData"))
                                             
                                             # Extract the thinned absences in a maximum 9 km distance to add it to next thinning band
                                             lon_coord_9km <- lon_ranges_df[l,2] - degrees_longitude_9km
                                             species_absences_thinned_block_9km <- species_absences_thinned_native[species_absences_thinned_native$lon >= lon_coord_9km & species_absences_thinned_native$lon <= lon_ranges_df[l,2],]
+                                            
+                                            if (l >= 2 && l <= 11) { # Prepare the thinned absence data to contain a  column indicating 0 for absence
+                                                                     species_absences_thinned_native$occ <- 0
+                                                                     
+                                                                     # Bind the thinned presences with thinned absences of each block
+                                                                     species_occ_native_raw <- rbind(species_occ_native_raw, species_absences_thinned_native)
+                                                                     
+                                                                     # Save the file with the thinned absences in between
+                                                                     save(species_occ_native_raw, file = paste0("output_data/distribution_data/native_EXTRA/species_occ_native_raw_",sp,".RData"))
+                                                                     
+                                            } else if (l == 1) {next
+                                            }
+                                                                     
+                                          
                                             
         } # End of if condition
         
@@ -295,36 +311,36 @@ for (sp in study_species) { # Start of loop over species
 # 4. Plot thinned presence and absence data ------------------------------------
 
 # for (sp in study_species) {
-#   try({ 
-#     
+#   try({
+# 
 #     print(sp)
-#     
+# 
 #     file_exists_1 <- file.exists(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
-#     
+# 
 #     file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_native_",sp,".svg"))
-#     
+# 
 #     if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
-#       
+# 
 #       print("plot presence-absence points")
-#       
+# 
 #       load(paste0("output_data/distribution_data/native/species_occ_native_",sp,".RData"))
-#       
+# 
 #       presences <- subset(species_occ_native, species_occ_native$occ == 1)
 #       absences <- subset(species_occ_native, species_occ_native$occ == 0)
-#       
+# 
 #       dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
-#       
+# 
 #       svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_native_",sp,".svg"))
 #       plot(world_mask,col='grey',legend=F, main = sp)
 #       points(absences$lon, absences$lat, col = "black", pch = 20)
 #       points(presences$lon, presences$lat, col = "red", pch = 20)
-#       
+# 
 #       dev.off()
-#       
+# 
 #     } else if (file_exists_1 == FALSE) { print("file not available yet")
 #     } else if (file_exists_2 == TRUE) { print("plot already generated")
 #     }
-#     
+# 
 # })}
 
 

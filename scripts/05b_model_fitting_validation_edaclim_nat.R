@@ -27,6 +27,11 @@ source("scripts/functions.R") # partial_response,cross-validation and evaluation
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
+study_species <- c("Caesalpinia_decapetala", "Euphorbia_tirucalli", "Phoenix_dactylifera",
+                   "Stachys_arvensis", "Digitaria_eriantha", "Acacia_auriculiformis",
+                   "Prunus_persica", "Lophostemon_confertus", "Desmanthus_pernambucanus",
+                   "Verbesina_encelioides")
+
 #-------------------------------------------------------------------------------
 
 # 1. Model fitting -------------------------------------------------------------
@@ -49,6 +54,12 @@ for (sp in study_species) { # Start the loop over all species
       # Load needed objects of species and environmental data
       load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData")) # distribution and environmental data
       load(paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData")) # predictor variables
+      
+      # Create a random subset of the absences to contain 10 times more absences than presences
+      indices_absence <- which(species_occ_edaclim_native$occ == 0)
+      subset_indices <- sample(indices_absence, ifelse(length(indices_absence) < sum(species_occ_edaclim_native$occ==1)*10, length(indices_absence), sum(species_occ_edaclim_native$occ==1)*10), replace = FALSE)
+      combined_indices <- c(which(species_occ_edaclim_native$occ == 1), subset_indices)
+      species_occ_edaclim_native <- species_occ_edaclim_native[combined_indices, ]
       
       # Create an absence index for machine learning algorithm to achieve even 
       # presence and absence data sets for machine learning algorithms
@@ -155,6 +166,19 @@ for (sp in study_species) { # Start the loop over all species
       # Calculation of performance metrics
       perf_glm_edaclim_native <- evalSDM(species_occ_edaclim_native$occ, preds_glm_cv_edaclim_native)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_edaclim_native$occ == 1) # Extract the indices of the presences
+      preds_glm_cv_edaclim_native_presences <- preds_glm_cv_edaclim_native[presences_indices] # Just retain the predictions of the presences based on indices
+      
+      boyce_index_glm_edaclim_native <- ecospat.boyce(fit = preds_glm_cv_edaclim_native, obs = preds_glm_cv_edaclim_native_presences,
+                                                      nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                      rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_glm_edaclim_native <- boyce_index_glm_edaclim_native$cor # Extract correlation value (Boyce index)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_glm_edaclim_native$Boyce <- boyce_index_glm_edaclim_native
+      
       # Plot partial response curves and save them
       svg(paste0("output_data/plots/response_plots/",sp,"/GLM_edaclim_native_",sp,".svg"))
       par(mfrow=c(2,2)) 
@@ -171,6 +195,19 @@ for (sp in study_species) { # Start the loop over all species
       
       # Calculation of performance metrics
       perf_gam_edaclim_native <- evalSDM(species_occ_edaclim_native$occ, preds_gam_cv_edaclim_native)
+      
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_edaclim_native$occ == 1) # Extract the indices of the presences
+      preds_gam_cv_edaclim_native_presences <- preds_gam_cv_edaclim_native[presences_indices] # Just retain the predictions of the presences based on indices
+      
+      boyce_index_gam_edaclim_native <- ecospat.boyce(fit = preds_gam_cv_edaclim_native, obs = preds_gam_cv_edaclim_native_presences,
+                                                      nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                      rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_gam_edaclim_native <- boyce_index_gam_edaclim_native$cor # Extract correlation value (Boyce index)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_gam_edaclim_native$Boyce <- boyce_index_gam_edaclim_native
       
       # Plot partial response curves and save them
       svg(paste0("output_data/plots/response_plots/",sp,"/GAM_edaclim_native_",sp,".svg"))
@@ -193,6 +230,20 @@ for (sp in study_species) { # Start the loop over all species
       # Calculate the mean of the 10 model performance metrics
       perf_rf_edaclim_native <- colMeans(perf_rf_edaclim_native)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_edaclim_native$occ == 1)
+      preds_rf_cv_edaclim_native_presences <- do.call("cbind", lapply(1:10,FUN=function(i){preds_rf_cv_edaclim_native_all[[i]][presences_indices]}))
+      
+      boyce_index_rf_edaclim_native <- do.call("rbind", lapply(1:10,FUN=function(i){boyce_index_rf_edaclim_native_all <- ecospat.boyce(fit = preds_rf_cv_edaclim_native_all[[i]], obs = preds_rf_cv_edaclim_native_presences[,i],
+                                                                                                                                       nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                                                                                       rm.duplicate = TRUE, method = 'kendall')
+                                                                                    boyce_index_rf_edaclim_native_all$cor }))
+      
+      boyce_index_rf_edaclim_native <- colMeans(boyce_index_rf_edaclim_native)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_rf_edaclim_native["Boyce"] <- boyce_index_rf_edaclim_native
+      
       # Plot partial response curves and save them
       svg(paste0("output_data/plots/response_plots/",sp,"/RF_edaclim_native_",sp,".svg"))
       par(mfrow=c(2,2)) 
@@ -213,6 +264,20 @@ for (sp in study_species) { # Start the loop over all species
       
       # Calculate the mean of the 10 model performance metrics
       perf_brt_edaclim_native <- colMeans(perf_brt_edaclim_native)
+      
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_edaclim_native$occ == 1)
+      preds_brt_cv_edaclim_native_presences <- do.call("cbind", lapply(1:10,FUN=function(i){preds_brt_cv_edaclim_native_all[[i]][presences_indices]}))
+      
+      boyce_index_brt_edaclim_native <- do.call("rbind", lapply(1:10,FUN=function(i){boyce_index_brt_edaclim_native_all <- ecospat.boyce(fit = preds_brt_cv_edaclim_native_all[[i]], obs = preds_brt_cv_edaclim_native_presences[,i],
+                                                                                                                                         nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                                                                                         rm.duplicate = TRUE, method = 'kendall')
+                                                                                     boyce_index_brt_edaclim_native_all$cor }))
+      
+      boyce_index_brt_edaclim_native <- colMeans(boyce_index_brt_edaclim_native)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_brt_edaclim_native["Boyce"] <- boyce_index_brt_edaclim_native
       
       # Plot partial response curves and save them
       svg(paste0("output_data/plots/response_plots/",sp,"/BRT_edaclim_native_",sp,".svg"))
@@ -253,7 +318,7 @@ for (sp in study_species) { # Start the loop over all species
       # Calculate the predictions for each row
       preds_mean_edaclim_native <- rowMeans(preds_all_edaclim_native) # using the mean
       preds_median_edaclim_native <- apply(preds_all_edaclim_native, 1, median) # using the median
-      preds_wmean_edaclim_native <- apply(preds_all_edaclim_native, 1, weighted.mean, w=comp_perf_edaclim_native[, "TSS"]) # using the weighted mean
+      preds_wmean_edaclim_native <- apply(preds_all_edaclim_native, 1, weighted.mean, w=comp_perf_edaclim_native[names(preds_all_edaclim_native), "TSS"]) # using the weighted mean
       preds_comav_edaclim_native <- rowSums(binpred_all_edaclim_native)/ncol(binpred_all_edaclim_native) # using the committee average
       
       # Calculate ensemble performance metrics
@@ -265,6 +330,37 @@ for (sp in study_species) { # Start the loop over all species
       # Combine ensemble performances into one data frame
       ensemble_perf_edaclim_native <- rbind(mean_prob = ensemble_perf_mean_edaclim_native, median_prob = ensemble_perf_median_edaclim_native, wmean_prob = ensemble_perf_wmean_edaclim_native,
                                             committee_av = ensemble_perf_comav_edaclim_native)
+      
+      # Calculate the Boyce index for the ensemble
+      presences_indices <- which(species_occ_edaclim_native$occ == 1)
+      preds_mean_edaclim_native_presences <- preds_mean_edaclim_native[presences_indices]
+      preds_median_edaclim_native_presences <- preds_median_edaclim_native[presences_indices]
+      preds_wmean_edaclim_native_presences <- preds_wmean_edaclim_native[presences_indices]
+      preds_comav_edaclim_native_presences <- preds_comav_edaclim_native[presences_indices]
+      
+      boyce_index_ensemble_edaclim_native_mean <- ecospat.boyce(fit = preds_mean_edaclim_native, obs = preds_mean_edaclim_native_presences,
+                                                                nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_edaclim_native_median <- ecospat.boyce(fit = preds_median_edaclim_native, obs = preds_median_edaclim_native_presences,
+                                                                  nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                  rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_edaclim_native_wmean <- ecospat.boyce(fit = preds_wmean_edaclim_native, obs = preds_wmean_edaclim_native_presences,
+                                                                 nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                 rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_edaclim_native_comav <- ecospat.boyce(fit = preds_comav_edaclim_native, obs = preds_comav_edaclim_native_presences,
+                                                                 nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                 rm.duplicate = TRUE, method = 'kendall')
+      
+      
+      ensemble_perf_boyce_edaclim_native <- data.frame(Boyce = c(boyce_index_ensemble_edaclim_native_mean$cor, boyce_index_ensemble_edaclim_native_median$cor,
+                                                                 boyce_index_ensemble_edaclim_native_wmean$cor, boyce_index_ensemble_edaclim_native_comav$cor))
+      
+      
+      # Add the Boyce index to the other performance metrics
+      ensemble_perf_edaclim_native <- cbind(ensemble_perf_edaclim_native, ensemble_perf_boyce_edaclim_native)
       
       # Add a column containing the names of the ensemble options
       ensemble_perf_edaclim_native <- data.frame(ens=row.names(ensemble_perf_edaclim_native),ensemble_perf_edaclim_native)

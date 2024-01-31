@@ -27,6 +27,11 @@ source("scripts/functions.R") # partial_response,cross-validation and evaluation
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
+study_species <- c("Caesalpinia_decapetala", "Euphorbia_tirucalli", "Phoenix_dactylifera",
+                   "Stachys_arvensis", "Digitaria_eriantha", "Acacia_auriculiformis",
+                   "Prunus_persica", "Lophostemon_confertus", "Desmanthus_pernambucanus",
+                   "Verbesina_encelioides")
+
 #-------------------------------------------------------------------------------
 
 # 1. Model fitting -------------------------------------------------------------
@@ -48,7 +53,9 @@ for (sp in study_species) { # Start the loop over all species
       
       # Load needed objects of species and environmental data
       load(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData")) # distribution and environmental data
-      load(paste0("output_data/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData")) # predictor variables
+      load(paste0("output_data/testing/variable_selection/global/clim/boyce/pred_sel_clim_global_",sp,".RData")) # predictor variables
+      
+      pred_sel_clim_global <- pred_sel_clim_global_boyce
       
       # Create an absence index for machine learning algorithm to achieve even 
       # presence and absence data sets for machine learning algorithms
@@ -122,7 +129,7 @@ for (sp in study_species) { # Start the loop over all species
       # (e) ---------------------------
       
       # Save all models together
-      save(m_glm_clim_global, m_gam_clim_global, m_rf_clim_global, m_brt_clim_global, file = paste0("output_data/models/global/clim/models_clim_global_",sp,".RData"))
+      #save(m_glm_clim_global, m_gam_clim_global, m_rf_clim_global, m_brt_clim_global, file = paste0("output_data/models/global/clim/models_clim_global_",sp,".RData"))
       
       
     } else if (file_exists_models == TRUE) { print("already done model building")
@@ -155,11 +162,24 @@ for (sp in study_species) { # Start the loop over all species
       # Calculation of performance metrics
       perf_glm_clim_global <- evalSDM(species_occ_clim_global$occ, preds_glm_cv_clim_global)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_clim_global$occ == 1) # Extract the indices of the presences
+      preds_glm_cv_clim_global_presences <- preds_glm_cv_clim_global[presences_indices] # Just retain the predictions of the presences based on indices
+      
+      boyce_index_glm_clim_global <- ecospat.boyce(fit = preds_glm_cv_clim_global, obs = preds_glm_cv_clim_global_presences,
+                                                   nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                   rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_glm_clim_global <- boyce_index_glm_clim_global$cor # Extract correlation value (Boyce index)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_glm_clim_global$Boyce <- boyce_index_glm_clim_global
+      
       # Plot partial response curves and save them
-      svg(paste0("output_data/plots/response_plots/",sp,"/GLM_clim_global_",sp,".svg"))
-      par(mfrow=c(2,2)) 
-      partial_response(m_glm_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GLM')
-      dev.off()
+      #svg(paste0("output_data/plots/response_plots/",sp,"/GLM_clim_global_",sp,".svg"))
+      #par(mfrow=c(2,2)) 
+      #partial_response(m_glm_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GLM')
+      #dev.off()
       
       
       
@@ -172,11 +192,24 @@ for (sp in study_species) { # Start the loop over all species
       # Calculation of performance metrics
       perf_gam_clim_global <- evalSDM(species_occ_clim_global$occ, preds_gam_cv_clim_global)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_clim_global$occ == 1) # Extract the indices of the presences
+      preds_gam_cv_clim_global_presences <- preds_gam_cv_clim_global[presences_indices] # Just retain the predictions of the presences based on indices
+      
+      boyce_index_gam_clim_global <- ecospat.boyce(fit = preds_gam_cv_clim_global, obs = preds_gam_cv_clim_global_presences,
+                                                   nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                   rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_gam_clim_global <- boyce_index_gam_clim_global$cor # Extract correlation value (Boyce index)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_gam_clim_global$Boyce <- boyce_index_gam_clim_global
+      
       # Plot partial response curves and save them
-      svg(paste0("output_data/plots/response_plots/",sp,"/GAM_clim_global_",sp,".svg"))
-      par(mfrow=c(2,2)) 
-      partial_response(m_gam_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GAM')
-      dev.off()
+      #svg(paste0("output_data/plots/response_plots/",sp,"/GAM_clim_global_",sp,".svg"))
+      #par(mfrow=c(2,2)) 
+      #partial_response(m_gam_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GAM')
+      #dev.off()
       
       
       
@@ -193,11 +226,24 @@ for (sp in study_species) { # Start the loop over all species
       # Calculate the mean of the 10 model performance metrics
       perf_rf_clim_global <- colMeans(perf_rf_clim_global)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_clim_global$occ == 1)
+      preds_rf_cv_clim_global_presences <- do.call("cbind", lapply(1:10,FUN=function(i){preds_rf_cv_clim_global_all[[i]][presences_indices]}))
+      
+      boyce_index_rf_clim_global <- do.call("rbind", lapply(1:10,FUN=function(i){boyce_index_rf_clim_global_all <- ecospat.boyce(fit = preds_rf_cv_clim_global_all[[i]], obs = preds_rf_cv_clim_global_presences[,i],
+                                                                                                                                 nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                                                                                 rm.duplicate = TRUE, method = 'kendall')
+                                                                                 boyce_index_rf_clim_global_all$cor }))
+      boyce_index_rf_clim_global <- colMeans(boyce_index_rf_clim_global)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_rf_clim_global["Boyce"] <- boyce_index_rf_clim_global
+      
       # Plot partial response curves and save them
-      svg(paste0("output_data/plots/response_plots/",sp,"/RF_clim_global_",sp,".svg"))
-      par(mfrow=c(2,2)) 
-      partial_response(m_rf_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='RF')
-      dev.off()
+      #svg(paste0("output_data/plots/response_plots/",sp,"/RF_clim_global_",sp,".svg"))
+      #par(mfrow=c(2,2)) 
+      #partial_response(m_rf_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='RF')
+      #dev.off()
       
       
       
@@ -214,11 +260,24 @@ for (sp in study_species) { # Start the loop over all species
       # Calculate the mean of the 10 model performance metrics
       perf_brt_clim_global <- colMeans(perf_brt_clim_global)
       
+      # Calculation of the Boyce index
+      presences_indices <- which(species_occ_clim_global$occ == 1)
+      preds_brt_cv_clim_global_presences <- do.call("cbind", lapply(1:10,FUN=function(i){preds_brt_cv_clim_global_all[[i]][presences_indices]}))
+      
+      boyce_index_brt_clim_global <- do.call("rbind", lapply(1:10,FUN=function(i){boyce_index_brt_clim_global_all <- ecospat.boyce(fit = preds_brt_cv_clim_global_all[[i]], obs = preds_brt_cv_clim_global_presences[,i],
+                                                                                                                                   nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                                                                                                   rm.duplicate = TRUE, method = 'kendall')
+                                                                                  boyce_index_brt_clim_global_all$cor }))
+      boyce_index_brt_clim_global <- colMeans(boyce_index_brt_clim_global)
+      
+      # Add the Boyce index to the performance metrics data frame
+      perf_brt_clim_global["Boyce"] <- boyce_index_brt_clim_global
+      
       # Plot partial response curves and save them
-      svg(paste0("output_data/plots/response_plots/",sp,"/BRT_clim_global_",sp,".svg"))
-      par(mfrow=c(2,2)) 
-      partial_response(m_brt_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='BRT')
-      dev.off()
+      #svg(paste0("output_data/plots/response_plots/",sp,"/BRT_clim_global_",sp,".svg"))
+      #par(mfrow=c(2,2)) 
+      #partial_response(m_brt_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='BRT')
+      #dev.off()
       
       
       
@@ -253,7 +312,7 @@ for (sp in study_species) { # Start the loop over all species
       # Calculate the predictions for each row
       preds_mean_clim_global <- rowMeans(preds_all_clim_global) # using the mean
       preds_median_clim_global <- apply(preds_all_clim_global, 1, median) # using the median
-      preds_wmean_clim_global <- apply(preds_all_clim_global, 1, weighted.mean, w=comp_perf_clim_global[, "TSS"]) # using the weighted mean
+      preds_wmean_clim_global <- apply(preds_all_clim_global, 1, weighted.mean, w=comp_perf_clim_global[names(preds_all_clim_global), "TSS"]) # using the weighted mean
       preds_comav_clim_global <- rowSums(binpred_all_clim_global)/ncol(binpred_all_clim_global) # using the committee average
       
       # Calculate ensemble performance metrics
@@ -266,6 +325,37 @@ for (sp in study_species) { # Start the loop over all species
       ensemble_perf_clim_global <- rbind(mean_prob = ensemble_perf_mean_clim_global, median_prob = ensemble_perf_median_clim_global, wmean_prob = ensemble_perf_wmean_clim_global,
                                          committee_av = ensemble_perf_comav_clim_global)
       
+      # Calculate the Boyce index for the ensemble
+      presences_indices <- which(species_occ_clim_global$occ == 1)
+      preds_mean_clim_global_presences <- preds_mean_clim_global[presences_indices]
+      preds_median_clim_global_presences <- preds_median_clim_global[presences_indices]
+      preds_wmean_clim_global_presences <- preds_wmean_clim_global[presences_indices]
+      preds_comav_clim_global_presences <- preds_comav_clim_global[presences_indices]
+      
+      boyce_index_ensemble_clim_global_mean <- ecospat.boyce(fit = preds_mean_clim_global, obs = preds_mean_clim_global_presences,
+                                                             nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                             rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_clim_global_median <- ecospat.boyce(fit = preds_median_clim_global, obs = preds_median_clim_global_presences,
+                                                               nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                               rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_clim_global_wmean <- ecospat.boyce(fit = preds_wmean_clim_global, obs = preds_wmean_clim_global_presences,
+                                                              nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                              rm.duplicate = TRUE, method = 'kendall')
+      
+      boyce_index_ensemble_clim_global_comav <- ecospat.boyce(fit = preds_comav_clim_global, obs = preds_comav_clim_global_presences,
+                                                              nclass=0, window.w="default", res=100, PEplot = FALSE, 
+                                                              rm.duplicate = TRUE, method = 'kendall')
+      
+      
+      ensemble_perf_boyce_clim_global <- data.frame(Boyce = c(boyce_index_ensemble_clim_global_mean$cor, boyce_index_ensemble_clim_global_median$cor,
+                                                              boyce_index_ensemble_clim_global_wmean$cor, boyce_index_ensemble_clim_global_comav$cor))
+      
+      
+      # Add the Boyce index to the other performance metrics
+      ensemble_perf_clim_global <- cbind(ensemble_perf_clim_global, ensemble_perf_boyce_clim_global)
+      
       # Add a column containing the names of the ensemble options
       ensemble_perf_clim_global <- data.frame(ens=row.names(ensemble_perf_clim_global),ensemble_perf_clim_global)
       
@@ -273,7 +363,7 @@ for (sp in study_species) { # Start the loop over all species
       
       # (g) Save validation outputs  -------------------------------------------
       
-      save(comp_perf_clim_global, ensemble_perf_clim_global, file = paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+      save(comp_perf_clim_global, ensemble_perf_clim_global, file = paste0("output_data/testing/validation/global/clim/boyce/validation_clim_global_",sp,".RData"))
       
       
       

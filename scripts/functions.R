@@ -337,7 +337,7 @@ select07_cv_eq <- function(X, y, kfold=5, family="binomial",univar="glm2", thres
     # Extract the number of presences
     number_presences <- nrow(obs_subset_1)
     
-    # Filter the absences and make a random subset of rows qual to the number of presences
+    # Filter the absences and make a random subset of rows equal to the number of presences
     obs_subset_0 <- y_new %>%
       filter(occ == 0) %>%
       slice_sample(n = number_presences, replace = FALSE)
