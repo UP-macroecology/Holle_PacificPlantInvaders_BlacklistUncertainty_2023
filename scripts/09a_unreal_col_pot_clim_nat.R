@@ -37,6 +37,7 @@ load("input_data/spatial_data/pacific_islands_extent.RData") # Island group name
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
+
 # Add an underscore to the species names to match them
 Wohlwend_data$Species <- str_replace_all(Wohlwend_data$Species, " ", "_")
 
@@ -52,6 +53,8 @@ rownames(observed_occ_pacific_islands) <- paste0(study_species)
 
 
 for (sp in study_species) { # Start of the loop over all species
+  
+  print(sp)
   
   # Subset the information from Wohlwend for each species
   species_info <- subset(Wohlwend_data, Wohlwend_data$Species == sp)
