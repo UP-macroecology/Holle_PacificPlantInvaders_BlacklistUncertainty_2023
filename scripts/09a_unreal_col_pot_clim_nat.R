@@ -41,6 +41,10 @@ study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species))
 # Add an underscore to the species names to match them
 Wohlwend_data$Species <- str_replace_all(Wohlwend_data$Species, " ", "_")
 
+# Subset the data frame to only contain the species that have the invasion status
+# "T" 
+Wohlwend_data <- subset(Wohlwend_data, Wohlwend_data$inva_stat == "T")
+
 # Retrieve island group names (change two parts of Fiji into Fiji islands)
 island_group <- as.character(pacific_islands_extent$island_group)
 island_group <- island_group[!island_group %in% c("Fiji_1", "Fiji_2")]

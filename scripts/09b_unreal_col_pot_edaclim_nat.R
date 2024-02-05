@@ -35,10 +35,16 @@ Wohlwend_data <- read_delim("input_data/Pacific_Invaders_GIFT_22_01.csv",
 load("input_data/spatial_data/pacific_islands_extent.RData") # Island group names and extent information
 
 # Retrieve species names
-study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
+study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species))
+study_species <- c(study_species, "Arrhenatherum_elatius", "Tanacetum_parthenium", # erase this later
+                   "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare")
 
 # Add an underscore to the species names to match them
 Wohlwend_data$Species <- str_replace_all(Wohlwend_data$Species, " ", "_")
+
+# Subset the data frame to only contain the species that have the invasion status
+# "T" 
+Wohlwend_data <- subset(Wohlwend_data, Wohlwend_data$inva_stat == "T")
 
 # Retrieve island group names (change two parts of Fiji into Fiji islands)
 island_group <- as.character(pacific_islands_extent$island_group)

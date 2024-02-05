@@ -5,7 +5,7 @@ Blacklisting potential Pacific plant invaders using species distribution models 
 
 ## Workflow
 
-The analysis is based on an initial subset of known naturalized plant populations of 122 plant species occurring on at least one of the Hawaiian Islands, derived from the compiled dataset by [Wohlwend et al. (2021)](#2). For these species, all available occurrence records were obtained from the [Global Biodiversity Information Facility](https://www.gbif.org/) (GBIF) and the [Botanical Information and Ecology Network](https://biendata.org/) (BIEN) in June 2023, which were first cleaned to remove duplicates and occurrence records with erroneous time stamps or coordinates and were fit to a 1 km resolution.
+The analysis is based on an initial subset of known naturalized plant populations of 122 plant species occurring on at least one of the Hawaiian Islands, derived from the compiled data set by [Wohlwend et al. (2021)](#2). For these species, all available occurrence records were obtained from the [Global Biodiversity Information Facility](https://www.gbif.org/) (GBIF) and the [Botanical Information and Ecology Network](https://biendata.org/) (BIEN) in June 2023, which were first cleaned to remove duplicates and occurrence records with erroneous time stamps or coordinates and were fit to a 1 km resolution.
 
 The biogeographical status of the cleaned occurrences was assigned based on the [World Checklist of Vascular Plants](#1) (WCVP), indicating whether the species record is a native or introduced occurrence. Data gaps were filled using two additional sources, the [Global Inventory of Floras and Traits](https://gift.uni-goettingen.de/home) (GIFT) and the [Global Naturalized Alien Flora](https://glonaf.org/) (GloNAF). Resulting contradictory information was dealt with using two subsequent criteria: If the conflicting sources referred to areas of different sizes, the status from the source referring to the smaller area is used. If this was not the case, all sources were weighted equally, leading to the status "contradictory" when conflicts in the status assignment occurred. Final status assignments designated species records as native, introduced, contradictory, or unknown. 
 
@@ -28,9 +28,19 @@ Based on each of the four SDM input datasets, four different model algorithms we
 For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms per SDM input data set. Moreover, an ensemble model was established by combining the continuous predictions of each algorithm using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
 
 ### 7 - Blacklist construction
-Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different approaches: The Pacific-wide fraction of predicted suitable habitat, the number of island groups with suitable habitats, and the mean rank over all island groups. This was done considering the predictions of the different predictor sets as well as the applied algorithms and their ensemble, resulting in 20 blacklists each based on unique information.
+Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different definitions: The Pacific-wide fraction of predicted suitable habitat, the number of island groups with suitable habitats, and the mean rank over all island groups. This was done considering the predictions of the different predictor sets as well as the applied algorithms, resulting in 16 blacklists each based on unique information.
 
-### 8 - Uncertainty analysis
+### 8 - Quantification of uncertainty
+Using random forest regression, it was assessed whether the blacklist rankings were associated with the considered niche in the input occurrence data (native and global), the used predictor type (purely climatic and combined climatic and edaphic), and the applied algorithms (GLM, GAM, RF, BRT). The output of variable importance was considered for the uncertainty quantification of the studied sources. This was separately done for all three blacklist definitions.
+
+### 9 - Pacific-wide unrealized colonization potential
+As another measure of establishment potential, the Pacific-wide predicted unrealized colonization potential was quantified for all study species, with an exclusive focus on the prediction results of ensemble models. The measure was based on the validation method of the False Positive Rate, accounting for predicted presence and absence information as well as actual presence and absence information on the studied Pacific island groups. Here, the very complete occurrence data set, gathered within the study of Wohlwend et al. (2021), was used as independent validation data.
+
+### 10 - Final Pacific-wide blacklisting
+A final blacklist ranking was created for all three blacklist definitions. To do so the risk estimator values were calculated based on the ensemble prediction values of each predictor set, averaged over all four predictor sets, and finally translated into a ranking.
+
+
+
 
 ### References
 

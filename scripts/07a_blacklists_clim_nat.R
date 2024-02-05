@@ -20,7 +20,7 @@ library(dplyr)
 # Load needed objects
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
 load("output_data/model_predictions/native/clim/islandgroups_results_clim_native.RData") # Contains area calculations based on predictions using 49 island groups
-load("output_data/model_predictions/native/clim/islandgroups_results_clim_native_comp.RData") # Contains area calculations based on predictions using 25 island groups
+load("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_comp.RData") # Contains area calculations based on predictions using 25 island groups
 
 
 #-------------------------------------------------------------------------------
