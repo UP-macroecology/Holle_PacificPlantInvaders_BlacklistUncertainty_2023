@@ -36,7 +36,7 @@ for (sp in study_species) { # Start the loop over all species
   print("clim")
   
   # check if joined distribution and climatic and edaphic data file already exists
-  file_exists_1 <- file.exists(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
+  file_exists_1 <- file.exists(paste0("output_data/distribution_env_data_subset/global/clim/species_occ_clim_global_",sp,".RData"))
     
   # check if variable selection data file already exists
   file_exists_2 <- file.exists(paste0("output_data/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData"))
@@ -48,7 +48,7 @@ for (sp in study_species) { # Start the loop over all species
   print("start of process")
   
   # Load the data frame of native species occurrences joined with climate variables
-  load(paste0("output_data/distribution_env_data/global/clim/species_occ_clim_global_",sp,".RData"))
+  load(paste0("output_data/distribution_env_data_subset/global/clim/species_occ_clim_global_",sp,".RData"))
   
   # Consideration of equal weights of presences and absences
   weights_clim <- ifelse(species_occ_clim_global$occ==1, 1, sum(species_occ_clim_global$occ==1) / sum(species_occ_clim_global$occ==0))
@@ -88,7 +88,7 @@ for (sp in study_species) { # Start the loop over all species
   print("edaclim")
   
   # check if joined distribution and climatic and edaphic data file already exists
-  file_exists_1 <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  file_exists_1 <- file.exists(paste0("output_data/distribution_env_data_subset/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
     
   # check if variable selection data file already exists
   file_exists_2 <- file.exists(paste0("output_data/variable_selection/global/edaclim/pred_sel_edaclim_global_",sp,".RData"))
@@ -100,7 +100,7 @@ for (sp in study_species) { # Start the loop over all species
   print("start of process")
     
   # Load the data frame of native species occurrences joined with climatic as well as edaphic variables
-  load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+  load(paste0("output_data/distribution_env_data_subset/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
   
   # Consideration of equal weights of presences and absences
   weights_edaclim <- ifelse(species_occ_edaclim_global$occ==1, 1, sum(species_occ_edaclim_global$occ==1) / sum(species_occ_edaclim_global$occ==0))

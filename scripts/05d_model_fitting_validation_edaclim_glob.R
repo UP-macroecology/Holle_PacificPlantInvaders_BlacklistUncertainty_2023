@@ -52,10 +52,9 @@ for (sp in study_species) { # Start the loop over all species
       print("start of model building process")
       
       # Load needed objects of species and environmental data
-      load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData")) # distribution and environmental data
-      load(paste0("output_data/testing/variable_selection/global/edaclim/boyce/pred_sel_edaclim_global_",sp,".RData")) # predictor variables
+      load(paste0("output_data/distribution_env_data_subset/global/edaclim/species_occ_edaclim_global_",sp,".RData")) # distribution and environmental data
+      load(paste0("output_data/testing/variable_selection/global/edaclim/pred_sel_edaclim_global_",sp,".RData")) # predictor variables
       
-      pred_sel_edaclim_global <- pred_sel_edaclim_global_boyce
       
       # Create an absence index for machine learning algorithm to achieve even 
       # presence and absence data sets for machine learning algorithms

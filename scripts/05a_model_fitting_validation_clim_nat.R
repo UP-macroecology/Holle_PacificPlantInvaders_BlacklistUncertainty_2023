@@ -50,14 +50,8 @@ for (sp in study_species) { # Start the loop over all species
     print("start of model building process")
     
     # Load needed objects of species and environmental data
-    load(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData")) # distribution and environmental data
+    load(paste0("output_data/distribution_env_data_subset/native/clim/species_occ_clim_native_",sp,".RData")) # distribution and environmental data
     load(paste0("output_data/variable_selection/native/clim/pred_sel_clim_native_",sp,".RData")) # predictor variables
-    
-    # Create a random subset of the absences to contain 10 times more absences than presences
-    indices_absence <- which(species_occ_clim_native$occ == 0)
-    subset_indices <- sample(indices_absence, ifelse(length(indices_absence) < sum(species_occ_clim_native$occ==1)*10, length(indices_absence), sum(species_occ_clim_native$occ==1)*10), replace = FALSE)
-    combined_indices <- c(which(species_occ_clim_native$occ == 1), subset_indices)
-    species_occ_clim_native <- species_occ_clim_native[combined_indices, ]
     
     # Create an absence index for machine learning algorithm to achieve even 
     # presence and absence data sets for machine learning algorithms

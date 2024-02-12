@@ -114,7 +114,7 @@ for (sp in study_species) {
   file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
   
   if (file_exists_1 == TRUE && file_exists_2 == FALSE) { # just continue with joining climatic and edaphic data if output 
-  # of joined distribution and climatic and edaphic data does not exist yet but the distribution dataset exists
+  # of joined distribution and climatic and edaphic data does not exist yet but the distribution data set exists
     
   print("start of process")
   
