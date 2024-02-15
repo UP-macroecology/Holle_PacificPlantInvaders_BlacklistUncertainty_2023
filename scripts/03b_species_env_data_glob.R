@@ -149,54 +149,54 @@ for (sp in study_species) {
 # 4. Final species selection after environmental relation ----------------------
 
 # Prepare a data frame to store the result of occurrence numbers
-# occ_numbers_thinned_env_glob <- data.frame(expand.grid(species=c(paste(study_species))), global_occurrences=NA)
-# 
-# for (sp in study_species) {
-#   try({
-#     
-#   print(sp)
-#     
-#   # check if joined distribution and climatic and edaphic data file already exists
-#   file_exists <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
-#   
-#   if (file_exists == TRUE) { # Just continue with the species if file exists
-#     
-#   print("file available")
-#   
-#   # Load in the data frame with species occurrences and all environmental variables
-#   load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
-#   
-#   # Subset by native presences
-#   global_presences <- subset(species_occ_edaclim_global, species_occ_edaclim_global$occ == 1)
-#   
-#   # Sum up number of native presences
-#   number_global_presences <- nrow(global_presences)
-#   
-#   # Store the results in data frame
-#   occ_numbers_thinned_env_glob[occ_numbers_thinned_env_glob$species == sp, "global_occurrences"] <- number_global_presences
-#   
-#   } else if (file_exists == FALSE) { print("file not available")
-#     next # If file does not exist, skip to the next species
-#   }
-#   
-# })}
-# 
-# # Remove the species with less than 40 occurrences
-# occ_numbers_thinned_env_glob_filtered <- subset(occ_numbers_thinned_env_glob, occ_numbers_thinned_env_glob$global_occurrences >= 40)
-# 
-# # Save the data frame
-# save(occ_numbers_thinned_env_glob_filtered, file = "input_data/occ_numbers_thinned_env_glob_filtered.RData")
-# 
-# # Load the data frame of native occurrence numbers after environmental relation
-# load("input_data/occ_numbers_thinned_env_nat_filtered.RData")
-# 
-# # Merge the two data frames based on the species that are left in the native occurrence numbers
-# occ_numbers_thinned_env_filtered <- merge(occ_numbers_thinned_env_nat_filtered, occ_numbers_thinned_env_glob_filtered, by = "species")
-# 
-# # Remove species where the minimum difference between native and global occurrences is below 40
-# occ_numbers_thinned_env_filtered <- subset(occ_numbers_thinned_env_filtered, (global_occurrences - native_occurrences) >= 40) 
-# 
-# occ_numbers_thinned_env_filtered <- subset(occ_numbers_thinned_env_filtered, !(species %in% c("Tribulus_cistoides", "Guaiacum_sanctum", "Piper_aduncum", "Solanum americanum")))
-# 
-# # Save data frame with final species selection
-# save(occ_numbers_thinned_env_filtered, file = "input_data/occ_numbers_thinned_env_filtered.RData")
+occ_numbers_thinned_env_glob <- data.frame(expand.grid(species=c(paste(study_species))), global_occurrences=NA)
+
+for (sp in study_species) {
+  try({
+
+  print(sp)
+
+  # check if joined distribution and climatic and edaphic data file already exists
+  file_exists <- file.exists(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+
+  if (file_exists == TRUE) { # Just continue with the species if file exists
+
+  print("file available")
+
+  # Load in the data frame with species occurrences and all environmental variables
+  load(paste0("output_data/distribution_env_data/global/edaclim/species_occ_edaclim_global_",sp,".RData"))
+
+  # Subset by native presences
+  global_presences <- subset(species_occ_edaclim_global, species_occ_edaclim_global$occ == 1)
+
+  # Sum up number of native presences
+  number_global_presences <- nrow(global_presences)
+
+  # Store the results in data frame
+  occ_numbers_thinned_env_glob[occ_numbers_thinned_env_glob$species == sp, "global_occurrences"] <- number_global_presences
+
+  } else if (file_exists == FALSE) { print("file not available")
+    next # If file does not exist, skip to the next species
+  }
+
+})}
+
+# Remove the species with less than 40 occurrences
+occ_numbers_thinned_env_glob_filtered <- subset(occ_numbers_thinned_env_glob, occ_numbers_thinned_env_glob$global_occurrences >= 40)
+
+# Save the data frame
+save(occ_numbers_thinned_env_glob_filtered, file = "input_data/occ_numbers_thinned_env_glob_filtered.RData")
+
+# Load the data frame of native occurrence numbers after environmental relation
+load("input_data/occ_numbers_thinned_env_nat_filtered.RData")
+
+# Merge the two data frames based on the species that are left in the native occurrence numbers
+occ_numbers_thinned_env_filtered <- merge(occ_numbers_thinned_env_nat_filtered, occ_numbers_thinned_env_glob_filtered, by = "species")
+
+# Remove species where the minimum difference between native and global occurrences is below 40
+occ_numbers_thinned_env_filtered <- subset(occ_numbers_thinned_env_filtered, (global_occurrences - native_occurrences) >= 40)
+
+occ_numbers_thinned_env_filtered <- subset(occ_numbers_thinned_env_filtered, !(species %in% c("Tribulus_cistoides", "Guaiacum_sanctum", "Piper_aduncum", "Solanum_americanum")))
+
+# Save data frame with final species selection
+save(occ_numbers_thinned_env_filtered, file = "input_data/occ_numbers_thinned_env_filtered.RData")

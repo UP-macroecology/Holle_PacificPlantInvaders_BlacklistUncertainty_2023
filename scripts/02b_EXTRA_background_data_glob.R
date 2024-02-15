@@ -68,8 +68,7 @@ degrees_longitude_9km <- round((9 / longitudinal_distance_per_degree), 2)
 # Retrieve names of study species
 # study_species <- unique(as.character(occurrence_numbers_thinned_filtered$species))
 
-study_species <- c("Lolium_arundinaceum", "Arrhenatherum_elatius", 
-                   "Tanacetum_parthenium", "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare")
+study_species <- "Cirsium_vulgare"
 
 # Loop over all species and generate background data
 for (sp in study_species) { # Start of loop over species
@@ -307,37 +306,37 @@ for (sp in study_species) { # Start of loop over species
 
 # 4. Plot thinned presence and absence data ------------------------------------
 
-for (sp in study_species) {
-  try({
-
-    print(sp)
-
-    file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
-
-    file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
-
-    if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
-
-      print("plot presence-absence points")
-
-      load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
-
-      presences <- subset(species_occ_global, species_occ_global$occ == 1)
-      absences <- subset(species_occ_global, species_occ_global$occ == 0)
-
-      dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
-
-      svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
-      plot(world_mask,col='grey',legend=F, main = sp)
-      points(absences$lon, absences$lat, col = "black", pch = 20)
-      points(presences$lon, presences$lat, col = "red", pch = 20)
-
-      dev.off()
-
-    } else if (file_exists_1 == FALSE) { print("file not available yet")
-    } else if (file_exists_2 == TRUE) { print("plot already generated")
-    }
-
-})}
+# for (sp in study_species) {
+#   try({
+# 
+#     print(sp)
+# 
+#     file_exists_1 <- file.exists(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+# 
+#     file_exists_2 <- file.exists(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
+# 
+#     if (file_exists_1 == TRUE && file_exists_2 == FALSE) {
+# 
+#       print("plot presence-absence points")
+# 
+#       load(paste0("output_data/distribution_data/global/species_occ_global_",sp,".RData"))
+# 
+#       presences <- subset(species_occ_global, species_occ_global$occ == 1)
+#       absences <- subset(species_occ_global, species_occ_global$occ == 0)
+# 
+#       dir.create(paste0("output_data/plots/presence_absence_plots/",sp))
+# 
+#       svg(paste0("output_data/plots/presence_absence_plots/",sp,"/presence_absence_global_",sp,".svg"))
+#       plot(world_mask,col='grey',legend=F, main = sp)
+#       points(absences$lon, absences$lat, col = "black", pch = 20)
+#       points(presences$lon, presences$lat, col = "red", pch = 20)
+# 
+#       dev.off()
+# 
+#     } else if (file_exists_1 == FALSE) { print("file not available yet")
+#     } else if (file_exists_2 == TRUE) { print("plot already generated")
+#     }
+# 
+# })}
 
 
