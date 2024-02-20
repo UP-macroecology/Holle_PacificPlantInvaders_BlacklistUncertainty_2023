@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                  07a. Blacklisting based on native                     #
+#                  07a. Blacklisting based on global                     #
 #                  occurrences and purely climatic data                  #
 # ---------------------------------------------------------------------- #
 
@@ -19,8 +19,8 @@ library(dplyr)
 
 # Load needed objects
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
-load("output_data/model_predictions/native/clim/islandgroups_results_clim_native.RData") # Contains area calculations based on predictions using 49 island groups
-load("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_comp.RData") # Contains area calculations based on predictions using 25 island groups
+load("output_data/model_predictions/global/clim/islandgroups_results_clim_global.RData") # Contains area calculations based on predictions using 49 island groups
+load("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_comp.RData") # Contains area calculations based on predictions using 25 island groups
 
 
 #-------------------------------------------------------------------------------
@@ -31,11 +31,11 @@ load("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_n
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species))
 
 # Retrieve the island group names included in a purely climatic analysis
-islandgroup_climate <- unique(islandgroups_results_clim_native$islandgroup)
+islandgroup_climate <- unique(islandgroups_results_clim_global$islandgroup)
 islandgroup_climate <- setdiff(islandgroup_climate, "Pacific")
 
 # Retrieve the island group names included in a combined climatic and edaphic analysis
-islandgroup_climate_soil <- unique(islandgroups_results_clim_native_comp$islandgroup)
+islandgroup_climate_soil <- unique(islandgroups_results_clim_global_comp$islandgroup)
 islandgroup_climate_soil <- setdiff(islandgroup_climate_soil, "Pacific")
 
 # Write a vector with the used algorithms
@@ -50,17 +50,17 @@ algorithm <- c("GLM", "GAM", "RF", "BRT", "Ensemble")
 # (a) Including all 49 island groups -------------------------------------------
 
 # Subset the prediction results data frame to exclusively obtain the Pacific-wide predictions
-Pacific_suitable_habitat_fraction_clim_native <- subset(islandgroups_results_clim_native, islandgroups_results_clim_native$islandgroup == "Pacific")
+Pacific_suitable_habitat_fraction_clim_global <- subset(islandgroups_results_clim_global, islandgroups_results_clim_global$islandgroup == "Pacific")
 
 # Create a data frame to store the results
-results_rank_suitable_habitat_fraction_clim_native <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(results_rank_suitable_habitat_fraction_clim_native) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
+results_rank_suitable_habitat_fraction_clim_global <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(results_rank_suitable_habitat_fraction_clim_global) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 for (a in algorithm) { # Start the loop over all algorithms
-
+  
   # Subset the data frame by each algorithm
-  subset_algorithm <- subset(Pacific_suitable_habitat_fraction_clim_native, Pacific_suitable_habitat_fraction_clim_native$algorithm == a)
+  subset_algorithm <- subset(Pacific_suitable_habitat_fraction_clim_global, Pacific_suitable_habitat_fraction_clim_global$algorithm == a)
   
   # Rank the species by their predicted Pacific-wide suitable habitat fraction
   subset_algorithm$rank <- dense_rank(desc(as.numeric(subset_algorithm$suitable_habitat_fraction)))
@@ -69,16 +69,16 @@ for (a in algorithm) { # Start the loop over all algorithms
   subset_algorithm_keep <- subset_algorithm[, c(4:9)]
   
   # Bind the data frame with the resulting rank information to the results data frame
-  results_rank_suitable_habitat_fraction_clim_native <- rbind(results_rank_suitable_habitat_fraction_clim_native, subset_algorithm_keep)
+  results_rank_suitable_habitat_fraction_clim_global <- rbind(results_rank_suitable_habitat_fraction_clim_global, subset_algorithm_keep)
   
   
 } # End the loop over all algorithms
-  
+
 # Make sure the column names are correct
-colnames(results_rank_suitable_habitat_fraction_clim_native) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(results_rank_suitable_habitat_fraction_clim_global) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # Save the final data frame with ranks
-save(results_rank_suitable_habitat_fraction_clim_native, file = "output_data/blacklists/native/clim/results_rank_suitable_habitat_fraction_clim_native.RData")
+save(results_rank_suitable_habitat_fraction_clim_global, file = "output_data/blacklists/global/clim/results_rank_suitable_habitat_fraction_clim_global.RData")
 
 
 # (b) Including 25 island groups -----------------------------------------------
@@ -86,18 +86,18 @@ save(results_rank_suitable_habitat_fraction_clim_native, file = "output_data/bla
 # a reasonable comparison
 
 # Subset the prediction results data frame to exclusively obtain the Pacific-wide predictions
-Pacific_suitable_habitat_fraction_clim_native_comp <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$islandgroup == "Pacific")
+Pacific_suitable_habitat_fraction_clim_global_comp <- subset(islandgroups_results_clim_global_comp, islandgroups_results_clim_global_comp$islandgroup == "Pacific")
 
 # Create a data frame to store the results
-results_rank_suitable_habitat_fraction_clim_native_comp <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(results_rank_suitable_habitat_fraction_clim_native_comp) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
+results_rank_suitable_habitat_fraction_clim_global_comp <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(results_rank_suitable_habitat_fraction_clim_global_comp) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 
 for (a in algorithm) { # Start the loop over all algorithms
-
+  
   # Subset the data frame by each algorithm
-  subset_algorithm_comp <- subset(Pacific_suitable_habitat_fraction_clim_native_comp, Pacific_suitable_habitat_fraction_clim_native_comp$algorithm == a)
+  subset_algorithm_comp <- subset(Pacific_suitable_habitat_fraction_clim_global_comp, Pacific_suitable_habitat_fraction_clim_global_comp$algorithm == a)
   
   # Rank the species by their predicted Pacific-wide suitable habitat fraction
   subset_algorithm_comp$rank <- dense_rank(desc(as.numeric(subset_algorithm_comp$suitable_habitat_fraction)))
@@ -106,16 +106,16 @@ for (a in algorithm) { # Start the loop over all algorithms
   subset_algorithm_keep_comp <- subset_algorithm_comp[, c(4:9)]
   
   # Bind the data frame with the resulting rank information to the results data frame
-  results_rank_suitable_habitat_fraction_clim_native_comp <- rbind(results_rank_suitable_habitat_fraction_clim_native_comp, subset_algorithm_keep_comp)
+  results_rank_suitable_habitat_fraction_clim_global_comp <- rbind(results_rank_suitable_habitat_fraction_clim_global_comp, subset_algorithm_keep_comp)
   
   
 } # End the loop over all algorithms
 
 # Make sure the column names are correct
-colnames(results_rank_suitable_habitat_fraction_clim_native_comp) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(results_rank_suitable_habitat_fraction_clim_global_comp) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # Save the final data frame with ranks
-save(results_rank_suitable_habitat_fraction_clim_native_comp, file = "output_data/blacklists/native/clim_comp/results_rank_suitable_habitat_fraction_clim_native_comp.RData")
+save(results_rank_suitable_habitat_fraction_clim_global_comp, file = "output_data/blacklists/global/clim_comp/results_rank_suitable_habitat_fraction_clim_global_comp.RData")
 
 
 
@@ -127,14 +127,14 @@ save(results_rank_suitable_habitat_fraction_clim_native_comp, file = "output_dat
 # (a) Including all 49 island groups -------------------------------------------
 
 # Create a data frame to store the results
-results_number_suitable_islandgroups_clim_native <- data.frame(matrix(ncol = 5, nrow = 0))
-colnames(results_number_suitable_islandgroups_clim_native) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
+results_number_suitable_islandgroups_clim_global <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(results_number_suitable_islandgroups_clim_global) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
 
 
 for (sp in study_species) { # Start loop over all species
   
   # Subset data frame for each species
-  subset_species <- subset(islandgroups_results_clim_native, islandgroups_results_clim_native$species == sp)
+  subset_species <- subset(islandgroups_results_clim_global, islandgroups_results_clim_global$species == sp)
   
   
   for (a in algorithm) { # Start loop over all algorithms
@@ -173,13 +173,13 @@ for (sp in study_species) { # Start loop over all species
     number_islandgroups <- sum(as.numeric(species_alg_df$prediction))
     
     # Create a results vector with number of predicted suitable island groups
-    results_number_islandgroups <- c(number_islandgroups, a, "clim", "native", sp)
+    results_number_islandgroups <- c(number_islandgroups, a, "clim", "global", sp)
     
     # Add the results vector to the data frame
-    results_number_suitable_islandgroups_clim_native <- rbind(results_number_suitable_islandgroups_clim_native, results_number_islandgroups)
+    results_number_suitable_islandgroups_clim_global <- rbind(results_number_suitable_islandgroups_clim_global, results_number_islandgroups)
     
     # Make sure the column names are correct
-    colnames(results_number_suitable_islandgroups_clim_native) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
+    colnames(results_number_suitable_islandgroups_clim_global) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
     
     
   } # End loop over all algorithms
@@ -192,28 +192,28 @@ for (sp in study_species) { # Start loop over all species
 # predicted suitable island groups
 
 # Create a data frame to store results
-results_rank_number_suitable_islandgroups_clim_native <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(results_rank_number_suitable_islandgroups_clim_native) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
+results_rank_number_suitable_islandgroups_clim_global <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(results_rank_number_suitable_islandgroups_clim_global) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 for (a in algorithm) { # Start the loop over all algorithms
   
   # Subset the data frame containing the number of suitable island groups by algorithm
-  subset_algorithm <- subset(results_number_suitable_islandgroups_clim_native, results_number_suitable_islandgroups_clim_native$algorithm == a)
+  subset_algorithm <- subset(results_number_suitable_islandgroups_clim_global, results_number_suitable_islandgroups_clim_global$algorithm == a)
   
   # Rank the species per algorithm by their predicted suitable number of island groups
   subset_algorithm$rank <- dense_rank(desc(as.numeric(subset_algorithm$number_suitable_islandgroups)))
   
   # Add the data frame including rank to the results data frame
-  results_rank_number_suitable_islandgroups_clim_native <- rbind(results_rank_number_suitable_islandgroups_clim_native, subset_algorithm)
+  results_rank_number_suitable_islandgroups_clim_global <- rbind(results_rank_number_suitable_islandgroups_clim_global, subset_algorithm)
   
 } # End loop over all algorithms
 
 # Make sure that the column names are correct 
-colnames(results_rank_number_suitable_islandgroups_clim_native) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(results_rank_number_suitable_islandgroups_clim_global) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # save the resulting data frame
-save(results_rank_number_suitable_islandgroups_clim_native, file = "output_data/blacklists/native/clim/results_rank_number_suitable_islandgroups_clim_native.RData")
+save(results_rank_number_suitable_islandgroups_clim_global, file = "output_data/blacklists/global/clim/results_rank_number_suitable_islandgroups_clim_global.RData")
 
 
 # (b) Including 25 island groups -----------------------------------------------
@@ -221,14 +221,14 @@ save(results_rank_number_suitable_islandgroups_clim_native, file = "output_data/
 # a reasonable comparison
 
 # Create a data frame to store the results
-results_number_suitable_islandgroups_clim_native_comp <- data.frame(matrix(ncol = 5, nrow = 0))
-colnames(results_number_suitable_islandgroups_clim_native_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
+results_number_suitable_islandgroups_clim_global_comp <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(results_number_suitable_islandgroups_clim_global_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
 
 
 for (sp in study_species) { # Start loop over all species
   
   # Subset data frame for each species
-  subset_species <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$species == sp)
+  subset_species <- subset(islandgroups_results_clim_global_comp, islandgroups_results_clim_global_comp$species == sp)
   
   
   for (a in algorithm) { # Start loop over all algorithms
@@ -267,13 +267,13 @@ for (sp in study_species) { # Start loop over all species
     number_islandgroups <- sum(as.numeric(species_alg_df$prediction))
     
     # Create a results vector with number of predicted suitable island groups
-    results_number_islandgroups <- c(number_islandgroups, a, "clim", "native", sp)
+    results_number_islandgroups <- c(number_islandgroups, a, "clim", "global", sp)
     
     # Add the results vector to the data frame
-    results_number_suitable_islandgroups_clim_native_comp <- rbind(results_number_suitable_islandgroups_clim_native_comp, results_number_islandgroups)
+    results_number_suitable_islandgroups_clim_global_comp <- rbind(results_number_suitable_islandgroups_clim_global_comp, results_number_islandgroups)
     
     # Make sure the column names are correct
-    colnames(results_number_suitable_islandgroups_clim_native_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
+    colnames(results_number_suitable_islandgroups_clim_global_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species")
     
     
   } # End loop over all algorithms
@@ -286,28 +286,28 @@ for (sp in study_species) { # Start loop over all species
 # predicted suitable island groups
 
 # Create a data frame to store results
-results_rank_number_suitable_islandgroups_clim_native_comp <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(results_rank_number_suitable_islandgroups_clim_native_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
+results_rank_number_suitable_islandgroups_clim_global_comp <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(results_rank_number_suitable_islandgroups_clim_global_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 for (a in algorithm) { # Start the loop over all algorithms
   
   # Subset the data frame containing the number of suitable island groups by algorithm
-  subset_algorithm <- subset(results_number_suitable_islandgroups_clim_native_comp, results_number_suitable_islandgroups_clim_native_comp$algorithm == a)
+  subset_algorithm <- subset(results_number_suitable_islandgroups_clim_global_comp, results_number_suitable_islandgroups_clim_global_comp$algorithm == a)
   
   # Rank the species per algorithm by their predicted suitable number of island groups
   subset_algorithm$rank <- dense_rank(desc(as.numeric(subset_algorithm$number_suitable_islandgroups)))
   
   # Add the data frame including rank to the results data frame
-  results_rank_number_suitable_islandgroups_clim_native_comp <- rbind(results_rank_number_suitable_islandgroups_clim_native_comp, subset_algorithm)
+  results_rank_number_suitable_islandgroups_clim_global_comp <- rbind(results_rank_number_suitable_islandgroups_clim_global_comp, subset_algorithm)
   
 } # End loop over all algorithms
 
 # Make sure that the column names are correct 
-colnames(results_rank_number_suitable_islandgroups_clim_native_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(results_rank_number_suitable_islandgroups_clim_global_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # Save the resulting data frame
-save(results_rank_number_suitable_islandgroups_clim_native_comp, file = "output_data/blacklists/native/clim_comp/results_rank_number_suitable_islandgroups_clim_native_comp.RData")
+save(results_rank_number_suitable_islandgroups_clim_global_comp, file = "output_data/blacklists/global/clim_comp/results_rank_number_suitable_islandgroups_clim_global_comp.RData")
 
 
 
@@ -319,14 +319,14 @@ save(results_rank_number_suitable_islandgroups_clim_native_comp, file = "output_
 # (a) Including all 49 island groups -------------------------------------------
 
 # Create a data frame to store the results
-islandgroups_rank_clim_native <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(islandgroups_rank_clim_native) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
+islandgroups_rank_clim_global <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(islandgroups_rank_clim_global) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 for (a in algorithm) { # Start the loop over all algorithms
   
   # Subset the data frame  of area calculations by each algorithm
-  subset_algorithm <- subset(islandgroups_results_clim_native, islandgroups_results_clim_native$algorithm == a)
+  subset_algorithm <- subset(islandgroups_results_clim_global, islandgroups_results_clim_global$algorithm == a)
   
   for (i in islandgroup_climate) { # Start the loop over all island groups
     
@@ -340,7 +340,7 @@ for (a in algorithm) { # Start the loop over all algorithms
     subset_algorithm_islandgroup_rank <- subset_algorithm_islandgroup[, -c(2:4)]
     
     # Add the resulting data frames
-    islandgroups_rank_clim_native <- rbind(islandgroups_rank_clim_native, subset_algorithm_islandgroup_rank)
+    islandgroups_rank_clim_global <- rbind(islandgroups_rank_clim_global, subset_algorithm_islandgroup_rank)
     
     
   } # End loop over all island groups
@@ -348,21 +348,21 @@ for (a in algorithm) { # Start the loop over all algorithms
 } # End the loop over all algorithms
 
 # Make sure column names are correct 
-colnames(islandgroups_rank_clim_native) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(islandgroups_rank_clim_global) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 # After obtaining the ranks per island group for all species, the mean rank per species
 # is calculated
 
 # Create a data frame to store results
-results_mean_rank_islandgroups_clim_native <- data.frame(matrix(ncol = 5, nrow = 0))
-colnames(results_mean_rank_islandgroups_clim_native) <- c("rank", "algorithm", "predictor_type", "niche", "species")
+results_mean_rank_islandgroups_clim_global <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(results_mean_rank_islandgroups_clim_global) <- c("rank", "algorithm", "predictor_type", "niche", "species")
 
 
 for (sp in study_species) { # Start the loop over all species
   
   # Subset the data frame by species
-  subset_species <- subset(islandgroups_rank_clim_native, islandgroups_rank_clim_native$species == sp)
+  subset_species <- subset(islandgroups_rank_clim_global, islandgroups_rank_clim_global$species == sp)
   
   
   for (a in algorithm) { # Start the loop over all algorithms
@@ -374,21 +374,21 @@ for (sp in study_species) { # Start the loop over all species
     mean_rank <- round(colMeans(subset_species_algorithm["rank"]), 2)
     
     # Create a vector that contains all result information
-    results_mean_rank <- c(mean_rank, a, "clim", "native", sp)
+    results_mean_rank <- c(mean_rank, a, "clim", "global", sp)
     
     # Add the results vector to the data frame
-    results_mean_rank_islandgroups_clim_native <- rbind(results_mean_rank_islandgroups_clim_native, results_mean_rank)
+    results_mean_rank_islandgroups_clim_global <- rbind(results_mean_rank_islandgroups_clim_global, results_mean_rank)
     
     
   } # End loop over all algorithms
-    
+  
 } # End loop over all species
 
 # Make sure all column names are correct
-colnames(results_mean_rank_islandgroups_clim_native) <- c("rank", "algorithm", "predictor_type", "niche", "species")
+colnames(results_mean_rank_islandgroups_clim_global) <- c("rank", "algorithm", "predictor_type", "niche", "species")
 
 # Save the resulting data frame
-save(results_mean_rank_islandgroups_clim_native, file = "output_data/blacklists/native/clim/results_mean_rank_islandgroups_clim_native.RData")
+save(results_mean_rank_islandgroups_clim_global, file = "output_data/blacklists/global/clim/results_mean_rank_islandgroups_clim_global.RData")
 
 
 
@@ -397,14 +397,14 @@ save(results_mean_rank_islandgroups_clim_native, file = "output_data/blacklists/
 # a reasonable comparison
 
 # Create a data frame to store the results
-islandgroups_rank_clim_native_comp <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(islandgroups_rank_clim_native_comp) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
+islandgroups_rank_clim_global_comp <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(islandgroups_rank_clim_global_comp) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 for (a in algorithm) { # Start the loop over all algorithms
   
   # Subset the data frame  of area calculations by each algorithm
-  subset_algorithm <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$algorithm == a)
+  subset_algorithm <- subset(islandgroups_results_clim_global_comp, islandgroups_results_clim_global_comp$algorithm == a)
   
   for (i in islandgroup_climate_soil) { # Start the loop over all island groups
     
@@ -418,7 +418,7 @@ for (a in algorithm) { # Start the loop over all algorithms
     subset_algorithm_islandgroup_rank <- subset_algorithm_islandgroup[, -c(2:4)]
     
     # Add the resulting data frames
-    islandgroups_rank_clim_native_comp <- rbind(islandgroups_rank_clim_native_comp, subset_algorithm_islandgroup_rank)
+    islandgroups_rank_clim_global_comp <- rbind(islandgroups_rank_clim_global_comp, subset_algorithm_islandgroup_rank)
     
     
   } # End loop over all island groups
@@ -426,21 +426,21 @@ for (a in algorithm) { # Start the loop over all algorithms
 } # End the loop over all algorithms
 
 # Make sure column names are correct 
-colnames(islandgroups_rank_clim_native_comp) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
+colnames(islandgroups_rank_clim_global_comp) <- c("islandgroup", "algorithm", "predictor_type", "niche", "species", "rank")
 
 
 # After obtaining the ranks per island group for all species, the mean rank per species
 # is calculated
 
 # Create a data frame to store results
-results_mean_rank_islandgroups_clim_native_comp <- data.frame(matrix(ncol = 5, nrow = 0))
-colnames(results_mean_rank_islandgroups_clim_native_comp) <- c("rank", "algorithm", "predictor_type", "niche", "species")
+results_mean_rank_islandgroups_clim_global_comp <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(results_mean_rank_islandgroups_clim_global_comp) <- c("rank", "algorithm", "predictor_type", "niche", "species")
 
 
 for (sp in study_species) { # Start the loop over all species
   
   # Subset the data frame by species
-  subset_species <- subset(islandgroups_rank_clim_native_comp, islandgroups_rank_clim_native_comp$species == sp)
+  subset_species <- subset(islandgroups_rank_clim_global_comp, islandgroups_rank_clim_global_comp$species == sp)
   
   
   for (a in algorithm) { # Start the loop over all algorithms
@@ -452,10 +452,10 @@ for (sp in study_species) { # Start the loop over all species
     mean_rank <- round(colMeans(subset_species_algorithm["rank"]), 2)
     
     # Create a vector that contains all result information
-    results_mean_rank <- c(mean_rank, a, "clim", "native", sp)
+    results_mean_rank <- c(mean_rank, a, "clim", "global", sp)
     
     # Add the results vector to the data frame
-    results_mean_rank_islandgroups_clim_native_comp <- rbind(results_mean_rank_islandgroups_clim_native_comp, results_mean_rank)
+    results_mean_rank_islandgroups_clim_global_comp <- rbind(results_mean_rank_islandgroups_clim_global_comp, results_mean_rank)
     
     
   } # End loop over all algorithms
@@ -463,7 +463,7 @@ for (sp in study_species) { # Start the loop over all species
 } # End loop over all species
 
 # Make sure all column names are correct
-colnames(results_mean_rank_islandgroups_clim_native_comp) <- c("rank", "algorithm", "predictor_type", "niche", "species")
+colnames(results_mean_rank_islandgroups_clim_global_comp) <- c("rank", "algorithm", "predictor_type", "niche", "species")
 
 # Save the resulting data frame
-save(results_mean_rank_islandgroups_clim_native_comp, file = "output_data/blacklists/native/clim_comp/results_mean_rank_islandgroups_clim_native_comp.RData")
+save(results_mean_rank_islandgroups_clim_global_comp, file = "output_data/blacklists/global/clim_comp/results_mean_rank_islandgroups_clim_global_comp.RData")

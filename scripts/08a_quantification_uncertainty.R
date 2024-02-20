@@ -113,7 +113,7 @@ model_number_suitable_RF_comp <- randomForest(x = results_rank_number_suitable_i
                                               ntree = 1000, importance = TRUE)
 
 model_mean_rank_RF_comp <- randomForest(x = results_mean_rank_islandgroups_comp[, c(2:4)],
-                                        y = results_mean_rank_islandgroups_comp$mean_rank,
+                                        y = results_mean_rank_islandgroups_comp$rank,
                                         ntree = 1000, importance = TRUE)
 
 # Save the models
@@ -205,7 +205,7 @@ model_number_suitable_RF <- randomForest(x = results_rank_number_[suitable_islan
                                          ntree = 1000, importance = TRUE)
 
 model_mean_rank_RF <- randomForest(x = results_mean_rank_islandgroups[, c(2,4)],
-                                   y = results_mean_rank_islandgroup$mean_rank,
+                                   y = results_mean_rank_islandgroup$rank,
                                    ntree = 1000, importance = TRUE)
 
 # Save the models
