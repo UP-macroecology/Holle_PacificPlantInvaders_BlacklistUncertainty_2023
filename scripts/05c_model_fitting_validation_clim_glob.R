@@ -19,6 +19,8 @@ library(mgcv)
 library(randomForest)
 library(gbm)
 library(dismo)
+library(PresenceAbsence)
+library(ecospat)
 
 # Load needed objects
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
@@ -27,10 +29,7 @@ source("scripts/functions.R") # partial_response,cross-validation and evaluation
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
-study_species <- c("Caesalpinia_decapetala", "Euphorbia_tirucalli", "Phoenix_dactylifera",
-                   "Stachys_arvensis", "Digitaria_eriantha", "Acacia_auriculiformis",
-                   "Prunus_persica", "Lophostemon_confertus", "Desmanthus_pernambucanus",
-                   "Verbesina_encelioides")
+
 
 #-------------------------------------------------------------------------------
 
@@ -53,7 +52,7 @@ for (sp in study_species) { # Start the loop over all species
       
       # Load needed objects of species and environmental data
       load(paste0("output_data/distribution_env_data_subset/global/clim/species_occ_clim_global_",sp,".RData")) # distribution and environmental data
-      load(paste0("output_data/testing/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData")) # predictor variables
+      load(paste0("output_data/variable_selection/global/clim/pred_sel_clim_global_",sp,".RData")) # predictor variables
       
       # Create an absence index for machine learning algorithm to achieve even 
       # presence and absence data sets for machine learning algorithms
@@ -127,7 +126,7 @@ for (sp in study_species) { # Start the loop over all species
       # (e) ---------------------------
       
       # Save all models together
-      #save(m_glm_clim_global, m_gam_clim_global, m_rf_clim_global, m_brt_clim_global, file = paste0("output_data/models/global/clim/models_clim_global_",sp,".RData"))
+      save(m_glm_clim_global, m_gam_clim_global, m_rf_clim_global, m_brt_clim_global, file = paste0("output_data/models/global/clim/models_clim_global_",sp,".RData"))
       
       
     } else if (file_exists_models == TRUE) { print("already done model building")
@@ -147,7 +146,7 @@ for (sp in study_species) { # Start the loop over all species
       print("start of model validation process")
       
       # Create a directory for each species to save R output plots
-      # dir.create(paste0("output_data/plots/response_plots/",sp))
+      dir.create(paste0("output_data/plots/response_plots/",sp))
       
       
       
@@ -174,10 +173,10 @@ for (sp in study_species) { # Start the loop over all species
       perf_glm_clim_global$Boyce <- boyce_index_glm_clim_global
       
       # Plot partial response curves and save them
-      #svg(paste0("output_data/plots/response_plots/",sp,"/GLM_clim_global_",sp,".svg"))
-      #par(mfrow=c(2,2)) 
-      #partial_response(m_glm_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GLM')
-      #dev.off()
+      svg(paste0("output_data/plots/response_plots/",sp,"/GLM_clim_global_",sp,".svg"))
+      par(mfrow=c(2,2)) 
+      partial_response(m_glm_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GLM')
+      dev.off()
       
       
       
@@ -204,10 +203,10 @@ for (sp in study_species) { # Start the loop over all species
       perf_gam_clim_global$Boyce <- boyce_index_gam_clim_global
       
       # Plot partial response curves and save them
-      #svg(paste0("output_data/plots/response_plots/",sp,"/GAM_clim_global_",sp,".svg"))
-      #par(mfrow=c(2,2)) 
-      #partial_response(m_gam_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GAM')
-      #dev.off()
+      svg(paste0("output_data/plots/response_plots/",sp,"/GAM_clim_global_",sp,".svg"))
+      par(mfrow=c(2,2)) 
+      partial_response(m_gam_clim_global, predictors = species_occ_clim_global[,pred_sel_clim_global], main='GAM')
+      dev.off()
       
       
       
@@ -238,10 +237,10 @@ for (sp in study_species) { # Start the loop over all species
       perf_rf_clim_global["Boyce"] <- boyce_index_rf_clim_global
       
       # Plot partial response curves and save them
-      #svg(paste0("output_data/plots/response_plots/",sp,"/RF_clim_global_",sp,".svg"))
-      #par(mfrow=c(2,2)) 
-      #partial_response(m_rf_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='RF')
-      #dev.off()
+      svg(paste0("output_data/plots/response_plots/",sp,"/RF_clim_global_",sp,".svg"))
+      par(mfrow=c(2,2)) 
+      partial_response(m_rf_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='RF')
+      dev.off()
       
       
       
@@ -272,10 +271,10 @@ for (sp in study_species) { # Start the loop over all species
       perf_brt_clim_global["Boyce"] <- boyce_index_brt_clim_global
       
       # Plot partial response curves and save them
-      #svg(paste0("output_data/plots/response_plots/",sp,"/BRT_clim_global_",sp,".svg"))
-      #par(mfrow=c(2,2)) 
-      #partial_response(m_brt_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='BRT')
-      #dev.off()
+      svg(paste0("output_data/plots/response_plots/",sp,"/BRT_clim_global_",sp,".svg"))
+      par(mfrow=c(2,2)) 
+      partial_response(m_brt_clim_global[[1]], predictors = species_occ_clim_global[,pred_sel_clim_global], main='BRT')
+      dev.off()
       
       
       
@@ -361,7 +360,7 @@ for (sp in study_species) { # Start the loop over all species
       
       # (g) Save validation outputs  -------------------------------------------
       
-      save(comp_perf_clim_global, ensemble_perf_clim_global, file = paste0("output_data/testing/validation/global/clim/boyce/validation_clim_global_",sp,".RData"))
+      save(comp_perf_clim_global, ensemble_perf_clim_global, file = paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
       
       
       

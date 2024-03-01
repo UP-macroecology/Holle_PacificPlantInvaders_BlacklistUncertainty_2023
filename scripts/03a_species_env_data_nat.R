@@ -151,41 +151,47 @@ for (sp in study_species) {
 # 4. Final species selection after environmental relation ----------------------
 
 # Prepare a data frame to store the result of occurrence numbers
-occ_numbers_thinned_env_nat <- data.frame(expand.grid(species=c(paste(study_species))), native_occurrences=NA)
+occ_numbers_thinned_env_nat <- data.frame(expand.grid(species=c(paste(study_species))), natclim_occurrences=NA, natedaclim_occurrences=NA)
 
 for (sp in study_species) {
   try({
 
   print(sp)
 
-  # check if joined distribution and climatic and edaphic data file already exists
-  file_exists <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  # Check if joined distribution with purely climatic
+  # and combined climatic and edaphic data file already exists
+  file_exists_1 <- file.exists(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
+  file_exists_2 <- file.exists(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
+  
 
-
-  if (file_exists == TRUE) { # Just continue with the species if file exists
+  if (file_exists_1 == TRUE && file_exists_2 == TRUE) { # Just continue with the species if file exists
 
   print("file available")
 
   # Load in the data frame with species occurrences and all environmental variables
+  load(paste0("output_data/distribution_env_data/native/clim/species_occ_clim_native_",sp,".RData"))
   load(paste0("output_data/distribution_env_data/native/edaclim/species_occ_edaclim_native_",sp,".RData"))
 
   # Subset by native presences
-  native_presences <- subset(species_occ_edaclim_native, species_occ_edaclim_native$occ == 1)
+  native_presences_clim <- subset(species_occ_clim_native, species_occ_clim_native$occ == 1)
+  native_presences_edaclim <- subset(species_occ_edaclim_native, species_occ_edaclim_native$occ == 1)
 
   # Sum up number of native presences
-  number_native_presences <- nrow(native_presences)
+  number_native_presences_clim <- nrow(native_presences_clim)
+  number_native_presences_edaclim <- nrow(native_presences_edaclim)
 
   # Store the results in data frame
-  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "native_occurrences"] <- number_native_presences
+  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "natclim_occurrences"] <- number_native_presences_clim
+  occ_numbers_thinned_env_nat[occ_numbers_thinned_env_nat$species == sp, "natedaclim_occurrences"] <- number_native_presences_edaclim
 
-  } else if (file_exists == FALSE) { print("file not available")
+  } else if (file_exists_1 == FALSE && file_exists_2 == FALSE) { print("file not available")
     next # If file does not exist, skip to the next species
   }
 
 })}
 
 # Remove the species with less than 40 occurrences
-occ_numbers_thinned_env_nat_filtered <- subset(occ_numbers_thinned_env_nat, occ_numbers_thinned_env_nat$native_occurrences >= 40)
+occ_numbers_thinned_env_nat_filtered <- subset(occ_numbers_thinned_env_nat, occ_numbers_thinned_env_nat$natclim_occurrences >= 40 & occ_numbers_thinned_env_nat$natedaclim_occurrences >= 40)
 
 # Save the data frame
 save(occ_numbers_thinned_env_nat_filtered, file = "input_data/occ_numbers_thinned_env_nat_filtered.RData")

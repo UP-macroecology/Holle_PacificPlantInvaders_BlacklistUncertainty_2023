@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                   01. Species selection                                #
+#                   01. Initial Species selection                        #
 # ---------------------------------------------------------------------- #
 
 # Set working directory
@@ -41,7 +41,7 @@ world_mask <- terra::rast("input_data/spatial_data/world_mask.tif") # mask with 
 # Species names are based on LCVP (Leipzig Catalogue of Vascular Plants; Freiberg et al. 2020), but don’t include author information
 Wohlwend_data <- read_delim("input_data/Pacific_Invaders_GIFT_22_01.csv", 
                             delim = ";", locale = locale(decimal_mark = ",")) %>%
-                 filter(inva_stat == "T", Islandgroup == "Hawaiian") %>%
+                 filter(inva_stat == "T", Islandgroup == "Hawaiian") %>% # "T" stand for true, they are recognized as invasive by PIER
                  distinct(Species)
 
 species_Hawaii <- Wohlwend_data$Species

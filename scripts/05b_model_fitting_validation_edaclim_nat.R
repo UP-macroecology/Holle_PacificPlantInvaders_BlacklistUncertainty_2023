@@ -19,6 +19,8 @@ library(mgcv)
 library(randomForest)
 library(gbm)
 library(dismo)
+library(PresenceAbsence)
+library(ecospat)
 
 # Load needed objects
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
@@ -27,10 +29,7 @@ source("scripts/functions.R") # partial_response,cross-validation and evaluation
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
-study_species <- c("Caesalpinia_decapetala", "Euphorbia_tirucalli", "Phoenix_dactylifera",
-                   "Stachys_arvensis", "Digitaria_eriantha", "Acacia_auriculiformis",
-                   "Prunus_persica", "Lophostemon_confertus", "Desmanthus_pernambucanus",
-                   "Verbesina_encelioides")
+
 
 #-------------------------------------------------------------------------------
 
@@ -147,7 +146,7 @@ for (sp in study_species) { # Start the loop over all species
       print("start of model validation process")
       
       # Create a directory for each species to save R output plots
-      # dir.create(paste0("output_data/plots/response_plots/",sp))
+      dir.create(paste0("output_data/plots/response_plots/",sp))
       
       
       

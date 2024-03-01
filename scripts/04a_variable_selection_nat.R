@@ -156,39 +156,3 @@ for (sp in study_species) { # Start the loop over all species
 
 
 
-### How often are the variables "organic carbon content" and "bulk density" selected?
-# (Due to its low coverage values of the Easter Islands)
-
-edaclim_Easter_native <- data.frame(expand.grid(species=c(paste(study_species))), organic_carbon_content=NA, 
-                                    bulk_density=NA, both=NA)
-
-for (sp in study_species) { # Start the loop over all species
-  try({
-    
-    print(sp)
-    
-    file_exists <- file.exists(paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData"))
-    
-    if (file_exists == TRUE) {
-      
-      load(paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData"))
-      
-      if ("organic_carbon_content" %in% pred_sel_edaclim_native) {
-        
-        edaclim_Easter_native[edaclim_Easter_native$species == sp, "organic_carbon_content"] <- 1
-        
-      } else if ("bulk_density" %in% pred_sel_edaclim_native) {
-        
-        edaclim_Easter_native[edaclim_Easter_native$species == sp, "bulk_density"] <- 1
-        
-      } else if ("organic_carbon_content" %in% pred_sel_edaclim_native & "bulk_density" %in% pred_sel_edaclim_native) {
-        
-        edaclim_Easter_native[edaclim_Easter_native$species == sp, "both"] <- 1
-        
-      } else { next
-      }}
-    
-    if (file_exists == FALSE) { next
-    }
-    
-  })}
