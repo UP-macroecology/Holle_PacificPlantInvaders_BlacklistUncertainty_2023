@@ -207,3 +207,4 @@ occ_numbers_thinned_env_filtered <- subset(occ_numbers_thinned_env_filtered, !(s
 
 # Save data frame with final species selection
 save(occ_numbers_thinned_env_filtered, file = "input_data/occ_numbers_thinned_env_filtered.RData")
+

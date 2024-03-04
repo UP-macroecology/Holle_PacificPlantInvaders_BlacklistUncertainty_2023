@@ -372,3 +372,5 @@ for (sp in study_species) { # Start the loop over all species
     
 })} # end of try and for loop over species
 
+gc()
+rm(list=ls())
