@@ -59,6 +59,10 @@ Chelsa_SoilGrids <- c(Chelsa, SoilGrids)
 # Transform to terra SpatVect object
 geoentities_SpatVect <- vect(geoentities, crs = "EPSG:4326")
 
+# Give a coordinate reference system to Fiji shapefiles
+crs(fiji_1) <- "EPSG:4326"
+crs(fiji_2) <- "EPSG:4326"
+
 
 
 #-------------------------------------------------------------------------------
@@ -506,3 +510,5 @@ islandgroups_results_edaclim_global[, 2:4] <- apply(islandgroups_results_edaclim
 save(islandgroups_results_edaclim_global, file = "output_data/model_predictions/global/edaclim/islandgroups_results_edaclim_global.RData")
 
 
+gc()
+rm(list=ls())

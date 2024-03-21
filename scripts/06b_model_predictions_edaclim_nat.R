@@ -59,6 +59,10 @@ Chelsa_SoilGrids <- c(Chelsa, SoilGrids)
 # Transform to terra SpatVect object
 geoentities_SpatVect <- vect(geoentities, crs = "EPSG:4326")
 
+# Give a coordinate reference system to Fiji shapefiles
+crs(fiji_1) <- "EPSG:4326"
+crs(fiji_2) <- "EPSG:4326"
+
 
 
 #-------------------------------------------------------------------------------
@@ -145,6 +149,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           
           
+          
           # (c) Predictions of GAM ---------------------------------------------
           
           # Make predictions
@@ -157,6 +162,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make a raster from binarised predictions
           r_env_preds_gam_bin <- terra::rast(env_preds_gam_bin, crs=crs(Chelsa_SoilGrids$bio_1))
+          
           
           
           
@@ -175,6 +181,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make a raster from binarised predictions
           r_env_preds_rf_bin <- terra::rast(env_preds_rf_bin, crs=crs(Chelsa_SoilGrids$bio_1))
+          
           
           
           
@@ -198,6 +205,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           
           
+          
           # (f) Predictions of Ensemble ----------------------------------------
           
           # Bind all continuous predictions of the algorithms into one data frame
@@ -215,6 +223,7 @@ for (sp in study_species) { # Start of the loop over all species
           
           # Make a raster from binarised predictions
           r_env_preds_ensemble_bin <- terra::rast(env_preds_ensemble_bin, crs=crs(Chelsa_SoilGrids$bio_1))
+          
           
           
           
@@ -506,3 +515,5 @@ islandgroups_results_edaclim_native[, 2:4] <- apply(islandgroups_results_edaclim
 save(islandgroups_results_edaclim_native, file = "output_data/model_predictions/native/edaclim/islandgroups_results_edaclim_native.RData")
 
 
+gc()
+rm(list=ls())

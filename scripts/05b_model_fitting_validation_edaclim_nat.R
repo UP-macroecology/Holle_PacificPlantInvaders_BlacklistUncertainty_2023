@@ -28,6 +28,7 @@ source("scripts/functions.R") # partial_response,cross-validation and evaluation
 
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
+study_species <- study_species[study_species!= "Crotalaria_juncea"]
 
 
 
@@ -57,7 +58,10 @@ for (sp in study_species) { # Start the loop over all species
       # Create an absence index for machine learning algorithm to achieve even 
       # presence and absence data sets for machine learning algorithms
       species_occ_edaclim_native$abs_index <- NA
-      species_occ_edaclim_native$abs_index[species_occ_edaclim_native$occ!=1] <- sample(1:10,sum(species_occ_edaclim_native$occ!=1), replace=T)
+      number_absences <- sum(species_occ_edaclim_native$occ != 1)
+      values_absences <- rep(1:10, length.out = number_absences)
+      values_sample <- sample(values_absences)
+      species_occ_edaclim_native$abs_index[species_occ_edaclim_native$occ != 1] <- values_sample
       
       # Calculate same weights for presences and absences for regression based algorithms
       weights <- ifelse(species_occ_edaclim_native$occ==1, 1, sum(species_occ_edaclim_native$occ==1) / sum(species_occ_edaclim_native$occ==0))

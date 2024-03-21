@@ -54,6 +54,10 @@ names(Chelsa) <- c(paste('bio',1:19, sep='_'))
 # Transform to terra SpatVect object
 geoentities_SpatVect <- vect(geoentities, crs = "EPSG:4326")
 
+# Give a coordinate reference system to Fiji shapefiles
+crs(fiji_1) <- "EPSG:4326"
+crs(fiji_2) <- "EPSG:4326"
+
 
 #-------------------------------------------------------------------------------
 
@@ -134,8 +138,16 @@ for (sp in study_species) { # Start of the loop over all species
                                           glm = ifelse(env_preds_glm[,"glm"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="glm",'thresh'],1,0))
           
           
-          # Make a raster from binarised predictions
-          r_env_preds_glm_bin <- terra::rast(env_preds_glm_bin, crs=crs(Chelsa$bio_1))
+          # Make a raster from binarised predictions - For the smallest island group Hunter and Matthew
+          # an alternative approach needs to be taken as it only consists of two data points (wrong resolution is estimated)
+          if (i == "Hunter and Matthew") {
+            extent_preds_glm <- c(min(env_preds_glm_bin$x), max(env_preds_glm_bin$x), min(env_preds_glm_bin$y), max(env_preds_glm_bin$y))
+            r_env_preds_glm_bin_temp <- terra::rast(ext = extent_preds_glm, res = res(Chelsa$bio_1), crs = crs(Chelsa$bio_1))
+            vec_preds_glm <- vect(env_preds_glm_bin, geom = c("x", "y"))
+            r_env_preds_glm_bin <- rasterize(vec_preds_glm, r_env_preds_glm_bin_temp, field = "glm")
+            
+          } else { r_env_preds_glm_bin <- terra::rast(env_preds_glm_bin, crs=crs(Chelsa$bio_1))
+          }
           
           
           
@@ -149,8 +161,16 @@ for (sp in study_species) { # Start of the loop over all species
           env_preds_gam_bin <- data.frame(bio_curr_df_islandgroup[,1:2], 
                                           gam = ifelse(env_preds_gam[,"gam"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="gam",'thresh'],1,0))
           
-          # Make a raster from binarised predictions
-          r_env_preds_gam_bin <- terra::rast(env_preds_gam_bin, crs=crs(Chelsa$bio_1))
+          # Make a raster from binarised predictions - For the smallest island group Hunter and Matthew
+          # an alternative approach needs to be taken as it only consists of two data points (wrong resolution is estimated)
+          if (i == "Hunter and Matthew") {
+            extent_preds_gam <- c(min(env_preds_gam_bin$x), max(env_preds_gam_bin$x), min(env_preds_gam_bin$y), max(env_preds_gam_bin$y))
+            r_env_preds_gam_bin_temp <- terra::rast(ext = extent_preds_gam, res = res(Chelsa$bio_1), crs = crs(Chelsa$bio_1))
+            vec_preds_gam <- vect(env_preds_gam_bin, geom = c("x", "y"))
+            r_env_preds_gam_bin <- rasterize(vec_preds_gam, r_env_preds_gam_bin_temp, field = "gam")
+            
+          } else { r_env_preds_gam_bin <- terra::rast(env_preds_gam_bin, crs=crs(Chelsa$bio_1))
+          }
           
           
           
@@ -167,8 +187,16 @@ for (sp in study_species) { # Start of the loop over all species
           env_preds_rf_bin <- data.frame(bio_curr_df_islandgroup[,1:2],
                                          rf = ifelse(env_preds_rf[,"rf"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="rf",'thresh'],1,0))
           
-          # Make a raster from binarised predictions
-          r_env_preds_rf_bin <- terra::rast(env_preds_rf_bin, crs=crs(Chelsa$bio_1))
+          # Make a raster from binarised predictions - For the smallest island group Hunter and Matthew
+          # an alternative approach needs to be taken as it only consists of two data points (wrong resolution is estimated)
+          if (i == "Hunter and Matthew") {
+            extent_preds_rf <- c(min(env_preds_rf_bin$x), max(env_preds_rf_bin$x), min(env_preds_rf_bin$y), max(env_preds_rf_bin$y))
+            r_env_preds_rf_bin_temp <- terra::rast(ext = extent_preds_rf, res = res(Chelsa$bio_1), crs = crs(Chelsa$bio_1))
+            vec_preds_rf <- vect(env_preds_rf_bin, geom = c("x", "y"))
+            r_env_preds_rf_bin <- rasterize(vec_preds_rf, r_env_preds_rf_bin_temp, field = "rf")
+            
+          } else { r_env_preds_rf_bin <- terra::rast(env_preds_rf_bin, crs=crs(Chelsa$bio_1))
+          }
           
           
           
@@ -187,8 +215,16 @@ for (sp in study_species) { # Start of the loop over all species
           env_preds_brt_bin <- data.frame(bio_curr_df_islandgroup[,1:2],
                                           brt = ifelse(env_preds_brt[,"brt"]>=comp_perf_clim_global[comp_perf_clim_global$alg=="brt",'thresh'],1,0))
           
-          # Make a raster from binarised predictions
-          r_env_preds_brt_bin <- terra::rast(env_preds_brt_bin, crs=crs(Chelsa$bio_1))
+          # Make a raster from binarised predictions - For the smallest island group Hunter and Matthew
+          # an alternative approach needs to be taken as it only consists of two data points (wrong resolution is estimated)
+          if (i == "Hunter and Matthew") {
+            extent_preds_brt <- c(min(env_preds_brt_bin$x), max(env_preds_brt_bin$x), min(env_preds_brt_bin$y), max(env_preds_brt_bin$y))
+            r_env_preds_brt_bin_temp <- terra::rast(ext = extent_preds_brt, res = res(Chelsa$bio_1), crs = crs(Chelsa$bio_1))
+            vec_preds_brt <- vect(env_preds_brt_bin, geom = c("x", "y"))
+            r_env_preds_brt_bin <- rasterize(vec_preds_brt, r_env_preds_brt_bin_temp, field = "brt")
+            
+          } else { r_env_preds_brt_bin <- terra::rast(env_preds_brt_bin, crs=crs(Chelsa$bio_1))
+          }
           
           
           
@@ -207,8 +243,16 @@ for (sp in study_species) { # Start of the loop over all species
                                                ensemble = ifelse(env_preds_ensemble[,"mean_prob"]>= ensemble_perf_clim_global["mean_prob",'thresh'],1,0))
           
           
-          # Make a raster from binarised predictions
-          r_env_preds_ensemble_bin <- terra::rast(env_preds_ensemble_bin, crs=crs(Chelsa$bio_1))
+          # Make a raster from binarised predictions - For the smallest island group Hunter and Matthew
+          # an alternative approach needs to be taken as it only consists of two data points (wrong resolution is estimated)
+          if (i == "Hunter and Matthew") {
+            extent_preds_ensemble <- c(min(env_preds_ensemble_bin$x), max(env_preds_ensemble_bin$x), min(env_preds_ensemble_bin$y), max(env_preds_ensemble_bin$y))
+            r_env_preds_ensemble_bin_temp <- terra::rast(ext = extent_preds_ensemble, res = res(Chelsa$bio_1), crs = crs(Chelsa$bio_1))
+            vec_preds_ensemble <- vect(env_preds_ensemble_bin, geom = c("x", "y"))
+            r_env_preds_ensemble_bin <- rasterize(vec_preds_ensemble, r_env_preds_ensemble_bin_temp, field = "ensemble")
+            
+          } else { r_env_preds_ensemble_bin <- terra::rast(env_preds_ensemble_bin, crs=crs(Chelsa$bio_1))
+          }
           
           
           
@@ -655,3 +699,7 @@ islandgroups_results_clim_global_comp[, 2:4] <- apply(islandgroups_results_clim_
 
 # Save the data frame containing all prediction results
 save(islandgroups_results_clim_global_comp, file = "output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_comp.RData")
+
+
+gc()
+rm(list=ls())
