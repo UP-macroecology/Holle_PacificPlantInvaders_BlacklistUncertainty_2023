@@ -149,7 +149,7 @@ for (sp in study_species) { # Start of the loop over all species
           } else { r_env_preds_glm_bin <- terra::rast(env_preds_glm_bin, crs=crs(Chelsa$bio_1))
           }
             
-            
+
             
           # (c) Predictions of GAM ---------------------------------------------
           
@@ -511,27 +511,27 @@ for (sp in study_species) { # Start of the loop over all species
 # Create a data frame to store the results of area calculations for all species
 islandgroups_results_clim_native <- data.frame(matrix(ncol = 8, nrow = 0))
 colnames(islandgroups_results_clim_native) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
-
+# 
 for (sp in study_species) {
   try({
-    
+
     # Check if prediction results already exist
     file_exists <- file.exists(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
-    
-    if (file_exists == TRUE) { # just continue with model predictions if output 
+
+    if (file_exists == TRUE) { # just continue with model predictions if output
       # with prediction results exists
-      
+
       # Load the file with predictions results
       load(paste0("output_data/model_predictions/native/clim/islandgroups_results_clim_native_spec_",sp,".RData"))
-      
+
       # Add the data frame for each species to the data frame containing all results for all species
       islandgroups_results_clim_native <- rbind(islandgroups_results_clim_native, islandgroups_results_clim_native_spec)
-      
+
     } else if (file_exists == FALSE) { next
     } # End of if condition
-      
-    
-  
+
+
+
 })} # end of try and for loop over species
 
 # Make sure the data frame contains the correct column names
@@ -644,14 +644,6 @@ for (sp in study_species) { # Start of the loop over all species
       islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_brt)
       islandgroups_results_clim_native_spec_comp <- rbind(islandgroups_results_clim_native_spec_comp, total_results_ensemble)
       
-      
-    } else if (file_exists == TRUE) { next
-    } # End of if condition
-    
-    
-})} # end of try and for loop over species
-
-
       # Make sure the data frame contains the correct column names 
       colnames(islandgroups_results_clim_native_spec_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
       
@@ -660,6 +652,15 @@ for (sp in study_species) { # Start of the loop over all species
       
       # Save the results data frame per species
       save(islandgroups_results_clim_native_spec_comp, file = paste0("output_data/model_predictions/native/clim_comp/islandgroups_results_clim_native_spec_comp_",sp,".RData"))
+      
+      
+    } else if (file_exists == TRUE) { next
+    } # End of if condition
+    
+    
+})} # end of try and for loop over species
+
+
 
       
 #-------------------------------------------------------------------------------

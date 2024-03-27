@@ -35,8 +35,6 @@ load("input_data/spatial_data/geoentities_plus_newname.RData") # Island group sh
 
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
-study_species <- c(study_species, "Arrhenatherum_elatius", "Tanacetum_parthenium", 
-                   "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare") # needs to be erased at some point
 
 # Retrieve names of all island groups
 islandgroup <- colnames(observed_occ_pacific_islands)

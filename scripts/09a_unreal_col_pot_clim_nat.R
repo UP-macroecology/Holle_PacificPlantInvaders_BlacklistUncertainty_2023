@@ -37,7 +37,6 @@ load("input_data/spatial_data/pacific_islands_extent.RData") # Island group name
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
-
 # Add an underscore to the species names to match them
 Wohlwend_data$Species <- str_replace_all(Wohlwend_data$Species, " ", "_")
 
@@ -126,8 +125,6 @@ for (sp in study_species) { # Start of the loop over all study species
   # Subset the prediction data frame by each species
   subset_species <- subset(islandgroups_results_clim_native_ensemble, islandgroups_results_clim_native_ensemble$species == sp)
   
-  # Create a directory for each species to save results
-  dir.create(paste0("output_data/unrealized_col_pot/native/clim/",sp))
   
   
   for (i in islandgroup_climate) { # Start of the loop over all island groups
@@ -163,7 +160,7 @@ for (sp in study_species) { # Start of the loop over all study species
     colnames(unreal_col_pot_clim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
     
     # Save the data frame for each species
-    save(unreal_col_pot_clim_native_species, file = paste0("output_data/unrealized_col_pot/native/clim/",sp,"/unreal_col_pot_clim_native_species_",sp,".RData"))
+    save(unreal_col_pot_clim_native_species, file = paste0("output_data/unrealized_col_pot/native/clim/unreal_col_pot_clim_native_species_",sp,".RData"))
     
     
 
@@ -216,7 +213,7 @@ unreal_col_pot_clim_native_comp <- data.frame(matrix(ncol = 3, nrow = 0))
 colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "predictor_set", "species")
 
 # Solely use the predictions of ensemble models
-islandgroups_results_clim_native_ensemble <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$algorithm == "Ensemble")
+islandgroups_results_clim_native_ensemble_comp <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$algorithm == "Ensemble")
 
 
 for (sp in study_species) { # Start of the loop over all study species
@@ -226,10 +223,8 @@ for (sp in study_species) { # Start of the loop over all study species
   colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
   
   # Subset the prediction data frame by each species
-  subset_species <- subset(islandgroups_results_clim_native_ensemble, islandgroups_results_clim_native_ensemble$species == sp)
+  subset_species <- subset(islandgroups_results_clim_native_ensemble_comp, islandgroups_results_clim_native_ensemble_comp$species == sp)
   
-  # Create a directory for each species to save results
-  dir.create(paste0("output_data/unrealized_col_pot/native/clim_comp/",sp))
   
   
   for (i in islandgroup_climate_soil) { # Start of the loop over all island groups
@@ -259,13 +254,13 @@ for (sp in study_species) { # Start of the loop over all study species
     }
     
     # Add the vector containing the results to the data frame
-    unreal_col_pot_clim_native_species_comp <- rbind(unreal_col_pot_clim_native_species, results_col_pot)
+    unreal_col_pot_clim_native_species_comp <- rbind(unreal_col_pot_clim_native_species_comp, results_col_pot)
     
     # Make sure the column names are correct
     colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
     
     # Save the data frame for each species
-    save(unreal_col_pot_clim_native_species_comp, file = paste0("output_data/unrealized_col_pot/native/clim/",sp,"/unreal_col_pot_clim_native_species_comp_",sp,".RData"))
+    save(unreal_col_pot_clim_native_species_comp, file = paste0("output_data/unrealized_col_pot/native/clim_comp/unreal_col_pot_clim_native_species_comp_",sp,".RData"))
     
     
     

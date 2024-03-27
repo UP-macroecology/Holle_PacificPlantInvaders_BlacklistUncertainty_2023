@@ -121,8 +121,6 @@ for (sp in study_species) { # Start of the loop over all study species
   # Subset the prediction data frame by each species
   subset_species <- subset(islandgroups_results_edaclim_global_ensemble, islandgroups_results_edaclim_global_ensemble$species == sp)
   
-  # Create a directory for each species to save results
-  dir.create(paste0("output_data/unrealized_col_pot/global/edaclim/",sp))
   
   
   for (i in islandgroup_climate_soil) { # Start of the loop over all island groups
@@ -145,10 +143,10 @@ for (sp in study_species) { # Start of the loop over all study species
     # Go through the four different possibilities of coinciding information and 
     # store the information that matches
     
-    if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 2, sp)
-    } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 2, sp)
-    } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 2, sp)
-    } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 2, sp) 
+    if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 4, sp)
+    } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 4, sp)
+    } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 4, sp)
+    } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 4, sp) 
     }
     
     # Add the vector containing the results to the data frame
@@ -158,7 +156,7 @@ for (sp in study_species) { # Start of the loop over all study species
     colnames(unreal_col_pot_edaclim_global_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
     
     # Save the data frame for each species
-    save(unreal_col_pot_edaclim_global_species, file = paste0("output_data/unrealized_col_pot/global/edaclim/",sp,"/unreal_col_pot_edaclim_global_species_",sp,".RData"))
+    save(unreal_col_pot_edaclim_global_species, file = paste0("output_data/unrealized_col_pot/global/edaclim/unreal_col_pot_edaclim_global_species_",sp,".RData"))
     
     
     
@@ -174,7 +172,7 @@ for (sp in study_species) { # Start of the loop over all study species
   false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
   
   # Create a vector with results
-  results_unreal_col_pot <- c(false_positives, 1, sp)
+  results_unreal_col_pot <- c(false_positives, 4, sp)
   
   # Add result to the data frame
   unreal_col_pot_edaclim_global <- rbind(unreal_col_pot_edaclim_global, results_unreal_col_pot)

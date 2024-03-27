@@ -36,8 +36,6 @@ load("input_data/spatial_data/pacific_islands_extent.RData") # Island group name
 
 # Retrieve species names
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species))
-study_species <- c(study_species, "Arrhenatherum_elatius", "Tanacetum_parthenium", # erase this later
-                   "Bellis_perennis", "Phleum_pratense", "Cirsium_vulgare")
 
 # Add an underscore to the species names to match them
 Wohlwend_data$Species <- str_replace_all(Wohlwend_data$Species, " ", "_")
@@ -123,8 +121,6 @@ for (sp in study_species) { # Start of the loop over all study species
   # Subset the prediction data frame by each species
   subset_species <- subset(islandgroups_results_edaclim_native_ensemble, islandgroups_results_edaclim_native_ensemble$species == sp)
   
-  # Create a directory for each species to save results
-  dir.create(paste0("output_data/unrealized_col_pot/native/edaclim/",sp))
   
   
   for (i in islandgroup_climate_soil) { # Start of the loop over all island groups
@@ -160,7 +156,7 @@ for (sp in study_species) { # Start of the loop over all study species
     colnames(unreal_col_pot_edaclim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
     
     # Save the data frame for each species
-    save(unreal_col_pot_edaclim_native_species, file = paste0("output_data/unrealized_col_pot/native/edaclim/",sp,"/unreal_col_pot_edaclim_native_species_",sp,".RData"))
+    save(unreal_col_pot_edaclim_native_species, file = paste0("output_data/unrealized_col_pot/native/edaclim/unreal_col_pot_edaclim_native_species_",sp,".RData"))
     
     
     
@@ -176,7 +172,7 @@ for (sp in study_species) { # Start of the loop over all study species
   false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
   
   # Create a vector with results
-  results_unreal_col_pot <- c(false_positives, 1, sp)
+  results_unreal_col_pot <- c(false_positives, 2, sp)
   
   # Add result to the data frame
   unreal_col_pot_edaclim_native <- rbind(unreal_col_pot_edaclim_native, results_unreal_col_pot)

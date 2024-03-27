@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#           06b. Model predictions based on global occurrences           #
+#           06d. Model predictions based on global occurrences           #
 #           and combined climatic and edaphic data                       #
 # ---------------------------------------------------------------------- #
 
@@ -74,7 +74,7 @@ for (sp in study_species) { # Start of the loop over all species
     
     print(sp)
     
-    print(edaclim)
+    print("edaclim")
     
     # Check if prediction results already exist
     file_exists <- file.exists(paste0("output_data/model_predictions/global/edaclim/islandgroups_results_edaclim_global_spec_",sp,".RData"))

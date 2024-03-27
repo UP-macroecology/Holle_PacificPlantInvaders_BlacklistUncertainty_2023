@@ -68,7 +68,7 @@ for (sp in study_species) { # Start of the loop over all species
     
     print(sp)
     
-    print(clim)
+    print("clim")
     
     # Check if prediction results already exist
     file_exists <- file.exists(paste0("output_data/model_predictions/global/clim/islandgroups_results_clim_global_spec_",sp,".RData"))
@@ -643,6 +643,15 @@ for (sp in study_species) { # Start of the loop over all species
       islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_brt)
       islandgroups_results_clim_global_spec_comp <- rbind(islandgroups_results_clim_global_spec_comp, total_results_ensemble)
       
+      # Make sure the data frame contains the correct column names 
+      colnames(islandgroups_results_clim_global_spec_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
+      
+      # Make sure that the column containing calculations are numeric
+      islandgroups_results_clim_global_spec_comp[, 2:4] <- apply(islandgroups_results_clim_global_spec_comp[, 2:4], 2, as.numeric)
+      
+      # Save the results data frame per species
+      save(islandgroups_results_clim_global_spec_comp, file = paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
+      
       
     } else if (file_exists == TRUE) { next
     } # End of if condition
@@ -651,14 +660,7 @@ for (sp in study_species) { # Start of the loop over all species
   })} # end of try and for loop over species
 
 
-# Make sure the data frame contains the correct column names 
-colnames(islandgroups_results_clim_global_spec_comp) <- c("islandgroup", "area_islandgroup_raster", "area_islandgroup_suitable", "suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species")
 
-# Make sure that the column containing calculations are numeric
-islandgroups_results_clim_global_spec_comp[, 2:4] <- apply(islandgroups_results_clim_global_spec_comp[, 2:4], 2, as.numeric)
-
-# Save the results data frame per species
-save(islandgroups_results_clim_global_spec_comp, file = paste0("output_data/model_predictions/global/clim_comp/islandgroups_results_clim_global_spec_comp_",sp,".RData"))
 
 
 #-------------------------------------------------------------------------------
