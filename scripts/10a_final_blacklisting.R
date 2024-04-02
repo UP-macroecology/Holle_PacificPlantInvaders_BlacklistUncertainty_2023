@@ -1,4 +1,5 @@
-# Uncertainty paper
+# Uncertainty in blacklisting potential Pacific plant invaders 
+# using species distribution models
 
 
 #-------------------------------------------------------------------------------
@@ -157,7 +158,7 @@ load("output_data/blacklists/native/clim/results_rank_number_suitable_islandgrou
 load("output_data/blacklists/global/clim/results_rank_number_suitable_islandgroups_clim_global.RData")
 
 # Mean rank over all Pacific island groups
-load("output_data/blacklists/native/clim_/results_mean_rank_islandgroups_clim_native.RData")
+load("output_data/blacklists/native/clim/results_mean_rank_islandgroups_clim_native.RData")
 load("output_data/blacklists/global/clim/results_mean_rank_islandgroups_clim_global.RData")
 
 

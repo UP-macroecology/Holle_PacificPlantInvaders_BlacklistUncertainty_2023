@@ -1,4 +1,5 @@
-# Uncertainty paper
+# Uncertainty in blacklisting potential Pacific plant invaders 
+# using species distribution models
 
 
 #-------------------------------------------------------------------------------
@@ -98,7 +99,7 @@ results_mean_rank_islandgroups_comp$predictor_type <- as.factor(results_mean_ran
 # Convert dependent variable (blacklist rank) into numeric values
 results_rank_suitable_fraction_comp$rank <- as.numeric(results_rank_suitable_fraction_comp$rank)
 results_rank_number_suitable_islandgroups_comp$rank <- as.numeric(results_rank_number_suitable_islandgroups_comp$rank)
-results_mean_rank_islandgroups_comp$mean_rank <- as.numeric(results_mean_rank_islandgroups_comp$mean_rank)
+results_mean_rank_islandgroups_comp$rank <- as.numeric(results_mean_rank_islandgroups_comp$rank)
 
 
 # (d) Build random forest models  ----------------------------------------------
@@ -129,17 +130,17 @@ save(model_suitable_fraction_RF_comp, model_number_suitable_RF_comp, model_mean_
 
 # Load needed objects
 # Ranking based on the predicted suitable habitat fraction
-load("output_data/blacklists/native/clim_comp/results_rank_suitable_habitat_fraction_clim_native.RData")
-load("output_data/blacklists/global/clim_comp/results_rank_suitable_habitat_fraction_clim_global.RData")
+load("output_data/blacklists/native/clim/results_rank_suitable_habitat_fraction_clim_native.RData")
+load("output_data/blacklists/global/clim/results_rank_suitable_habitat_fraction_clim_global.RData")
 
 
 # Ranking based on predicted suitable number of island groups
-load("output_data/blacklists/native/clim_comp/results_rank_number_suitable_islandgroups_clim_native.RData")
-load("output_data/blacklists/global/clim_comp/results_rank_number_suitable_islandgroups_clim_global.RData")
+load("output_data/blacklists/native/clim/results_rank_number_suitable_islandgroups_clim_native.RData")
+load("output_data/blacklists/global/clim/results_rank_number_suitable_islandgroups_clim_global.RData")
 
 # Ranking based on mean rank over all Pacific island groups
-load("output_data/blacklists/native/clim_comp/results_mean_rank_islandgroups_clim_native.RData")
-load("output_data/blacklists/global/clim_comp/results_mean_rank_islandgroups_clim_global.RData")
+load("output_data/blacklists/native/clim/results_mean_rank_islandgroups_clim_native.RData")
+load("output_data/blacklists/global/clim/results_mean_rank_islandgroups_clim_global.RData")
 
 
 # (a) Suitable habitat fraction ------------------------------------------------
@@ -157,7 +158,7 @@ results_rank_suitable_fraction <- results_rank_suitable_fraction[results_rank_su
 
 # Bind the two data frames
 results_rank_number_suitable_islandgroups <- rbind(results_rank_number_suitable_islandgroups_clim_native,
-                                                        results_rank_number_suitable_islandgroups_clim_global)
+                                                   results_rank_number_suitable_islandgroups_clim_global)
 
 # Remove the results based on the ensemble models
 results_rank_number_suitable_islandgroups <- results_rank_number_suitable_islandgroups[results_rank_number_suitable_islandgroups$algorithm != "Ensemble", ]
@@ -168,7 +169,7 @@ results_rank_number_suitable_islandgroups <- results_rank_number_suitable_island
 
 # Bind the two data frames
 results_mean_rank_islandgroups <- rbind(results_mean_rank_islandgroups_clim_native,
-                                             results_mean_rank_islandgroups_clim_global)
+                                        results_mean_rank_islandgroups_clim_global)
 
 # Remove the results based on the ensemble models
 results_mean_rank_islandgroups <- results_mean_rank_islandgroups[results_mean_rank_islandgroups$algorithm != "Ensemble", ]
@@ -190,7 +191,7 @@ results_mean_rank_islandgroups$niche <- as.factor(results_mean_rank_islandgroups
 # Convert dependent variable (blacklist rank) into numeric values
 results_rank_suitable_fraction$rank <- as.numeric(results_rank_suitable_fraction$rank)
 results_rank_number_suitable_islandgroups$rank <- as.numeric(results_rank_number_suitable_islandgroups$rank)
-results_mean_rank_islandgroups$mean_rank <- as.numeric(results_mean_rank_islandgroups$mean_rank)
+results_mean_rank_islandgroups$rank <- as.numeric(results_mean_rank_islandgroups$rank)
 
 
 # (d) Build random forest models  ----------------------------------------------
@@ -200,12 +201,12 @@ model_suitable_fraction_RF <- randomForest(x = results_rank_suitable_fraction[, 
                                            y = results_rank_suitable_fraction$rank,
                                            ntree = 1000, importance = TRUE)
 
-model_number_suitable_RF <- randomForest(x = results_rank_number_[suitable_islandgroups, c(2,4)],
+model_number_suitable_RF <- randomForest(x = results_rank_number_suitable_islandgroups[, c(2,4)],
                                          y = results_rank_number_suitable_islandgroups$rank,
                                          ntree = 1000, importance = TRUE)
 
 model_mean_rank_RF <- randomForest(x = results_mean_rank_islandgroups[, c(2,4)],
-                                   y = results_mean_rank_islandgroup$rank,
+                                   y = results_mean_rank_islandgroups$rank,
                                    ntree = 1000, importance = TRUE)
 
 # Save the models

@@ -1,10 +1,11 @@
-# Uncertainty paper
+# Uncertainty in blacklisting potential Pacific plant invaders 
+# using species distribution models
 
 
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                06a. Model predictions based on global                  #
+#                06c. Model predictions based on global                  #
 #                occurrences and purely climatic data                    #
 # ---------------------------------------------------------------------- #
 
@@ -549,7 +550,7 @@ save(islandgroups_results_clim_global, file = "output_data/model_predictions/glo
 #-------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------- #
-#                06a. Model predictions based on global                  #
+#                06c. Model predictions based on global                  #
 #                occurrences and purely climatic data                    #
 # (only considering island groups that are covered by edaphic data       #
 # for a reasonable comparison)                                           #

@@ -1,4 +1,5 @@
-# Uncertainty paper
+# Uncertainty in blacklisting potential Pacific plant invaders 
+# using species distribution models
 
 
 #-------------------------------------------------------------------------------
@@ -94,12 +95,12 @@ ggplot(data = imp_blacklists_comp, aes(x = factor, y = standardized, fill = blac
   ylab('% of variable importance') +
   ggtitle("") +
   scale_fill_manual(values=c("darkseagreen3", "#44AA99", "aquamarine4"), name = "Blacklist ranking established by", labels = c("mean rank over all island groups", "number of suitable island groups", "suitable habitat fraction over all island groups"))+
-  ylim(c(0, 105)) +
-  geom_text(label = round((imp_blacklists_edaclim$standardized), 2), position=position_dodge(width=0.5), hjust= -0.5) +
+  ylim(c(-5, 100)) +
+  geom_text(label = round((imp_blacklists_comp$standardized), 2), position=position_dodge(width=0.5), hjust= -0.5) +
   scale_x_discrete(breaks=c("algorithm", "niche", "predictor_type"),
                    labels=c("Algorithm", "Niche", "Predictor type"))+
   theme(legend.position = c(0.778,0.865), axis.text = element_text(color = "black", size = 12), legend.box.background = element_rect(color="black", size=0.5),
-        legend.box.margin = margin(5, 5, 5, 5),  axis.title = element_text(size = 13, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+        axis.title = element_text(size = 13, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   #labs(tag = "(a)") +
   coord_flip()
@@ -180,12 +181,12 @@ ggplot(data = imp_blacklists, aes(x = factor, y = standardized, fill = blacklist
   ylab('% of variable importance') +
   ggtitle("") +
   scale_fill_manual(values=c("darkseagreen3", "#44AA99", "aquamarine4"), name = "Blacklist ranking established by", labels = c("mean rank over all island groups", "number of suitable island groups", "suitable habitat fraction over all island groups"))+
-  ylim(c(0, 105)) +
-  geom_text(label = round((imp_blacklists_clim$standardized), 2), position=position_dodge(width=0.5), hjust= -0.5) +
+  ylim(c(-5, 105)) +
+  geom_text(label = round((imp_blacklists$standardized), 2), position=position_dodge(width=0.5), hjust= -0.5) +
   scale_x_discrete(breaks=c("algorithm", "niche"),
                    labels=c("Algorithm", "Niche"))+
   theme(legend.position = c(0.785,0.865), axis.text = element_text(color = "black", size = 12), legend.box.background = element_rect(color="black", size=0.5),
-        legend.box.margin = margin(5, 5, 5, 5),  axis.title = element_text(size = 13, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+        axis.title = element_text(size = 13, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   #labs(tag = "(b)") +
   coord_flip()

@@ -1,6 +1,6 @@
 # Holle_PacificPlantInvaders_BlacklistUncertainty_2023/24
 
-Blacklisting potential Pacific plant invaders using species distribution models - uncertainties through species and environmental inputs
+Uncertainty in blacklisting potential Pacific plant invaders using species distribution models
 
 
 ## Workflow

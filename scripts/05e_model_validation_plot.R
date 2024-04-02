@@ -1,4 +1,5 @@
-# Uncertainty paper
+# Uncertainty in blacklisting potential Pacific plant invaders 
+# using species distribution models
 
 
 #-------------------------------------------------------------------------------
@@ -50,16 +51,27 @@ for (sp in study_species) { # Start of the loop over all species
     
     # Load in the performance measures
     if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
+                             validation_alg_AUC <- comp_perf_clim_native
+                             validation_ens_AUC <- ensemble_perf_clim_native
     } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
+                                        validation_alg_AUC <- comp_perf_edaclim_native
+                                        validation_ens_AUC <- ensemble_perf_edaclim_native
     } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+                                     validation_alg_AUC <- comp_perf_clim_global
+                                     validation_ens_AUC <- ensemble_perf_clim_global
     } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
-    }
+                                         validation_alg_AUC <- comp_perf_edaclim_global
+                                         validation_ens_AUC <- ensemble_perf_edaclim_global
+                                        
+    }                                    
+    
+
     
     for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
       
       # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { AUC_alg <- comp_perf_clim_native$AUC[alg]
-      } else if (alg == "mean_prob") { AUC_alg <- ensemble_perf_clim_native$AUC["mean_prob"]
+      if (alg %in% c("glm", "gam", "rf", "brt")) { AUC_alg <- validation_alg_AUC[alg, "AUC"]
+      } else if (alg == "ensemble") { AUC_alg <- validation_ens_AUC["mean_prob", "AUC"]
       }
       
       # Write a vector with extracted information
@@ -73,6 +85,9 @@ for (sp in study_species) { # Start of the loop over all species
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
+
+# Make sure the column names are correct
+colnames(AUC_algorithm_comparison) <- c("Species", "AUC", "Algorithm", "Predictor_set")
 
 # Save the resulting data frame
 save(AUC_algorithm_comparison, file = "output_data/validation/AUC_algorithm_comparison.RData")
@@ -130,16 +145,24 @@ for (sp in study_species) { # Start of the loop over all species
     
     # Load in the performance measures
     if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
+                             validation_alg_TSS <- comp_perf_clim_native
+                             validation_ens_TSS <- ensemble_perf_clim_native
     } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
+                                        validation_alg_TSS <- comp_perf_edaclim_native
+                                        validation_ens_TSS <- ensemble_perf_edaclim_native
     } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+                                     validation_alg_TSS <- comp_perf_clim_global
+                                     validation_ens_TSS <- ensemble_perf_clim_global
     } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
+                                         validation_alg_TSS <- comp_perf_edaclim_global
+                                         validation_ens_TSS <- ensemble_perf_edaclim_global
     }
     
     for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
       
       # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { TSS_alg <- comp_perf_clim_native$TSS[alg]
-      } else if (alg == "mean_prob") { TSS_alg <- ensemble_perf_clim_native$TSS["mean_prob"]
+      if (alg %in% c("glm", "gam", "rf", "brt")) { TSS_alg <- validation_alg_TSS[alg, "TSS"]
+      } else if (alg == "ensemble") { TSS_alg <- validation_ens_TSS["mean_prob", "TSS"]
       }
       
       # Write a vector with extracted information
@@ -153,6 +176,9 @@ for (sp in study_species) { # Start of the loop over all species
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
+
+# Make sure the column names are correct
+colnames(TSS_algorithm_comparison) <- c("Species", "TSS", "Algorithm", "Predictor_set")
 
 # Save the resulting data frame
 save(TSS_algorithm_comparison, file = "output_data/validation/TSS_algorithm_comparison.RData")
@@ -177,7 +203,7 @@ ggplot(TSS_algorithm_comparison, aes(x= Predictor_set, y=TSS, fill=Algorithm)) +
   geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
                outlier.size=2) +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(a) TSS") +
+  labs(title = "(b) TSS") +
   xlab("Predictor set") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
         legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
@@ -210,16 +236,24 @@ for (sp in study_species) { # Start of the loop over all species
     
     # Load in the performance measures
     if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
+                             validation_alg_Boyce <- comp_perf_clim_native
+                             validation_ens_Boyce <- ensemble_perf_clim_native
     } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
+                                        validation_alg_Boyce <- comp_perf_edaclim_native
+                                        validation_ens_Boyce <- ensemble_perf_edaclim_native
     } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+                                     validation_alg_Boyce <- comp_perf_clim_global
+                                     validation_ens_Boyce <- ensemble_perf_clim_global
     } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
+                                         validation_alg_Boyce <- comp_perf_edaclim_global
+                                         validation_ens_Boyce <- ensemble_perf_edaclim_global
     }
     
     for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
       
       # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { Boyce_alg <- comp_perf_clim_native$Boyce[alg]
-      } else if (alg == "mean_prob") { Boyce_alg <- ensemble_perf_clim_native$Boyce["mean_prob"]
+      if (alg %in% c("glm", "gam", "rf", "brt")) { Boyce_alg <- validation_alg_Boyce[alg, "Boyce"]
+      } else if (alg == "ensemble") { Boyce_alg <- validation_ens_Boyce["mean_prob", "Boyce"]
       }
       
       # Write a vector with extracted information
@@ -233,6 +267,9 @@ for (sp in study_species) { # Start of the loop over all species
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
+
+# Make sure the column names are correct
+colnames(Boyce_algorithm_comparison) <- c("Species", "Boyce", "Algorithm", "Predictor_set")
 
 # Save the resulting data frame
 save(Boyce_algorithm_comparison, file = "output_data/validation/Boyce_algorithm_comparison.RData")
@@ -255,8 +292,8 @@ ggplot(Boyce_algorithm_comparison, aes(x= Predictor_set, y=Boyce, fill=Algorithm
   stat_boxplot(geom = "errorbar", width=0.6) +
   geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
                outlier.size=2) +
-  scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(a) Boyce") +
+  scale_y_continuous(limits=c(-0.1,1)) +
+  labs(title = "(c) Boyce") +
   xlab("Predictor set") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
         legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
@@ -288,16 +325,24 @@ for (sp in study_species) { # Start of the loop over all species
     
     # Load in the performance measures
     if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
+                             validation_alg_Sensitivity <- comp_perf_clim_native
+                             validation_ens_Sensitivity <- ensemble_perf_clim_native
     } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
+                                        validation_alg_Sensitivity <- comp_perf_edaclim_native
+                                        validation_ens_Sensitivity <- ensemble_perf_edaclim_native
     } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+                                     validation_alg_Sensitivity <- comp_perf_clim_global
+                                     validation_ens_Sensitivity <- ensemble_perf_clim_global
     } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
+                                         validation_alg_Sensitivity <- comp_perf_edaclim_global
+                                         validation_ens_Sensitivity <- ensemble_perf_edaclim_global
     }
     
     for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
       
       # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { Sensitivity_alg <- comp_perf_clim_native$Sensitivity[alg]
-      } else if (alg == "mean_prob") { Sensitivity_alg <- ensemble_perf_clim_native$Sensitivity["mean_prob"]
+      if (alg %in% c("glm", "gam", "rf", "brt")) { Sensitivity_alg <- validation_alg_Sensitivity[alg, "Sens"]
+      } else if (alg == "ensemble") { Sensitivity_alg <- validation_ens_Sensitivity["mean_prob", "Sens"]
       }
       
       # Write a vector with extracted information
@@ -311,6 +356,9 @@ for (sp in study_species) { # Start of the loop over all species
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
+
+# Make sure the column names are correct
+colnames(Sensitivity_algorithm_comparison) <- c("Species", "Sensitivity", "Algorithm", "Predictor_set")
 
 # Save the resulting data frame
 save(Sensitivity_algorithm_comparison, file = "output_data/validation/Sensitivity_algorithm_comparison.RData")
@@ -334,7 +382,7 @@ ggplot(Sensitivity_algorithm_comparison, aes(x= Predictor_set, y=Sensitivity, fi
   geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
                outlier.size=2) +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(a) Sensitivity") +
+  labs(title = "(d) Sensitivity") +
   xlab("Predictor set") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
         legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
@@ -368,16 +416,24 @@ for (sp in study_species) { # Start of the loop over all species
     
     # Load in the performance measures
     if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
+                             validation_alg_Specificity <- comp_perf_clim_native
+                             validation_ens_Specificity <- ensemble_perf_clim_native
     } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
+                                        validation_alg_Specificity <- comp_perf_edaclim_native
+                                        validation_ens_Specificity <- ensemble_perf_edaclim_native
     } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
+                                     validation_alg_Specificity <- comp_perf_clim_global
+                                     validation_ens_Specificity <- ensemble_perf_clim_global
     } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
+                                         validation_alg_Specificity <- comp_perf_edaclim_global
+                                         validation_ens_Specificity <- ensemble_perf_edaclim_global
     }
     
     for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
       
       # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { Specificity_alg <- comp_perf_clim_native$Specificity[alg]
-      } else if (alg == "mean_prob") { Specificity_alg <- ensemble_perf_clim_native$Specificity["mean_prob"]
+      if (alg %in% c("glm", "gam", "rf", "brt")) { Specificity_alg <- validation_alg_Specificity[alg, "Spec"]
+      } else if (alg == "ensemble") { Specificity_alg <- validation_ens_Specificity["mean_prob", "Spec"]
       }
       
       # Write a vector with extracted information
@@ -391,6 +447,9 @@ for (sp in study_species) { # Start of the loop over all species
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
+
+# Make sure the column names are correct
+colnames(Specificity_algorithm_comparison) <- c("Species", "Specificity", "Algorithm", "Predictor_set")
 
 # Save the resulting data frame
 save(Specificity_algorithm_comparison, file = "output_data/validation/Specificity_algorithm_comparison.RData")
@@ -413,7 +472,7 @@ ggplot(Specificity_algorithm_comparison, aes(x= Predictor_set, y=Specificity, fi
   geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
                outlier.size=2) +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(a) Specificity") +
+  labs(title = "(e) Specificity") +
   xlab("Predictor set") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
         legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
