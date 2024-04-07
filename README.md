@@ -28,7 +28,7 @@ Based on each of the four SDM input datasets, four different model algorithms we
 For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms per SDM input data set. Moreover, an ensemble model was established by combining the continuous predictions of each algorithm using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
 
 ### 7 - Blacklist construction
-Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different definitions: The Pacific-wide fraction of predicted suitable habitat, the number of island groups with suitable habitats, and the mean rank over all island groups. This was done considering the predictions of the different predictor sets as well as the applied algorithms, resulting in 16 blacklists each based on unique information.
+Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different definitions: The total fraction of predicted suitable habitat, the mean suitable habitat fraction over all island groups, and the total number of island groups with suitable habitats. This was done considering the predictions of the different predictor sets as well as the applied algorithms, resulting in 16 blacklists each based on unique information.
 
 ### 8 - Quantification of uncertainty
 Using random forest regression, it was assessed whether the blacklist rankings were associated with the considered niche in the input occurrence data (native and global), the used predictor type (purely climatic and combined climatic and edaphic), and the applied algorithms (GLM, GAM, RF, BRT). The output of variable importance was considered for the uncertainty quantification of the studied sources. This was separately done for all three blacklist definitions.
@@ -37,7 +37,7 @@ Using random forest regression, it was assessed whether the blacklist rankings w
 As another measure of establishment potential, the Pacific-wide predicted unrealized colonization potential was quantified for all study species, with an exclusive focus on the prediction results of ensemble models. The measure was based on the validation method of the False Positive Rate, accounting for predicted presence and absence information as well as actual presence and absence information on the studied Pacific island groups. Here, the very complete occurrence data set, gathered within the study of Wohlwend et al. (2021), was used as independent validation data.
 
 ### 10 - Final Pacific-wide blacklisting
-A final blacklist ranking was created for all three blacklist definitions. To do so the risk estimator values were calculated based on the ensemble prediction values of each predictor set, averaged over all four predictor sets, and finally translated into a ranking.
+Final blacklist rankings were created for all three blacklist definitions based on the ensemble predictions. Additionally, final blacklists were established based on the total ensemble, averaging the ensemble predictions over all four predictor sets and finally translating those into a ranking.
 
 
 

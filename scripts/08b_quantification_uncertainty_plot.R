@@ -29,13 +29,13 @@ library(viridis)
 load("output_data/uncertainty_quantification/models_uncertainty_RF_comp.RData") # Random forest models
 
 
-# (a) Suitable habitat fraction ------------------------------------------------
+# (a) Total suitable habitat fraction ------------------------------------------
 
 # Get the variable importance values of the uncertainty factors
 imp_suitable_fraction_comp <- as.data.frame(importance(model_suitable_fraction_RF_comp))
 imp_suitable_fraction_comp <- cbind(factor = rownames(imp_suitable_fraction_comp), imp_suitable_fraction_comp)
 imp_suitable_fraction_comp$factor <- factor(imp_suitable_fraction_comp$factor, levels = unique(imp_suitable_fraction_comp$factor))
-imp_suitable_fraction_comp$blacklist <- "suitable_fraction"
+imp_suitable_fraction_comp$blacklist <- "total_suitable_fraction"
  
 # Standardize these values to sum up to 100 %
 sum_accuracy_suitable_fraction_comp <- as.numeric(imp_suitable_fraction_comp[1,2]) +
@@ -47,7 +47,25 @@ imp_suitable_fraction_comp[2,5] <- (100/sum_accuracy_suitable_fraction_comp) * a
 imp_suitable_fraction_comp[3,5] <- (100/sum_accuracy_suitable_fraction_comp) * as.numeric(imp_suitable_fraction_comp[3,2])
 
 
-# (b) Number of suitable island groups  ----------------------------------------
+# (b) Mean suitable habitat fraction ------------------------------------------
+
+# Get the variable importance values of the uncertainty factors
+imp_mean_suitable_fraction_comp <- as.data.frame(importance(model_mean_suitable_fraction_RF_comp))
+imp_mean_suitable_fraction_comp <- cbind(factor = rownames(imp_mean_suitable_fraction_comp), imp_suitable_fraction_comp)
+imp_mean_suitable_fraction_comp$factor <- factor(imp_mean_suitable_fraction_comp$factor, levels = unique(imp_mean_suitable_fraction_comp$factor))
+imp_mean_suitable_fraction_comp$blacklist <- "mean_suitable_fraction"
+
+# Standardize these values to sum up to 100 %
+sum_accuracy_mean_suitable_fraction_comp <- as.numeric(imp_mean_suitable_fraction_comp[1,2]) +
+  as.numeric(imp_mean_suitable_fraction_comp[2,2]) + 
+  as.numeric(imp_mean_suitable_fraction_comp[3,2])
+imp_mean_suitable_fraction_comp$standardized <- NA 
+imp_mean_suitable_fraction_comp[1,5] <- (100/sum_accuracy_mean_suitable_fraction_comp) * as.numeric(imp_mean_suitable_fraction_comp[1,2])
+imp_mean_suitable_fraction_comp[2,5] <- (100/sum_accuracy_mean_suitable_fraction_comp) * as.numeric(imp_mean_suitable_fraction_comp[2,2])
+imp_mean_suitable_fraction_comp[3,5] <- (100/sum_accuracy_mean_suitable_fraction_comp) * as.numeric(imp_mean_suitable_fraction_comp[3,2])
+
+
+# (c) Number of suitable island groups  ----------------------------------------
 
 # Get the variable importance values of the uncertainty factors
 imp_number_suitable_comp <- as.data.frame(importance(model_number_suitable_RF_comp))
@@ -65,28 +83,13 @@ imp_number_suitable_comp[2,5] <- (100/sum_accuracy_number_suitable_comp) * as.nu
 imp_number_suitable_comp[3,5] <- (100/sum_accuracy_number_suitable_comp) * as.numeric(imp_number_suitable_comp[3,2])
 
 
-# (c) Mean rank over all island groups  ----------------------------------------
 
-# Get the variable importance values of the uncertainty factors
-imp_mean_rank_comp <- as.data.frame(importance(model_mean_rank_RF_comp))
-imp_mean_rank_comp <- cbind(factor = rownames(imp_mean_rank_comp), imp_mean_rank_comp)
-imp_mean_rank_comp$factor <- factor(imp_mean_rank_comp$factor, levels = unique(imp_mean_rank_comp$factor))
-imp_mean_rank_comp$blacklist <- "mean_rank"
-
-# Standardize these values to sum up to 100 %
-sum_accuracy_mean_rank_comp <- as.numeric(imp_mean_rank_comp[1,2]) +
-                               as.numeric(imp_mean_rank_comp[2,2]) + 
-                               as.numeric(imp_mean_rank_comp[3,2])
-imp_mean_rank_comp$standardized <- NA 
-imp_mean_rank_comp[1,5] <- (100/sum_accuracy_mean_rank_comp) * as.numeric(imp_mean_rank_comp[1,2])
-imp_mean_rank_comp[2,5] <- (100/sum_accuracy_mean_rank_comp) * as.numeric(imp_mean_rank_comp[2,2])
-imp_mean_rank_comp[3,5] <- (100/sum_accuracy_mean_rank_comp) * as.numeric(imp_mean_rank_comp[3,2])
 
 
 # (d) Plot the uncertainty factors as bars  ------------------------------------
 
 # Bind the data frames together
-imp_blacklists_comp <- rbind(imp_suitable_fraction_comp, imp_number_suitable_comp, imp_mean_rank_comp)
+imp_blacklists_comp <- rbind(imp_suitable_fraction_comp, imp_mean_suitable_fraction_comp, imp_number_suitable_comp)
 
 # Plot the variable importance
 ggplot(data = imp_blacklists_comp, aes(x = factor, y = standardized, fill = blacklist)) +
@@ -121,13 +124,13 @@ ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification_
 load("output_data/uncertainty_quantification/models_uncertainty_RF.RData") # Random forest models
 
 
-# (a) Suitable habitat fraction ------------------------------------------------
+# (a) Total Suitable habitat fraction ------------------------------------------
 
 # Get the variable importance values of the uncertainty factors
 imp_suitable_fraction <- as.data.frame(importance(model_suitable_fraction_RF))
 imp_suitable_fraction <- cbind(factor = rownames(imp_suitable_fraction), imp_suitable_fraction)
 imp_suitable_fraction$factor <- factor(imp_suitable_fraction$factor, levels = unique(imp_suitable_fraction$factor))
-imp_suitable_fraction$blacklist <- "suitable_fraction"
+imp_suitable_fraction$blacklist <- "total_suitable_fraction"
 
 # Standardize these values to sum up to 100 %
 sum_accuracy_suitable_fraction <- as.numeric(imp_suitable_fraction[1,2]) +
@@ -137,7 +140,23 @@ imp_suitable_fraction[1,5] <- (100/sum_accuracy_suitable_fraction) * as.numeric(
 imp_suitable_fraction[2,5] <- (100/sum_accuracy_suitable_fraction) * as.numeric(imp_suitable_fraction[2,2])
 
 
-# (b) Number of suitable island groups  ----------------------------------------
+# (b) Mean suitable habitat fraction -------------------------------------------
+
+# Get the variable importance values of the uncertainty factors
+imp_mean_suitable_fraction <- as.data.frame(importance(model_mean_suitable_fraction_RF))
+imp_mean_suitable_fraction <- cbind(factor = rownames(imp_mean_suitable_fraction), imp_mean_suitable_fraction)
+imp_mean_suitable_fraction$factor <- factor(imp_mean_suitable_fraction$factor, levels = unique(imp_mean_suitable_fraction$factor))
+imp_mean_suitable_fraction$blacklist <- "mean_suitable_fraction"
+
+# Standardize these values to sum up to 100 %
+sum_accuracy_mean_suitable_fraction <- as.numeric(imp_mean_suitable_fraction[1,2]) +
+  as.numeric(imp_mean_suitable_fraction_comp[2,2]) 
+imp_mean_suitable_fraction$standardized <- NA 
+imp_mean_suitable_fraction[1,5] <- (100/sum_accuracy_mean_suitable_fraction) * as.numeric(imp_mean_suitable_fraction[1,2])
+imp_mean_suitable_fraction[2,5] <- (100/sum_accuracy_mean_suitable_fraction) * as.numeric(imp_mean_suitable_fraction[2,2])
+
+
+# (c) Number of suitable island groups  ----------------------------------------
 
 # Get the variable importance values of the uncertainty factors
 imp_number_suitable <- as.data.frame(importance(model_number_suitable_RF))
@@ -153,26 +172,12 @@ imp_number_suitable[1,5] <- (100/sum_accuracy_number_suitable) * as.numeric(imp_
 imp_number_suitable[2,5] <- (100/sum_accuracy_number_suitable) * as.numeric(imp_number_suitable[2,2])
 
 
-# (c) Mean rank over all island groups  ----------------------------------------
-
-# Get the variable importance values of the uncertainty factors
-imp_mean_rank <- as.data.frame(importance(model_mean_rank_RF))
-imp_mean_rank <- cbind(factor = rownames(imp_mean_rank), imp_mean_rank)
-imp_mean_rank$factor <- factor(imp_mean_rank$factor, levels = unique(imp_mean_rank$factor))
-imp_mean_rank$blacklist <- "mean_rank"
-
-# Standardize these values to sum up to 100 %
-sum_accuracy_mean_rank <- as.numeric(imp_mean_rank[1,2]) +
-                          as.numeric(imp_mean_rank[2,2])
-imp_mean_rank$standardized <- NA 
-imp_mean_rank[1,5] <- (100/sum_accuracy_mean_rank) * as.numeric(imp_mean_rank[1,2])
-imp_mean_rank[2,5] <- (100/sum_accuracy_mean_rank) * as.numeric(imp_mean_rank[2,2])
 
 
 # (d) Plot the uncertainty factors as bars  ------------------------------------
 
 # Bind the data frames together
-imp_blacklists <- rbind(imp_suitable_fraction, imp_number_suitable, imp_mean_rank)
+imp_blacklists <- rbind(imp_suitable_fraction, imp_mean_suitable_fraction, imp_number_suitable)
 
 # Plot the variable importance
 ggplot(data = imp_blacklists, aes(x = factor, y = standardized, fill = blacklist)) +
