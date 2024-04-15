@@ -16,6 +16,7 @@ setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUnce
 
 # Load needed packages
 library(ggplot2)
+library(showtext)
 
 # Load needed objects
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
@@ -105,21 +106,26 @@ AUC_algorithm_comparison$Algorithm <- factor(AUC_algorithm_comparison$Algorithm,
 # Bring the predictor sets in the right order
 AUC_algorithm_comparison$Predictor_set <- factor(AUC_algorithm_comparison$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot
 ggplot(AUC_algorithm_comparison, aes(x= Predictor_set, y=AUC, fill=Algorithm)) + 
-  stat_boxplot(geom = "errorbar", width=0.6) +
-  geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
-               outlier.size=2) +
+  stat_boxplot(geom = "errorbar", width=0.8) +
+  geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
+               outlier.size=1.6) +
+  theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
   labs(title = "(a) AUC") +
-  xlab("Predictor set") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
-        legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
-        axis.title = element_text(size = 15, color = "black"), legend.text = element_text(size = 13), legend.title = element_text(size = 15),
+  xlab("") +
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
+        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
+        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   scale_fill_brewer(palette="BuPu")
 
-ggsave("output_data/plots/validation/AUC_algorithm_comparison.svg", width = 11, height = 7)
+ggsave("output_data/plots/validation/AUC_algorithm_comparison.svg", width = 5, height = 4)
 
 
 
@@ -197,21 +203,26 @@ TSS_algorithm_comparison$Algorithm <- factor(TSS_algorithm_comparison$Algorithm,
 # Bring the predictor sets in the right order
 TSS_algorithm_comparison$Predictor_set <- factor(TSS_algorithm_comparison$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot
 ggplot(TSS_algorithm_comparison, aes(x= Predictor_set, y=TSS, fill=Algorithm)) + 
-  stat_boxplot(geom = "errorbar", width=0.6) +
-  geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
-               outlier.size=2) +
+  stat_boxplot(geom = "errorbar", width=0.8) +
+  geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
+               outlier.size=1.6) +
+  theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(b) TSS") +
-  xlab("Predictor set") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
-        legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
-        axis.title = element_text(size = 15, color = "black"), legend.text = element_text(size = 13), legend.title = element_text(size = 15),
+  #labs(title = "(a) TSS") +
+  xlab("") +
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = "bottom",
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 15, color = "black"),
+        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 12), legend.title = element_text(size = 14),
         text = element_text(family = "Calibri")) +
   scale_fill_brewer(palette="BuPu")
 
-ggsave("output_data/plots/validation/TSS_algorithm_comparison.svg", width = 11, height = 7)
+ggsave("output_data/plots/validation/TSS_algorithm_comparison.svg", width = 5, height = 4)
 
 
 
@@ -287,21 +298,27 @@ Boyce_algorithm_comparison$Algorithm <- factor(Boyce_algorithm_comparison$Algori
 # Bring the predictor sets in the right order
 Boyce_algorithm_comparison$Predictor_set <- factor(Boyce_algorithm_comparison$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot
 ggplot(Boyce_algorithm_comparison, aes(x= Predictor_set, y=Boyce, fill=Algorithm)) + 
-  stat_boxplot(geom = "errorbar", width=0.6) +
-  geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
-               outlier.size=2) +
+  stat_boxplot(geom = "errorbar", width=0.8) +
+  geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
+               outlier.size=1.6) +
+  theme_minimal() +
   scale_y_continuous(limits=c(-0.1,1)) +
-  labs(title = "(c) Boyce") +
-  xlab("Predictor set") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
-        legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
-        axis.title = element_text(size = 15, color = "black"), legend.text = element_text(size = 13), legend.title = element_text(size = 15),
+  #labs(title = "(b) Boyce index") +
+  xlab("") +
+  ylab("Boyce index") +
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = "none",
+        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
+        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   scale_fill_brewer(palette="BuPu")
 
-ggsave("output_data/plots/validation/Boyce_algorithm_comparison.svg", width = 11, height = 7)
+ggsave("output_data/plots/validation/Boyce_algorithm_comparison.svg", width = 5, height = 4)
 
 
 
@@ -376,21 +393,26 @@ Sensitivity_algorithm_comparison$Algorithm <- factor(Sensitivity_algorithm_compa
 # Bring the predictor sets in the right order
 Sensitivity_algorithm_comparison$Predictor_set <- factor(Sensitivity_algorithm_comparison$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot
 ggplot(Sensitivity_algorithm_comparison, aes(x= Predictor_set, y=Sensitivity, fill=Algorithm)) + 
-  stat_boxplot(geom = "errorbar", width=0.6) +
-  geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
-               outlier.size=2) +
+  stat_boxplot(geom = "errorbar", width=0.8) +
+  geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
+               outlier.size=1.6) +
+  theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(d) Sensitivity") +
-  xlab("Predictor set") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
-        legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
-        axis.title = element_text(size = 15, color = "black"), legend.text = element_text(size = 13), legend.title = element_text(size = 15),
+  labs(title = "(b) Sensitivity") +
+  xlab("") +
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
+        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
+        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   scale_fill_brewer(palette="BuPu")
 
-ggsave("output_data/plots/validation/Sensitivity_algorithm_comparison.svg", width = 11, height = 7)
+ggsave("output_data/plots/validation/Sensitivity_algorithm_comparison.svg", width = 5, height = 4)
 
 
 
@@ -466,18 +488,312 @@ Specificity_algorithm_comparison$Algorithm <- factor(Specificity_algorithm_compa
 # Bring the predictor sets in the right order
 Specificity_algorithm_comparison$Predictor_set <- factor(Specificity_algorithm_comparison$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot
 ggplot(Specificity_algorithm_comparison, aes(x= Predictor_set, y=Specificity, fill=Algorithm)) + 
-  stat_boxplot(geom = "errorbar", width=0.6) +
-  geom_boxplot(width = 0.6, outlier.colour="black", outlier.shape=16,
-               outlier.size=2) +
+  stat_boxplot(geom = "errorbar", width=0.8) +
+  geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
+               outlier.size=1.6) +
+  theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(e) Specificity") +
-  xlab("Predictor set") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.position = c(0.925, 0.18),
-        legend.key.size = unit(0.8, "cm"), legend.box.background = element_rect(color="black", size=0.9), axis.text = element_text(size = 13),
-        axis.title = element_text(size = 15, color = "black"), legend.text = element_text(size = 13), legend.title = element_text(size = 15),
+  labs(title = "(c) Specificity") +
+  xlab("") +
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
+        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
+        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
         text = element_text(family = "Calibri")) +
   scale_fill_brewer(palette="BuPu")
 
-ggsave("output_data/plots/validation/Specificity_algorithm_comparison.svg", width = 11, height = 7)
+
+
+
+ggsave("output_data/plots/validation/Specificity_algorithm_comparison.svg", width = 5, height = 4)
+
+
+
+#-------------------------------------------------------------------------------
+
+# 6. Calculate component uncertainties -----------------------------------------
+
+library(randomForest)
+
+# (a) AUC ----------------------------------------------------------------------
+
+# Loop through the different rows of the data frame and identify the predictor sets
+# as single predictor type and niche
+
+# Load in the data frame
+load("output_data/validation/AUC_algorithm_comparison.RData")
+
+# Create new columns for the data frame
+AUC_algorithm_comparison_uncertainty <- AUC_algorithm_comparison
+AUC_algorithm_comparison_uncertainty$Predictor_type <- NA
+AUC_algorithm_comparison_uncertainty$Niche <- NA
+
+for (i in 1:nrow(AUC_algorithm_comparison_uncertainty)) {
+  
+  # identify the predictor set
+  AUC_predictor_set <- AUC_algorithm_comparison_uncertainty[i,"Predictor_set"]
+  
+  if (AUC_predictor_set == "natclim") { AUC_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                        AUC_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+    
+  } else if (AUC_predictor_set == "natclim+eda") { AUC_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                   AUC_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+                                                   
+  } else if (AUC_predictor_set == "globclim") { AUC_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                                AUC_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+                                                
+  } else if (AUC_predictor_set == "globclim+eda") { AUC_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                    AUC_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  }
+                                                   
+                                               
+} # End of loop over the rows
+
+# Remove the values of ensembles
+AUC_algorithm_comparison_uncertainty <- subset(AUC_algorithm_comparison_uncertainty, AUC_algorithm_comparison_uncertainty$Algorithm != "ensemble")
+
+# Make sure the uncertainty components Algorithm, predictor type and niche are factors
+AUC_algorithm_comparison_uncertainty$Algorithm <- as.factor(AUC_algorithm_comparison_uncertainty$Algorithm)
+AUC_algorithm_comparison_uncertainty$Predictor_type <- as.factor(AUC_algorithm_comparison_uncertainty$Predictor_type)
+AUC_algorithm_comparison_uncertainty$Niche <- as.factor(AUC_algorithm_comparison_uncertainty$Niche)
+
+# Make sure the dependent variable (validation measure) is numeric
+AUC_algorithm_comparison_uncertainty$AUC <- as.numeric(AUC_algorithm_comparison_uncertainty$AUC)
+
+# Build a random forest model
+model_RF_AUC <- randomForest(x = AUC_algorithm_comparison_uncertainty[, c("Algorithm", "Predictor_type", "Niche")],
+                             y = AUC_algorithm_comparison_uncertainty$AUC,
+                             ntree = 1000, importance = TRUE)
+
+# Show variable importance
+importance(model_RF_AUC)
+
+
+
+
+
+# (b) TSS ----------------------------------------------------------------------
+
+
+# Loop through the different rows of the data frame and identify the predictor sets
+# as single predictor type and niche
+
+# Load in the data frame
+load("output_data/validation/TSS_algorithm_comparison.RData")
+
+# Create new columns for the data frame
+TSS_algorithm_comparison_uncertainty <- TSS_algorithm_comparison
+TSS_algorithm_comparison_uncertainty$Predictor_type <- NA
+TSS_algorithm_comparison_uncertainty$Niche <- NA
+
+for (i in 1:nrow(TSS_algorithm_comparison_uncertainty)) {
+  
+  # identify the predictor set
+  TSS_predictor_set <- TSS_algorithm_comparison_uncertainty[i,"Predictor_set"]
+  
+  if (TSS_predictor_set == "natclim") { TSS_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                        TSS_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (TSS_predictor_set == "natclim+eda") { TSS_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                   TSS_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (TSS_predictor_set == "globclim") { TSS_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                                TSS_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  
+  } else if (TSS_predictor_set == "globclim+eda") { TSS_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                    TSS_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  }
+  
+  
+} # End of loop over the rows
+
+# Remove the values of ensembles
+TSS_algorithm_comparison_uncertainty <- subset(TSS_algorithm_comparison_uncertainty, TSS_algorithm_comparison_uncertainty$Algorithm != "ensemble")
+
+# Make sure the uncertainty components Algorithm, predictor type and niche are factors
+TSS_algorithm_comparison_uncertainty$Algorithm <- as.factor(TSS_algorithm_comparison_uncertainty$Algorithm)
+TSS_algorithm_comparison_uncertainty$Predictor_type <- as.factor(TSS_algorithm_comparison_uncertainty$Predictor_type)
+TSS_algorithm_comparison_uncertainty$Niche <- as.factor(TSS_algorithm_comparison_uncertainty$Niche)
+
+# Make sure the dependent variable (validation measure) is numeric
+TSS_algorithm_comparison_uncertainty$TSS <- as.numeric(TSS_algorithm_comparison_uncertainty$TSS)
+
+# Build a random forest model
+model_RF_TSS <- randomForest(x = TSS_algorithm_comparison_uncertainty[, c("Algorithm", "Predictor_type", "Niche")],
+                             y = TSS_algorithm_comparison_uncertainty$TSS,
+                             ntree = 1000, importance = TRUE)
+
+# Show variable importance
+importance(model_RF_TSS)
+
+
+
+# (c) Boyce --------------------------------------------------------------------
+
+# Loop through the different rows of the data frame and identify the predictor sets
+# as single predictor type and niche
+
+# Load in the data frame
+load("output_data/validation/Boyce_algorithm_comparison.RData")
+
+# Create new columns for the data frame
+Boyce_algorithm_comparison_uncertainty <- Boyce_algorithm_comparison
+Boyce_algorithm_comparison_uncertainty$Predictor_type <- NA
+Boyce_algorithm_comparison_uncertainty$Niche <- NA
+
+for (i in 1:nrow(Boyce_algorithm_comparison_uncertainty)) {
+  
+  # identify the predictor set
+  Boyce_predictor_set <- Boyce_algorithm_comparison_uncertainty[i,"Predictor_set"]
+  
+  if (Boyce_predictor_set == "natclim") { Boyce_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                          Boyce_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Boyce_predictor_set == "natclim+eda") { Boyce_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                     Boyce_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Boyce_predictor_set == "globclim") { Boyce_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                                  Boyce_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  
+  } else if (Boyce_predictor_set == "globclim+eda") { Boyce_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                      Boyce_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  }
+  
+  
+} # End of loop over the rows
+
+# Remove the values of ensembles
+Boyce_algorithm_comparison_uncertainty <- subset(Boyce_algorithm_comparison_uncertainty, Boyce_algorithm_comparison_uncertainty$Algorithm != "ensemble")
+
+# Make sure the uncertainty components Algorithm, predictor type and niche are factors
+Boyce_algorithm_comparison_uncertainty$Algorithm <- as.factor(Boyce_algorithm_comparison_uncertainty$Algorithm)
+Boyce_algorithm_comparison_uncertainty$Predictor_type <- as.factor(Boyce_algorithm_comparison_uncertainty$Predictor_type)
+Boyce_algorithm_comparison_uncertainty$Niche <- as.factor(Boyce_algorithm_comparison_uncertainty$Niche)
+
+# Make sure the dependent variable (validation measure) is numeric
+Boyce_algorithm_comparison_uncertainty$Boyce <- as.numeric(Boyce_algorithm_comparison_uncertainty$Boyce)
+
+# Build a random forest model
+model_RF_Boyce <- randomForest(x = Boyce_algorithm_comparison_uncertainty[, c("Algorithm", "Predictor_type", "Niche")],
+                             y = Boyce_algorithm_comparison_uncertainty$Boyce,
+                             ntree = 1000, importance = TRUE)
+
+# Show variable importance
+importance(model_RF_Boyce)
+
+
+
+
+# (d) Sensitivity --------------------------------------------------------------
+
+# Loop through the different rows of the data frame and identify the predictor sets
+# as single predictor type and niche
+
+# Load in the data frame
+load("output_data/validation/Sensitivity_algorithm_comparison.RData")
+
+# Create new columns for the data frame
+Sens_algorithm_comparison_uncertainty <- Sensitivity_algorithm_comparison
+Sens_algorithm_comparison_uncertainty$Predictor_type <- NA
+Sens_algorithm_comparison_uncertainty$Niche <- NA
+
+for (i in 1:nrow(Sens_algorithm_comparison_uncertainty)) {
+  
+  # identify the predictor set
+  Sens_predictor_set <- Sens_algorithm_comparison_uncertainty[i,"Predictor_set"]
+  
+  if (Sens_predictor_set == "natclim") { Sens_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                         Sens_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Sens_predictor_set == "natclim+eda") { Sens_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                    Sens_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Sens_predictor_set == "globclim") { Sens_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                                 Sens_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  
+  } else if (Sens_predictor_set == "globclim+eda") { Sens_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                     Sens_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  }
+  
+  
+} # End of loop over the rows
+
+# Remove the values of ensembles
+Sens_algorithm_comparison_uncertainty <- subset(Sens_algorithm_comparison_uncertainty, Sens_algorithm_comparison_uncertainty$Algorithm != "ensemble")
+
+# Make sure the uncertainty components Algorithm, predictor type and niche are factors
+Sens_algorithm_comparison_uncertainty$Algorithm <- as.factor(Sens_algorithm_comparison_uncertainty$Algorithm)
+Sens_algorithm_comparison_uncertainty$Predictor_type <- as.factor(Sens_algorithm_comparison_uncertainty$Predictor_type)
+Sens_algorithm_comparison_uncertainty$Niche <- as.factor(Sens_algorithm_comparison_uncertainty$Niche)
+
+# Make sure the dependent variable (validation measure) is numeric
+Sens_algorithm_comparison_uncertainty$Sensitivity <- as.numeric(Sens_algorithm_comparison_uncertainty$Sensitivity)
+
+# Build a random forest model
+model_RF_Sens <- randomForest(x = Sens_algorithm_comparison_uncertainty[, c("Algorithm", "Predictor_type", "Niche")],
+                               y = Sens_algorithm_comparison_uncertainty$Sensitivity,
+                               ntree = 1000, importance = TRUE)
+
+# Show variable importance
+importance(model_RF_Sens)
+
+
+
+# (e) Specificity --------------------------------------------------------------
+
+# Loop through the different rows of the data frame and identify the predictor sets
+# as single predictor type and niche
+
+# Load in the data frame
+load("output_data/validation/Specificity_algorithm_comparison.RData")
+
+# Create new columns for the data frame
+Spec_algorithm_comparison_uncertainty <- Specificity_algorithm_comparison
+Spec_algorithm_comparison_uncertainty$Predictor_type <- NA
+Spec_algorithm_comparison_uncertainty$Niche <- NA
+
+for (i in 1:nrow(Spec_algorithm_comparison_uncertainty)) {
+  
+  # identify the predictor set
+  Spec_predictor_set <- Spec_algorithm_comparison_uncertainty[i,"Predictor_set"]
+  
+  if (Spec_predictor_set == "natclim") { Spec_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                         Spec_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Spec_predictor_set == "natclim+eda") { Spec_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                    Spec_algorithm_comparison_uncertainty[i, "Niche"] <- "native"
+  
+  } else if (Spec_predictor_set == "globclim") { Spec_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "clim"
+                                                 Spec_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  
+  } else if (Spec_predictor_set == "globclim+eda") { Spec_algorithm_comparison_uncertainty[i, "Predictor_type"] <- "edaclim"
+                                                     Spec_algorithm_comparison_uncertainty[i, "Niche"] <- "global"
+  }
+  
+  
+} # End of loop over the rows
+
+# Remove the values of ensembles
+Spec_algorithm_comparison_uncertainty <- subset(Spec_algorithm_comparison_uncertainty, Spec_algorithm_comparison_uncertainty$Algorithm != "ensemble")
+
+# Make sure the uncertainty components Algorithm, predictor type and niche are factors
+Spec_algorithm_comparison_uncertainty$Algorithm <- as.factor(Spec_algorithm_comparison_uncertainty$Algorithm)
+Spec_algorithm_comparison_uncertainty$Predictor_type <- as.factor(Spec_algorithm_comparison_uncertainty$Predictor_type)
+Spec_algorithm_comparison_uncertainty$Niche <- as.factor(Spec_algorithm_comparison_uncertainty$Niche)
+
+# Make sure the dependent variable (validation measure) is numeric
+Spec_algorithm_comparison_uncertainty$Specificity <- as.numeric(Spec_algorithm_comparison_uncertainty$Specificity)
+
+# Build a random forest model
+model_RF_Spec <- randomForest(x = Spec_algorithm_comparison_uncertainty[, c("Algorithm", "Predictor_type", "Niche")],
+                              y = Spec_algorithm_comparison_uncertainty$Specificity,
+                              ntree = 1000, importance = TRUE)
+
+# Show variable importance
+importance(model_RF_Spec)
+

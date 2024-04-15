@@ -692,3 +692,37 @@ partial_response=function(object,predictors,select.columns=NULL, label=NULL, len
   inflated_response(object,predictors,select.columns,label,len,method='mean',
                     col.curves=col, ylab=ylab,...)
 }
+
+
+
+#-------------------------------------------------------------------------------
+
+# 5. Function for explained deviance -------------------------------------------
+
+#' expl_deviance
+#'
+#' Calculates the explained deviance based on the dismo package.
+#' 
+#' @param obs a numeric vector of observations
+#' @param pred a numeric vector of predictions
+#' @param family a description of the error distribution and link function to be used in the model.
+#' 
+#' @return A numeric value.
+#' 
+#' @examples 
+#' data(Anguilla_train)
+#' m1 <- glm(Angaus ~ poly(SegSumT,2), data=Anguilla_train, family='binomial')
+#' expl_deviance(Anguilla_train$Angaus, m1$fitted)
+#' 
+#' @seealso [calc.deviance()]
+#' 
+#' @export
+expl_deviance <- function(obs, pred, family='binomial'){
+  if (family=='binomial') {pred <- ifelse(pred<.00001,.00001,ifelse(pred>.9999,.9999,pred))}
+  
+  null_pred <- rep(mean(obs), length(obs))
+  
+  1 - (dismo::calc.deviance(obs, pred, family=family) / 
+         dismo::calc.deviance(obs, null_pred, family=family))
+}
+

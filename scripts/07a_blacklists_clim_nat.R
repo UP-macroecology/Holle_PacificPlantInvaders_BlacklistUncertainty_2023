@@ -189,7 +189,7 @@ for (a in algorithm) { # Start loop over all algorithms
 colnames(results_rank_mean_suitable_habitat_fraction_clim_native) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
 # Save the resulting data frame
-save(results_rank_mean_suitable_habitat_fraction_clim_native, file = "output_data/blacklists/native/clim/results_mean_suitable_habitat_fraction_clim_native.RData")
+save(results_rank_mean_suitable_habitat_fraction_clim_native, file = "output_data/blacklists/native/clim/results_rank_mean_suitable_habitat_fraction_clim_native.RData")
 
 
 # (b) Including 25 island groups -----------------------------------------------
@@ -257,7 +257,7 @@ for (a in algorithm) { # Start loop over all algorithms
 colnames(results_rank_mean_suitable_habitat_fraction_clim_native_comp) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # Save the resulting data frame
-save(results_rank_mean_suitable_habitat_fraction_clim_native_comp, file = "output_data/blacklists/native/clim_comp/results_mean_suitable_habitat_fraction_clim_native_comp.RData")
+save(results_rank_mean_suitable_habitat_fraction_clim_native_comp, file = "output_data/blacklists/native/clim_comp/results_rank_mean_suitable_habitat_fraction_clim_native_comp.RData")
 
 
 

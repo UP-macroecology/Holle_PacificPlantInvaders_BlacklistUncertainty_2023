@@ -32,10 +32,10 @@ load("output_data/blacklists/global/clim_comp/results_rank_suitable_habitat_frac
 load("output_data/blacklists/global/edaclim/results_rank_suitable_habitat_fraction_edaclim_global.RData")
 
 # Ranking based on the mean suitable habitat fraction over all island groups
-load("output_data/blacklists/native/clim_comp/results_mean_suitable_habitat_fraction_clim_native_comp.RData")
-load("output_data/blacklists/native/edaclim/results_mean_suitable_habitat_fraction_edaclim_native.RData")
-load("output_data/blacklists/global/clim_comp/results_mean_suitable_habitat_fraction_clim_global_comp.RData")
-load("output_data/blacklists/global/edaclim/results_mean_suitable_habitat_fraction_edaclim_global.RData")
+load("output_data/blacklists/native/clim_comp/results_rank_mean_suitable_habitat_fraction_clim_native_comp.RData")
+load("output_data/blacklists/native/edaclim/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData")
+load("output_data/blacklists/global/clim_comp/results_rank_mean_suitable_habitat_fraction_clim_global_comp.RData")
+load("output_data/blacklists/global/edaclim/results_rank_mean_suitable_habitat_fraction_edaclim_global.RData")
 
 # Ranking based on predicted suitable number of island groups
 load("output_data/blacklists/native/clim_comp/results_rank_number_suitable_islandgroups_clim_native_comp.RData")

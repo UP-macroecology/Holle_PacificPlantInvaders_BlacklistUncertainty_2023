@@ -19,6 +19,7 @@ library(ggplot2)
 library(terra)
 library(viridis)
 library(maps)
+library(showtext)
 
 
 
@@ -151,7 +152,7 @@ rownames(sum_observed_occ_pacific_islands) <- NULL
 islandgroups_clim <- islandgroups_clim[,1, drop = FALSE]
 
 islandgroups_edaclim <- islandgroups_edaclim[,1, drop = FALSE]
-islandgroups_edaclim$analysis <- "climate+edaphic"
+islandgroups_edaclim$analysis <- "climate + edaphic"
 
 # Merge both data frames and retain, keep all island groups and keep the values 
 # from the second data frame if values do not match
@@ -187,71 +188,35 @@ study_region_plot$new_lon <- as.numeric(as.character(study_region_plot$new_lon))
 study_region_plot$lat <- as.numeric(as.character(study_region_plot$lat))
 study_region_plot$observed_occurrences <- as.numeric(as.character(study_region_plot$observed_occurrences))
 
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
 # Plot a Pacific centered map, add the island groups with their observed study species
 # numbers and indicate whether an island group is only suitable for a purely climatic
 # analysis or a climatic and edaphic analysis
 ggplot(study_region_plot, aes(x = new_lon, y = lat)) +
   geom_polygon(data = map_pacific_data, aes(x=long, y = lat, group = group)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick2", linewidth = 0.5, alpha = 0.7) +
-  geom_vline(xintercept = 180, linetype = "dashed", color = "firebrick2", linewidth = 0.5,  alpha = 0.7) +
-  geom_point(aes(colour = factor(analysis), fill = observed_occurrences), shape = 21, size = 9, alpha = 0.8, position = "jitter", stroke = 1.1) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick3", linewidth = 0.5, alpha = 0.7) +
+  geom_vline(xintercept = 180, linetype = "dashed", color = "firebrick3", linewidth = 0.5,  alpha = 0.7) +
+  geom_point(aes(colour = factor(analysis), fill = observed_occurrences), shape = 21, size = 10, alpha = 0.8, position = "jitter", stroke = 1.3) +
+  theme_minimal() +
   labs(y= "Latitude", x = "Longitude") +
-  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -3.9, check_overlap = T, size = 3.2) +
-  geom_text(label = study_region_plot$observed_occurrences, size = 3) +
+  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -5.5, check_overlap = T, size = 3.4) +
+  #geom_text(label = study_region_plot$observed_occurrences, size = 3) +
   coord_sf(ylim=c(-53, 35), xlim=c(110, 320)) +
   scale_x_continuous(breaks=c(100, 150, 200, 250, 300),
                      labels=c("100°E", "150°E", "160°W", "110°W", "60°W"))+
   scale_y_continuous(breaks=c(-40, -20, 0, 20),
                      labels=c("40°S", "20°S", "0°N/S", "20°N"))  +
-  theme(legend.title = element_text(size = 13), legend.text = element_text(size = 11), plot.title = element_text(hjust = 0, size = 22), 
-        axis.title = element_text(size = 17, color = "black"), axis.text = element_text(color = "black", size = 14), text = element_text(family = "Calibri")) +
-  scale_colour_manual(values=c("black", "firebrick3"), name = "Predictor availablility") +
-  scale_fill_viridis(name = "Observed non-native\nspecies richness", option = "G", limits=c(0,82), direction = -1) +
-  theme_bw()
+  theme(legend.title = element_text(size = 14), legend.text = element_text(size = 13), plot.title = element_text(hjust = 0, size = 22), 
+        axis.title = element_text(size = 18, color = "black"), axis.text = element_text(color = "black", size = 14), text = element_text(family = "Calibri")) +
+  scale_colour_manual(values=c("navyblue", "firebrick4"), name = "Predictor availablility") +
+  scale_fill_viridis(name = "Observed non-native\nspecies richness", option = "G", limits=c(0,82), direction = -1) 
+
 
 # Save the plot
-ggsave("output_data/plots/study_region/study_region_plot_1.svg", width = 14, height = 6)
+ggsave("output_data/plots/study_region/study_region_plot.svg", width = 12, height = 5)
 
 
-ggplot(study_region_plot, aes(x = new_lon, y = lat)) +
-  geom_polygon(data = map_pacific_data, aes(x=long, y = lat, group = group)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick2", linewidth = 0.5, alpha = 0.7) +
-  geom_vline(xintercept = 180, linetype = "dashed", color = "firebrick2", linewidth = 0.5,  alpha = 0.7) +
-  geom_point(aes(colour = factor(analysis), fill = observed_occurrences), shape = 21, size = 9, alpha = 0.8, position = "jitter", stroke = 1.1) +
-  labs(y= "Latitude", x = "Longitude") +
-  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -3.9, check_overlap = F, size = 3.2) +
-  coord_sf(ylim=c(-53, 35), xlim=c(110, 320)) +
-  scale_x_continuous(breaks=c(100, 150, 200, 250, 300),
-                     labels=c("100°E", "150°E", "160°W", "110°W", "60°W"))+
-  scale_y_continuous(breaks=c(-40, -20, 0, 20),
-                     labels=c("40°S", "20°S", "0°N/S", "20°N"))  +
-  theme(legend.title = element_text(size = 13), legend.text = element_text(size = 11), plot.title = element_text(hjust = 0, size = 22), 
-        axis.title = element_text(size = 17, color = "black"), axis.text = element_text(color = "black", size = 14), text = element_text(family = "Calibri")) +
-  scale_colour_manual(values=c("black", "firebrick3"), name = "Predictor availablility") +
-  scale_fill_viridis(name = "Observed non-native\nspecies richness", option = "G", limits=c(0,82), direction = -1) +
-  theme_bw()
 
-# Save the plot
-ggsave("output_data/plots/study_region/study_region_plot_2.svg", width = 14, height = 6)
-
-
-ggplot(study_region_plot, aes(x = new_lon, y = lat)) +
-  geom_polygon(data = map_pacific_data, aes(x=long, y = lat, group = group)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick2", linewidth = 0.5, alpha = 0.7) +
-  geom_vline(xintercept = 180, linetype = "dashed", color = "firebrick2", linewidth = 0.5,  alpha = 0.7) +
-  geom_point(aes(colour = factor(analysis), fill = observed_occurrences), shape = 21, size = 9, alpha = 0.8, position = "jitter", stroke = 1.1) +
-  labs(y= "Latitude", x = "Longitude") +
-  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -3.9, check_overlap = T, size = 3.2) +
-  coord_sf(ylim=c(-53, 35), xlim=c(110, 320)) +
-  scale_x_continuous(breaks=c(100, 150, 200, 250, 300),
-                     labels=c("100°E", "150°E", "160°W", "110°W", "60°W"))+
-  scale_y_continuous(breaks=c(-40, -20, 0, 20),
-                     labels=c("40°S", "20°S", "0°N/S", "20°N"))  +
-  theme(legend.title = element_text(size = 13), legend.text = element_text(size = 11), plot.title = element_text(hjust = 0, size = 22), 
-        axis.title = element_text(size = 17, color = "black"), axis.text = element_text(color = "black", size = 14), text = element_text(family = "Calibri")) +
-  scale_colour_manual(values=c("black", "firebrick3"), name = "Predictor availablility") +
-  scale_fill_viridis(name = "Observed non-native\nspecies richness", option = "G", limits=c(0,82), direction = -1) +
-  theme_bw()
-
-# Save the plot
-ggsave("output_data/plots/study_region/study_region_plot_3.svg", width = 14, height = 6)

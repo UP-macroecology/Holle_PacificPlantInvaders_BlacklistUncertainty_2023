@@ -105,7 +105,7 @@ for (sp in study_species) { # Start loop over all species
     sum_suitable_habitat_fraction <- sum(as.numeric(subset_species_algorithm$suitable_habitat_fraction))
     
     # Calculate the mean suitable habitat fraction over all island groups
-    mean_suitable_habitat_fraction <- round((sum_suitable_habitat_fraction / 49), 2)
+    mean_suitable_habitat_fraction <- round((sum_suitable_habitat_fraction / 25), 2)
     
     # Create a vector that summarizes the result
     results_vector <- c(mean_suitable_habitat_fraction, a, "edaclim", "native", sp)
@@ -144,7 +144,7 @@ for (a in algorithm) { # Start loop over all algorithms
 colnames(results_rank_mean_suitable_habitat_fraction_edaclim_native) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
 
 # Save the resulting data frame
-save(results_rank_mean_suitable_habitat_fraction_edaclim_native, file = "output_data/blacklists/native/edaclim/results_mean_suitable_habitat_fraction_edaclim_native.RData")
+save(results_rank_mean_suitable_habitat_fraction_edaclim_native, file = "output_data/blacklists/native/edaclim/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData")
 
 
 

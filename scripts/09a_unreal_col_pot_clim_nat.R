@@ -110,83 +110,95 @@ islandgroup_climate <- setdiff(islandgroup_climate, "Pacific")
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
 # Create a data frame to store the results
-unreal_col_pot_clim_native <- data.frame(matrix(ncol = 3, nrow = 0))
-colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "predictor_set", "species")
+unreal_col_pot_clim_native <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
 
-# Solely use the predictions of ensemble models
-islandgroups_results_clim_native_ensemble <- subset(islandgroups_results_clim_native, islandgroups_results_clim_native$algorithm == "Ensemble")
+# Write a vector with the used algorithms and their ensemble
+algorithm <- c("GLM", "GAM", "RF", "BRT", "Ensemble")
 
 
 for (sp in study_species) { # Start of the loop over all study species
   
-  # Create a data frame to store the results per species
-  unreal_col_pot_clim_native_species <- data.frame(matrix(ncol = 7, nrow = 0))
-  colnames(unreal_col_pot_clim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
+  print(sp)
   
   # Subset the prediction data frame by each species
-  subset_species <- subset(islandgroups_results_clim_native_ensemble, islandgroups_results_clim_native_ensemble$species == sp)
+  subset_species <- subset(islandgroups_results_clim_native, islandgroups_results_clim_native$species == sp)
   
   
-  
-  for (i in islandgroup_climate) { # Start of the loop over all island groups
+  for (a in algorithm) { # Start the loop over all algorithms
     
-    # Subset the prediction data frame of each species by each island group
-    subset_species_islandgroup <- subset(subset_species, subset_species$islandgroup == i)
+    # Create a data frame to store the results per species and algorithm
+    unreal_col_pot_clim_native_species <- data.frame(matrix(ncol = 8, nrow = 0))
+    colnames(unreal_col_pot_clim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species", "algorithm")
     
-    # Check if species is present or absent on the island group according to Wohlwend
-    check_observation <- observed_occ_pacific_islands[sp,i]
+    # Subset the species data frame by the algorithm
+    subset_species_algorithm <- subset(subset_species, subset_species$algorithm == a)
     
-    # Check if the species is predicted to be present on the island group with
-    # a suitable habitat fraction values above 0, if yes a value of 1 (present)
-    # is given
-    check_prediction <- as.numeric(subset_species_islandgroup[subset_species_islandgroup$islandgroup == i, "suitable_habitat_fraction"])
     
-    if (check_prediction > 0) {check_prediction <- 1 # If the predicted suitable habitat fraction is above 0, a value of 1 is given (present)
-    } else if (check_prediction == 0) {check_prediction <- 0 # If not, a value of 0 is given (absent)
-    }
+    for (i in islandgroup_climate) { # Start of the loop over all island groups
+      
+      # Subset the prediction data frame of each species by each island group
+      subset_species_algorithm_islandgroup <- subset(subset_species_algorithm, subset_species_algorithm$islandgroup == i)
+      
+      # Check if species is present or absent on the island group according to Wohlwend
+      check_observation <- observed_occ_pacific_islands[sp,i]
+      
+      # Check if the species is predicted to be present on the island group with
+      # a suitable habitat fraction values above 0, if yes a value of 1 (present)
+      # is given
+      check_prediction <- as.numeric(subset_species_algorithm_islandgroup[subset_species_algorithm_islandgroup$islandgroup == i, "suitable_habitat_fraction"])
+      
+      if (check_prediction > 0) {check_prediction <- 1 # If the predicted suitable habitat fraction is above 0, a value of 1 is given (present)
+      } else if (check_prediction == 0) {check_prediction <- 0 # If not, a value of 0 is given (absent)
+      }
+      
+      # Go through the four different possibilities of coinciding information and 
+      # store the information that matches
+      
+      if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 1, sp, a)
+      } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 1, sp, a)
+      } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 1, sp, a)
+      } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 1, sp, a) 
+      }
+      
+      # Add the vector containing the results to the data frame
+      unreal_col_pot_clim_native_species <- rbind(unreal_col_pot_clim_native_species, results_col_pot)
+      
+      # Make sure the column names are correct
+      colnames(unreal_col_pot_clim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species", "algorithm")
+      
+      # Save the data frame for each species
+      #save(unreal_col_pot_clim_native_species, file = paste0("output_data/unrealized_col_pot/native/clim/unreal_col_pot_clim_native_species_",sp,"_",a,".RData"))
+      
+      
+      
+    } # End of the loop over all island groups
     
-    # Go through the four different possibilities of coinciding information and 
-    # store the information that matches
     
-    if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 1, sp)
-    } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 1, sp)
-    } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 1, sp)
-    } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 1, sp) 
-    }
+    # Calculate the unrealized colonization potential (False Positive Rate) per species
+    col_pot_a <- sum(as.numeric(unreal_col_pot_clim_native_species$a)) # a
+    col_pot_b <- sum(as.numeric(unreal_col_pot_clim_native_species$b)) # b
+    col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species$c)) # c
+    col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species$d)) # d
     
-    # Add the vector containing the results to the data frame
-    unreal_col_pot_clim_native_species <- rbind(unreal_col_pot_clim_native_species, results_col_pot)
+    false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    
+    # Create a vector with results
+    results_unreal_col_pot <- c(false_positives, a, "clim", "native", 1, sp)
+    
+    # Add result to the data frame
+    unreal_col_pot_clim_native <- rbind(unreal_col_pot_clim_native, results_unreal_col_pot)
     
     # Make sure the column names are correct
-    colnames(unreal_col_pot_clim_native_species) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
-    
-    # Save the data frame for each species
-    save(unreal_col_pot_clim_native_species, file = paste0("output_data/unrealized_col_pot/native/clim/unreal_col_pot_clim_native_species_",sp,".RData"))
+    colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
     
     
-
-  } # End of the loop over all island groups
-  
-  
-  # Calculate the unrealized colonization potential (False Positive Rate) per species
-  col_pot_a <- sum(as.numeric(unreal_col_pot_clim_native_species$a)) # a
-  col_pot_b <- sum(as.numeric(unreal_col_pot_clim_native_species$b)) # b
-  col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species$c)) # c
-  col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species$d)) # d
-  
-  false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
-  
-  # Create a vector with results
-  results_unreal_col_pot <- c(false_positives, 1, sp)
-  
-  # Add result to the data frame
-  unreal_col_pot_clim_native <- rbind(unreal_col_pot_clim_native, results_unreal_col_pot)
-  
-  # Make sure the column names are correct
-  colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "predictor_set", "species")
-  
-
+  } # Close the loop over all algorithms
+    
+    
 } # End of the loop over all species
+    
+  
 
 # Save the results data frame containing the unrealized colonization potential 
 # of all study species
@@ -210,83 +222,95 @@ islandgroup_climate_soil <- setdiff(islandgroup_climate_soil, "Pacific")
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
 # Create a data frame to store the results
-unreal_col_pot_clim_native_comp <- data.frame(matrix(ncol = 3, nrow = 0))
-colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "predictor_set", "species")
+unreal_col_pot_clim_native_comp <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
 
-# Solely use the predictions of ensemble models
-islandgroups_results_clim_native_ensemble_comp <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$algorithm == "Ensemble")
+# Write a vector with the used algorithms and their ensemble
+algorithm <- c("GLM", "GAM", "RF", "BRT", "Ensemble")
 
 
 for (sp in study_species) { # Start of the loop over all study species
   
-  # Create a data frame to store the results per species
-  unreal_col_pot_clim_native_species_comp <- data.frame(matrix(ncol = 7, nrow = 0))
-  colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
+  print(sp)
+  
   
   # Subset the prediction data frame by each species
-  subset_species <- subset(islandgroups_results_clim_native_ensemble_comp, islandgroups_results_clim_native_ensemble_comp$species == sp)
+  subset_species <- subset(islandgroups_results_clim_native_comp, islandgroups_results_clim_native_comp$species == sp)
   
   
-  
-  for (i in islandgroup_climate_soil) { # Start of the loop over all island groups
+  for (a in algorithm) { # Start the loop over all algorithms
     
-    # Subset the prediction data frame of each species by each island group
-    subset_species_islandgroup <- subset(subset_species, subset_species$islandgroup == i)
+    # Create a data frame to store the results per species and algorithm
+    unreal_col_pot_clim_native_species_comp <- data.frame(matrix(ncol = 8, nrow = 0))
+    colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species", "algorithm")
     
-    # Check if species is present or absent on the island group according to Wohlwend
-    check_observation <- observed_occ_pacific_islands[sp,i]
+    # Subset the species data frame by the algorithm
+    subset_species_algorithm <- subset(subset_species, subset_species$algorithm == a)
     
-    # Check if the species is predicted to be present on the island group with
-    # a suitable habitat fraction values above 0, if yes a value of 1 (present)
-    # is given
-    check_prediction <- as.numeric(subset_species_islandgroup[subset_species_islandgroup$islandgroup == i, "suitable_habitat_fraction"])
     
-    if (check_prediction > 0) {check_prediction <- 1 # If the predicted suitable habitat fraction is above 0, a value of 1 is given (present)
-    } else if (check_prediction == 0) {check_prediction <- 0 # If not, a value of 0 is given (absent)
-    }
+    for (i in islandgroup_climate_soil) { # Start of the loop over all island groups
+      
+      # Subset the prediction data frame of each species by each island group
+      subset_species_algorithm_islandgroup <- subset(subset_species_algorithm, subset_species_algorithm$islandgroup == i)
+      
+      # Check if species is present or absent on the island group according to Wohlwend
+      check_observation <- observed_occ_pacific_islands[sp,i]
+      
+      # Check if the species is predicted to be present on the island group with
+      # a suitable habitat fraction values above 0, if yes a value of 1 (present)
+      # is given
+      check_prediction <- as.numeric(subset_species_algorithm_islandgroup[subset_species_algorithm_islandgroup$islandgroup == i, "suitable_habitat_fraction"])
+      
+      if (check_prediction > 0) {check_prediction <- 1 # If the predicted suitable habitat fraction is above 0, a value of 1 is given (present)
+      } else if (check_prediction == 0) {check_prediction <- 0 # If not, a value of 0 is given (absent)
+      }
+      
+      # Go through the four different possibilities of coinciding information and 
+      # store the information that matches
+      
+      if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 1, sp, a)
+      } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 1, sp, a)
+      } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 1, sp, a)
+      } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 1, sp, a) 
+      }
+      
+      # Add the vector containing the results to the data frame
+      unreal_col_pot_clim_native_species_comp <- rbind(unreal_col_pot_clim_native_species_comp, results_col_pot)
+      
+      # Make sure the column names are correct
+      colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species", "algorithm")
+      
+      # Save the data frame for each species
+      #save(unreal_col_pot_clim_native_species_comp, file = paste0("output_data/unrealized_col_pot/native/clim_comp/unreal_col_pot_clim_native_species_comp_",sp,"_",a,".RData"))
+      
+      
+      
+    } # End of the loop over all island groups
     
-    # Go through the four different possibilities of coinciding information and 
-    # store the information that matches
     
-    if (check_observation == 1 & check_prediction == 1) { results_col_pot <- c(i, 1, 0, 0, 0, 1, sp)
-    } else if (check_observation == 0 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 0, 1, 1, sp)
-    } else if (check_observation == 0 & check_prediction == 1) { results_col_pot <- c(i, 0, 1, 0, 0, 1, sp)
-    } else if (check_observation == 1 & check_prediction == 0) { results_col_pot <- c(i, 0, 0, 1, 0, 1, sp) 
-    }
+    # Calculate the unrealized colonization potential (False Positive Rate) per species
+    col_pot_a <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$a)) # a
+    col_pot_b <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$b)) # b
+    col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$c)) # c
+    col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$d)) # d
     
-    # Add the vector containing the results to the data frame
-    unreal_col_pot_clim_native_species_comp <- rbind(unreal_col_pot_clim_native_species_comp, results_col_pot)
+    false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    
+    # Create a vector with results
+    results_unreal_col_pot <- c(false_positives, a, "clim", "native", 1, sp)
+    
+    # Add result to the data frame
+    unreal_col_pot_clim_native_comp <- rbind(unreal_col_pot_clim_native_comp, results_unreal_col_pot)
     
     # Make sure the column names are correct
-    colnames(unreal_col_pot_clim_native_species_comp) <- c("islandgroup", "a", "b", "c", "d", "predictor_set", "species")
-    
-    # Save the data frame for each species
-    save(unreal_col_pot_clim_native_species_comp, file = paste0("output_data/unrealized_col_pot/native/clim_comp/unreal_col_pot_clim_native_species_comp_",sp,".RData"))
+    colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
     
     
-    
-  } # End of the loop over all island groups
-  
-  
-  # Calculate the unrealized colonization potential (False Positive Rate) per species
-  col_pot_a <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$a)) # a
-  col_pot_b <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$b)) # b
-  col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$c)) # c
-  col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$d)) # d
-  
-  false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
-  
-  # Create a vector with results
-  results_unreal_col_pot <- c(false_positives, 1, sp)
-  
-  # Add result to the data frame
-  unreal_col_pot_clim_native_comp <- rbind(unreal_col_pot_clim_native_comp, results_unreal_col_pot)
-  
-  # Make sure the column names are correct
-  colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "predictor_set", "species")
-  
+  } # End of the loop over algorithms
   
 } # End of the loop over all species
+  
+
 
 # Save the results data frame containing the unrealized colonization potential 
 # of all study species
