@@ -114,18 +114,67 @@ showtext_auto()
 ggplot(AUC_algorithm_comparison, aes(x= Predictor_set, y=AUC, fill=Algorithm)) + 
   stat_boxplot(geom = "errorbar", width=0.8) +
   geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
-               outlier.size=1.6) +
+               outlier.size=1.4) +
   theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(a) AUC") +
+  #labs(title = "(a) AUC") +
   xlab("") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
-        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
-        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 9, color = "black"),
+        axis.title = element_text(size = 10, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 8),
         text = element_text(family = "Calibri")) +
-  scale_fill_brewer(palette="BuPu")
+        scale_fill_brewer(palette="BuPu", labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble"))
 
-ggsave("output_data/plots/validation/AUC_algorithm_comparison.svg", width = 5, height = 4)
+ggsave("output_data/plots/validation/AUC_algorithm_comparison.svg", width = 9.5, height = 8, unit = "cm")
+
+
+
+
+
+# (c) Descriptive statistics ---------------------------------------------------
+
+# Average value across all predictor sets of the algorithms and their ensemble
+# GLM
+AUC_algorithm_comparison_glm <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm == "glm")
+AUC_algorithm_comparison_glm$AUC <- as.numeric(AUC_algorithm_comparison_glm$AUC)
+mean(AUC_algorithm_comparison_glm$AUC) # 0.79
+sd(AUC_algorithm_comparison_glm$AUC) # 0.07
+
+# GAM
+AUC_algorithm_comparison_gam <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm == "gam")
+AUC_algorithm_comparison_gam$AUC <- as.numeric(AUC_algorithm_comparison_gam$AUC)
+mean(AUC_algorithm_comparison_gam$AUC) # 0.80
+sd(AUC_algorithm_comparison_gam$AUC) # 0.06
+
+# RF
+AUC_algorithm_comparison_rf <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm == "rf")
+AUC_algorithm_comparison_rf$AUC <- as.numeric(AUC_algorithm_comparison_rf$AUC)
+mean(AUC_algorithm_comparison_rf$AUC) # 0.93
+sd(AUC_algorithm_comparison_rf$AUC) # 0.03
+
+# BRT
+AUC_algorithm_comparison_brt <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm == "brt")
+AUC_algorithm_comparison_brt$AUC <- as.numeric(AUC_algorithm_comparison_brt$AUC)
+mean(AUC_algorithm_comparison_brt$AUC) # 0.83
+sd(AUC_algorithm_comparison_brt$AUC) # 0.06
+
+# Ensemble
+AUC_algorithm_comparison_ens <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm == "ensemble")
+AUC_algorithm_comparison_ens$AUC <- as.numeric(AUC_algorithm_comparison_ens$AUC)
+mean(AUC_algorithm_comparison_ens$AUC) # 0.87
+sd(AUC_algorithm_comparison_ens$AUC) # 0.04
+
+# Generally without ensemble
+AUC_algorithm_comparison_no_ens <- subset(AUC_algorithm_comparison, AUC_algorithm_comparison$Algorithm != "ensemble")
+AUC_algorithm_comparison_no_ens$AUC <- as.numeric(AUC_algorithm_comparison_no_ens$AUC)
+mean(AUC_algorithm_comparison_no_ens$AUC) # 0.84
+sd(AUC_algorithm_comparison_no_ens$AUC) # 0.08
+
+# All algorithms + ensemble
+AUC_algorithm_comparison$AUC <- as.numeric(AUC_algorithm_comparison$AUC)
+mean(AUC_algorithm_comparison$AUC) # 0.84
+sd(AUC_algorithm_comparison$AUC) # 0.07
+
 
 
 
@@ -211,18 +260,59 @@ showtext_auto()
 ggplot(TSS_algorithm_comparison, aes(x= Predictor_set, y=TSS, fill=Algorithm)) + 
   stat_boxplot(geom = "errorbar", width=0.8) +
   geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
-               outlier.size=1.6) +
+               outlier.size=1.4) +
   theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
   #labs(title = "(a) TSS") +
   xlab("") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = "bottom",
-        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 15, color = "black"),
-        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 12), legend.title = element_text(size = 14),
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 9, color = "black"),
+        axis.title = element_text(size = 10, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 8),
         text = element_text(family = "Calibri")) +
-  scale_fill_brewer(palette="BuPu")
+  scale_fill_brewer(palette="BuPu", labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble"))
 
-ggsave("output_data/plots/validation/TSS_algorithm_comparison.svg", width = 5, height = 4)
+
+ggsave("output_data/plots/validation/TSS_algorithm_comparison.svg", width = 9.5, height = 8, unit = "cm")
+
+
+
+# (c) Descriptive statistics ---------------------------------------------------
+
+# Average value across all predictor sets of the algorithms and their ensemble
+# GLM
+TSS_algorithm_comparison_glm <- subset(TSS_algorithm_comparison, TSS_algorithm_comparison$Algorithm == "glm")
+TSS_algorithm_comparison_glm$TSS <- as.numeric(TSS_algorithm_comparison_glm$TSS)
+mean(TSS_algorithm_comparison_glm$TSS) # 0.47
+sd(TSS_algorithm_comparison_glm$TSS) # 0.12
+
+# GAM
+TSS_algorithm_comparison_gam <- subset(TSS_algorithm_comparison, TSS_algorithm_comparison$Algorithm == "gam")
+TSS_algorithm_comparison_gam$TSS <- as.numeric(TSS_algorithm_comparison_gam$TSS)
+mean(TSS_algorithm_comparison_gam$TSS) # 0.48
+sd(TSS_algorithm_comparison_gam$TSS) # 0.12
+
+# RF
+TSS_algorithm_comparison_rf <- subset(TSS_algorithm_comparison, TSS_algorithm_comparison$Algorithm == "rf")
+TSS_algorithm_comparison_rf$TSS <- as.numeric(TSS_algorithm_comparison_rf$TSS)
+mean(TSS_algorithm_comparison_rf$TSS) # 0.70
+sd(TSS_algorithm_comparison_rf$TSS) # 0.06
+
+# BRT
+TSS_algorithm_comparison_brt <- subset(TSS_algorithm_comparison, TSS_algorithm_comparison$Algorithm == "brt")
+TSS_algorithm_comparison_brt$TSS <- as.numeric(TSS_algorithm_comparison_brt$TSS)
+mean(TSS_algorithm_comparison_brt$TSS) # 0.52
+sd(TSS_algorithm_comparison_brt$TSS) # 0.12
+
+# Ensemble
+TSS_algorithm_comparison_ens <- subset(TSS_algorithm_comparison, TSS_algorithm_comparison$Algorithm == "ensemble")
+TSS_algorithm_comparison_ens$TSS <- as.numeric(TSS_algorithm_comparison_ens$TSS)
+mean(TSS_algorithm_comparison_ens$TSS) # 0.58
+sd(TSS_algorithm_comparison_ens$TSS) # 0.09
+
+# All algorithms + ensemble
+TSS_algorithm_comparison$TSS <- as.numeric(TSS_algorithm_comparison$TSS)
+mean(TSS_algorithm_comparison$TSS) # 0.55
+sd(TSS_algorithm_comparison$TSS) # 0.14
 
 
 
@@ -306,19 +396,76 @@ showtext_auto()
 ggplot(Boyce_algorithm_comparison, aes(x= Predictor_set, y=Boyce, fill=Algorithm)) + 
   stat_boxplot(geom = "errorbar", width=0.8) +
   geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
-               outlier.size=1.6) +
+               outlier.size=1.4) +
   theme_minimal() +
   scale_y_continuous(limits=c(-0.1,1)) +
   #labs(title = "(b) Boyce index") +
   xlab("") +
   ylab("Boyce index") +
-  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = "none",
-        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
-        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+  theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = "bottom",
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 9, color = "black"),
+        axis.title = element_text(size = 10, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 8),
         text = element_text(family = "Calibri")) +
-  scale_fill_brewer(palette="BuPu")
+  scale_fill_brewer(palette="BuPu", labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble"))
 
-ggsave("output_data/plots/validation/Boyce_algorithm_comparison.svg", width = 5, height = 4)
+ggsave("output_data/plots/validation/Boyce_algorithm_comparison.svg", width = 9.5, height = 8, unit = "cm")
+
+
+
+# (c) Descriptive statistics ---------------------------------------------------
+
+# Average value across all predictor sets of the algorithms and their ensemble
+# + average value across predictor sets
+# GLM
+Boyce_algorithm_comparison_glm <- subset(Boyce_algorithm_comparison, Boyce_algorithm_comparison$Algorithm == "glm")
+Boyce_algorithm_comparison_glm$Boyce <- as.numeric(Boyce_algorithm_comparison_glm$Boyce)
+mean(Boyce_algorithm_comparison_glm$Boyce) # 0.92
+sd(Boyce_algorithm_comparison_glm$Boyce) # 0.1
+
+# GAM
+Boyce_algorithm_comparison_gam <- subset(Boyce_algorithm_comparison, Boyce_algorithm_comparison$Algorithm == "gam")
+Boyce_algorithm_comparison_gam$Boyce <- as.numeric(Boyce_algorithm_comparison_gam$Boyce)
+mean(Boyce_algorithm_comparison_gam$Boyce) # 0.93
+sd(Boyce_algorithm_comparison_gam$Boyce) # 0.09
+
+# RF
+Boyce_algorithm_comparison_rf <- subset(Boyce_algorithm_comparison, Boyce_algorithm_comparison$Algorithm == "rf")
+Boyce_algorithm_comparison_rf$Boyce <- as.numeric(Boyce_algorithm_comparison_rf$Boyce)
+mean(Boyce_algorithm_comparison_rf$Boyce) # 0.98
+sd(Boyce_algorithm_comparison_rf$Boyce) # 0.04
+
+# BRT
+Boyce_algorithm_comparison_brt <- subset(Boyce_algorithm_comparison, Boyce_algorithm_comparison$Algorithm == "brt")
+Boyce_algorithm_comparison_brt$Boyce <- as.numeric(Boyce_algorithm_comparison_brt$Boyce)
+mean(Boyce_algorithm_comparison_brt$Boyce) # 0.86
+sd(Boyce_algorithm_comparison_brt$Boyce) # 0.12
+
+# Ensemble
+Boyce_algorithm_comparison_ens <- subset(Boyce_algorithm_comparison, Boyce_algorithm_comparison$Algorithm == "ensemble")
+Boyce_algorithm_comparison_ens$Boyce <- as.numeric(Boyce_algorithm_comparison_ens$Boyce)
+mean(Boyce_algorithm_comparison_ens$Boyce) # 0.97
+sd(Boyce_algorithm_comparison_ens$Boyce) # 0.05
+
+# All algorithms + ensemble
+Boyce_algorithm_comparison$Boyce <- as.numeric(Boyce_algorithm_comparison$Boyce)
+mean(Boyce_algorithm_comparison$Boyce) # 0.93
+sd(Boyce_algorithm_comparison$Boyce) # 0.09
+
+# natclim & natclim+eda
+Boyce_algorithm_comparison_natclim <- subset(Boyce_algorithm_comparison_no_ens, Boyce_algorithm_comparison_no_ens$Predictor_set == "natclim")
+Boyce_algorithm_comparison_natclimeda <- subset(Boyce_algorithm_comparison_no_ens, Boyce_algorithm_comparison_no_ens$Predictor_set == "natclim+eda")
+Boyce_algorithm_comparison_nat <- rbind(Boyce_algorithm_comparison_natclim, Boyce_algorithm_comparison_natclimeda)
+Boyce_algorithm_comparison_nat$Boyce <- as.numeric(Boyce_algorithm_comparison_nat$Boyce)
+mean(Boyce_algorithm_comparison_nat$Boyce) # 0.90
+sd(Boyce_algorithm_comparison_nat$Boyce) # 0.12
+
+# globclim & globclim+eda
+Boyce_algorithm_comparison_globclim <- subset(Boyce_algorithm_comparison_no_ens, Boyce_algorithm_comparison_no_ens$Predictor_set == "globclim")
+Boyce_algorithm_comparison_globclimeda <- subset(Boyce_algorithm_comparison_no_ens, Boyce_algorithm_comparison_no_ens$Predictor_set == "globclim+eda")
+Boyce_algorithm_comparison_glob <- rbind(Boyce_algorithm_comparison_globclim, Boyce_algorithm_comparison_globclimeda)
+Boyce_algorithm_comparison_glob$Boyce <- as.numeric(Boyce_algorithm_comparison_glob$Boyce)
+mean(Boyce_algorithm_comparison_glob$Boyce) # 0.95
+sd(Boyce_algorithm_comparison_glob$Boyce) # 0.07
 
 
 
@@ -401,18 +548,18 @@ showtext_auto()
 ggplot(Sensitivity_algorithm_comparison, aes(x= Predictor_set, y=Sensitivity, fill=Algorithm)) + 
   stat_boxplot(geom = "errorbar", width=0.8) +
   geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
-               outlier.size=1.6) +
+               outlier.size=1.4) +
   theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(b) Sensitivity") +
+  #labs(title = "(b) Sensitivity") +
   xlab("") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
-        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
-        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 9, color = "black"),
+        axis.title = element_text(size = 10, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 8),
         text = element_text(family = "Calibri")) +
-  scale_fill_brewer(palette="BuPu")
+  scale_fill_brewer(palette="BuPu", labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble"))
 
-ggsave("output_data/plots/validation/Sensitivity_algorithm_comparison.svg", width = 5, height = 4)
+ggsave("output_data/plots/validation/Sensitivity_algorithm_comparison.svg", width = 9.5, height = 8, unit = "cm")
 
 
 
@@ -496,21 +643,21 @@ showtext_auto()
 ggplot(Specificity_algorithm_comparison, aes(x= Predictor_set, y=Specificity, fill=Algorithm)) + 
   stat_boxplot(geom = "errorbar", width=0.8) +
   geom_boxplot(width = 0.8, outlier.colour="black", outlier.shape=16,
-               outlier.size=1.6) +
+               outlier.size=1.4) +
   theme_minimal() +
   scale_y_continuous(limits=c(0,1)) +
-  labs(title = "(c) Specificity") +
+  #labs(title = "(c) Specificity") +
   xlab("") +
   theme(plot.title = element_text(hjust = 0, size = 20), plot.subtitle = element_text(hjust = 0.5), legend.direction = "horizontal", legend.position = c(0.5, 0.13),
-        legend.key.size = unit(0.35, "cm"), axis.text = element_text(size = 15, color = "black"),
-        axis.title = element_text(size = 16, color = "black"), legend.text = element_text(size = 11), legend.title = element_text(size = 13),
+        legend.key.size = unit(0.5, "cm"), axis.text = element_text(size = 9, color = "black"),
+        axis.title = element_text(size = 10, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 8),
         text = element_text(family = "Calibri")) +
-  scale_fill_brewer(palette="BuPu")
+  scale_fill_brewer(palette="BuPu", labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble"))
 
 
 
 
-ggsave("output_data/plots/validation/Specificity_algorithm_comparison.svg", width = 5, height = 4)
+ggsave("output_data/plots/validation/Specificity_algorithm_comparison.svg", width = 9.5, height = 8, unit = "cm")
 
 
 

@@ -4,7 +4,7 @@
 ## Workflow
 The analysis built on the global occurrence data of the plant species listed in the [PaciFLora](https://bdj.pensoft.net/article/67318/) data set. Each occurrence point matched with a biogeographic status (native or introduced). Code for the data preparation can be found in a separate [repository](https://github.com/UP-macroecology/GlobalOccurrences).
 
-From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study
+From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study.
 
 
 ### 1 - Initial species selection
@@ -41,9 +41,6 @@ Final blacklist rankings were created for all three blacklist definitions based 
 
 
 ### References
-
-<a id="1"></a>
-Govaerts, R (2023). The World Checklist of Vascular Plants (WCVP). Royal Botanic Gardens, Kew. Checklist dataset https://doi.org/10.15468/6h8ucr accessed via GBIF.org on 2023-11-10.
 
 <a id="2"></a>
 Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmental drivers shape diversity of naturalized plants across the Pacific. Divers Distrib.; 27: 1120– 1133. https://doi.org/10.1111/ddi.13260

@@ -118,18 +118,16 @@ ggplot(data = imp_blacklists_comp, aes(x = factor, y = standardized, fill = blac
   ylim(c(0, 100)) +
   #geom_text(label = round((imp_blacklists_comp$standardized), 2), position=position_dodge(width=0.5), hjust= imp_blacklists_comp$hjust) +
   scale_x_discrete(breaks=c("algorithm", "niche", "predictor_type"),
-                   labels=c("Algorithm", "Niche", "Predictor type"))+
-  theme(legend.position = c(0.73,0.73), axis.text = element_text(color = "black", size = 13), legend.box.background = element_rect(color="black", linewidth = 0.3),
-        axis.title = element_text(size = 14, color = "black"), legend.text = element_text(size = 10), legend.title = element_text(size = 11),
+                   labels=c("Algorithm", "Species data", "Predictor type"))+
+  theme(legend.position = c(0.73,0.64), axis.text = element_text(color = "black", size = 8), legend.box.background = element_rect(color="black", linewidth = 0.3),
+        axis.title = element_text(size = 9, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 9),
         text = element_text(family = "Calibri"), axis.text.y = element_text(angle = 90, hjust = 0.5)) +
   #labs(tag = "(a)") +
   coord_flip()
 
 
 # Save the plot
-ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification_comp.svg", width = 5, height = 4)
-
-
+ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification_comp.svg", width = 9.5, height = 7, unit = "cm")
 
 
 
@@ -222,15 +220,15 @@ ggplot(data = imp_blacklists, aes(x = factor, y = standardized, fill = blacklist
   ylim(c(0, 105)) +
   #geom_text(label = round((imp_blacklists$standardized), 2), position=position_dodge(width=0.5), hjust= imp_blacklists$hjust) +
   scale_x_discrete(breaks=c("algorithm", "niche"),
-                   labels=c("Algorithm", "Niche"))+
-  theme(legend.position = c(0.71,0.67), axis.text = element_text(color = "black", size = 13), legend.box.background = element_rect(color="black", linewidth = 0.3),
-        axis.title = element_text(size = 14, color = "black"), legend.text = element_text(size = 9), legend.title = element_text(size = 10),
+                   labels=c("Algorithm", "Species data"))+
+  theme(legend.position = c(0.71,0.59), axis.text = element_text(color = "black", size = 9), legend.box.background = element_rect(color="black", linewidth = 0.3),
+        axis.title = element_text(size = 9, color = "black"), legend.text = element_text(size = 8), legend.title = element_text(size = 9),
         text = element_text(family = "Calibri"), axis.text.y = element_text(angle = 90, hjust = 0.5)) +
   #labs(tag = "(b)") +
   coord_flip()
 
 
 # Save the plot
-ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification.svg", width = 5, height = 4)
+ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification.svg", width = 11.5, height = 7, unit = "cm")
 
 

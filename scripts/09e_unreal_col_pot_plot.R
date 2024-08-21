@@ -57,11 +57,11 @@ ggplot(unreal_col_pot_25_ens, aes(x = predictor_set, y = unrealized_col_pot, fil
   scale_x_discrete(breaks=c(1, 2, 3, 4),
                    labels=c("natclim", "natclim+eda", "globclim", "globclim+eda"))+
   scale_fill_manual(values = c("lightgrey", "lightgrey", "lightgrey", "lightgrey")) +
-  theme(legend.position = "none", axis.text = element_text(size = 13, color = "black"),
-        axis.title = element_text(size = 14, color = "black"), text = element_text(family = "Calibri"))
+  theme(legend.position = "none", axis.text = element_text(size = 8, color = "black"),
+        axis.title = element_text(size = 9, color = "black"), text = element_text(family = "Calibri"))
 
 # Save the plot
-ggsave("output_data/plots/unrealized_col_pot/unreal_col_pot_25.svg", width = 5, height = 4)
+ggsave("output_data/plots/unrealized_col_pot/unreal_col_pot_25.svg", width = 7, height = 7, unit = "cm")
 
 #scale_fill_manual(values = c("#6699CC", "#CC6677", "#27408B", "firebrick4")) +
 
@@ -98,18 +98,340 @@ ggplot(unreal_col_pot_49_ens, aes(x = predictor_set, y = unrealized_col_pot, fil
   scale_x_discrete(breaks=c(1, 3),
                    labels=c("natclim", "globclim"))+
   scale_fill_manual(values = c("lightgrey", "lightgrey")) +
-  theme(legend.position = "none", axis.text = element_text(size = 13, color = "black"),
-        axis.title = element_text(size = 14, color = "black"), text = element_text(family = "Calibri")) +
+  theme(legend.position = "none", axis.text = element_text(size = 8, color = "black"),
+        axis.title = element_text(size = 9, color = "black"), text = element_text(family = "Calibri")) +
   scale_y_continuous(limits = c(0,1))
 
 # Save the plot
-ggsave("output_data/plots/unrealized_col_pot/unreal_col_pot_49.svg", width = 5, height = 4)
+ggsave("output_data/plots/unrealized_col_pot/unreal_col_pot_49.svg", width = 6, height = 7, unit = "cm")
 
-# scale_fill_manual(values = c("#6699CC", "#27408B")) +
+
+
+
 
 #-------------------------------------------------------------------------------
 
-# 2. Calculate component uncertainties -----------------------------------------
+# 2. Density plots of suitable number of island groups (FP, TN, TP+FP) ---------
+
+# (a) based on 25 island groups covered by climatic and edaphic data -----------
+
+# Needed objects (results of FP, TN, and TP+FP based on all four predictor sets
+# and the algorithms)
+load("output_data/unrealized_col_pot/native/clim_comp/unreal_col_pot_clim_native_comp.RData")
+load("output_data/unrealized_col_pot/native/edaclim/unreal_col_pot_edaclim_native.RData")
+load("output_data/unrealized_col_pot/global/clim_comp/unreal_col_pot_clim_global_comp.RData")
+load("output_data/unrealized_col_pot/global/edaclim/unreal_col_pot_edaclim_global.RData")
+
+# natclim
+# Solely retain values based on ensemble models
+unreal_col_pot_clim_native_comp_ens <- subset(unreal_col_pot_clim_native_comp, unreal_col_pot_clim_native_comp$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_clim_native_comp_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_clim_native_comp_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_clim_native_comp_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_clim_native_comp <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_clim_native_comp$value <- as.numeric(as.character(metric_comparison_clim_native_comp$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_clim_native_comp$metric <- factor(metric_comparison_clim_native_comp$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_clim_native_comp, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.175) + 
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none") +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+                     
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_clim_native_comp.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+
+
+# natclim+eda
+# Solely retain values based on ensemble models
+unreal_col_pot_edaclim_native_ens <- subset(unreal_col_pot_edaclim_native, unreal_col_pot_edaclim_native$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_edaclim_native_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_edaclim_native_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_edaclim_native_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_edaclim_native <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_edaclim_native$value <- as.numeric(as.character(metric_comparison_edaclim_native$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_edaclim_native$metric <- factor(metric_comparison_edaclim_native$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_edaclim_native, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.175) + 
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none") +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_edaclim_native.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+
+
+# globclim
+# Solely retain values based on ensemble models
+unreal_col_pot_clim_global_comp_ens <- subset(unreal_col_pot_clim_global_comp, unreal_col_pot_clim_global_comp$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_clim_global_comp_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_clim_global_comp_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_clim_global_comp_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_clim_global_comp <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_clim_global_comp$value <- as.numeric(as.character(metric_comparison_clim_global_comp$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_clim_global_comp$metric <- factor(metric_comparison_clim_global_comp$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_clim_global_comp, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.175) + 
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none") +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_clim_global_comp.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+# globclim+eda
+# Solely retain values based on ensemble models
+unreal_col_pot_edaclim_global_ens <- subset(unreal_col_pot_edaclim_global, unreal_col_pot_edaclim_global$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_edaclim_global_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_edaclim_global_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_edaclim_global_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_edaclim_global <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_edaclim_global$value <- as.numeric(as.character(metric_comparison_edaclim_global$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_edaclim_global$metric <- factor(metric_comparison_edaclim_global$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_edaclim_global, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.175) + 
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none", legend.text = element_text(size = 8)) +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+
+
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_edaclim_global.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+
+
+
+# (b) based on 49 island groups covered by climatic data -----------------------
+
+# Needed objects (results of TP and FP based on the two predictor sets
+# including solely climatic data)
+load("output_data/unrealized_col_pot/native/clim/unreal_col_pot_clim_native.RData")
+load("output_data/unrealized_col_pot/global/clim/unreal_col_pot_clim_global.RData")
+
+# natclim
+# Solely retain values based on ensemble models
+unreal_col_pot_clim_native_ens <- subset(unreal_col_pot_clim_native, unreal_col_pot_clim_native$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_clim_native_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_clim_native_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_clim_native_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_clim_native <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_clim_native$value <- as.numeric(as.character(metric_comparison_clim_native$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_clim_native$metric <- factor(metric_comparison_clim_native$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_clim_native, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.06) + 
+  xlim(0, 49) +
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none") +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_clim_native.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+
+
+# globclim
+# Solely retain values based on ensemble models
+unreal_col_pot_clim_global_ens <- subset(unreal_col_pot_clim_global, unreal_col_pot_clim_global$algorithm == "Ensemble")
+
+# Extract single columns of FP, TN, and TP_and_FP
+FP_column <- data.frame(unreal_col_pot_clim_global_ens[, "FP"])
+colnames(FP_column) <- "value"
+TN_column <- data.frame(unreal_col_pot_clim_global_ens[, "TN"])
+colnames(TN_column) <- "value"
+TP_and_FP_column <- data.frame(unreal_col_pot_clim_global_ens[, "TP_and_FP"])
+colnames(TP_and_FP_column) <- "value"
+
+# Add a column that indicates their metric
+FP_column$metric <- "FP"
+TN_column$metric <- "TN"
+TP_and_FP_column$metric <- "TP_and_FP"
+
+# Bind the three data frames
+metric_comparison_clim_global <- rbind(FP_column, TN_column, TP_and_FP_column)
+
+# Make sure the values are numeric
+metric_comparison_clim_global$value <- as.numeric(as.character(metric_comparison_clim_global$value))
+
+# Make sure the order of metrices is correct
+metric_comparison_clim_global$metric <- factor(metric_comparison_clim_global$metric, levels = c("FP", "TN", "TP_and_FP"))
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot density curve of all three metrics
+ggplot(metric_comparison_clim_global, aes(x = value, color = metric)) +
+  geom_density(linewidth = 0.8) +
+  labs(x = "Island groups", y = "Density") +
+  theme_minimal() +
+  ylim(0, 0.06) + 
+  xlim(0, 49) +
+  theme(text = element_text(family = "Calibri"), axis.title = element_blank(), axis.text = element_text(size = 8, color = "black"), 
+        legend.position = "none") +
+  scale_color_manual(labels = c("FP" = "False Positives", "TN" = "True Negatives", "TP_and_FP" = "True Positives + False Positives"),
+                     values = c("#F8766D", "#619CFF", "black"),
+                     guide = guide_legend(title = NULL))
+
+
+
+# Save the plot
+ggsave("output_data/plots/unrealized_col_pot/metrices_clim_global.svg", width = 4.45, height = 2.8, unit = "cm")
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+
+# 3. Calculate component uncertainties -----------------------------------------
 
 library(randomForest)
 
@@ -174,6 +496,84 @@ model_RF_unrealized_col_pot <- randomForest(x = unreal_col_pot_49[, c("algorithm
 
 # Look at variable importance of model variables
 importance(model_RF_unrealized_col_pot)
+
+
+
+#-------------------------------------------------------------------------------
+
+# 3. Descriptive statistics ----------------------------------------------------
+
+# (a) based on 25 island groups covered by climatic and edaphic data -----------
+
+# Extract average values of the different predictor sets and per niche
+# natclim
+unreal_col_pot_25_ens_natclim <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_set == 1)
+mean(unreal_col_pot_25_ens_natclim$unrealized_col_pot) # 0.73
+sd(unreal_col_pot_25_ens_natclim$unrealized_col_pot) # 0.31
+
+# natclim+eda
+unreal_col_pot_25_ens_natclimeda <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_set == 2)
+mean(unreal_col_pot_25_ens_natclimeda$unrealized_col_pot) # 0.73
+sd(unreal_col_pot_25_ens_natclimeda$unrealized_col_pot) # 0.33
+
+# globclim
+unreal_col_pot_25_ens_globclim <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_set == 3)
+mean(unreal_col_pot_25_ens_globclim$unrealized_col_pot) # 0.8
+sd(unreal_col_pot_25_ens_globclim$unrealized_col_pot) # 0.29
+
+# globclim+eda
+unreal_col_pot_25_ens_globclimeda <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_set == 4)
+mean(unreal_col_pot_25_ens_globclimeda$unrealized_col_pot) # 0.77
+sd(unreal_col_pot_25_ens_globclimeda$unrealized_col_pot) # 0.34
+
+# native
+unreal_col_pot_25_ens_native <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$niche == "native")
+mean(unreal_col_pot_25_ens_native$unrealized_col_pot) # 0.73
+sd(unreal_col_pot_25_ens_native$unrealized_col_pot) # 0.32
+
+# global
+unreal_col_pot_25_ens_global <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$niche == "global")
+mean(unreal_col_pot_25_ens_global$unrealized_col_pot) # 0.79
+sd(unreal_col_pot_25_ens_global$unrealized_col_pot) # 0.32
+
+# climatic
+unreal_col_pot_25_ens_clim <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_type == "clim")
+mean(unreal_col_pot_25_ens_clim$unrealized_col_pot) # 0.77
+sd(unreal_col_pot_25_ens_clim$unrealized_col_pot) # 0.3
+
+# climatic + edaphic 
+unreal_col_pot_25_ens_edaclim <- subset(unreal_col_pot_25_ens, unreal_col_pot_25_ens$predictor_type == "edaclim")
+mean(unreal_col_pot_25_ens_edaclim$unrealized_col_pot) # 0.75
+sd(unreal_col_pot_25_ens_edaclim$unrealized_col_pot) # 0.34
+
+
+# all
+mean(unreal_col_pot_25_ens$unrealized_col_pot) # 0.76
+sd(unreal_col_pot_25_ens$unrealized_col_pot) # 0.32
+min(unreal_col_pot_25_ens$unrealized_col_pot) # 0
+max(unreal_col_pot_25_ens$unrealized_col_pot) # 1
+
+
+
+# (b) based on 49 island groups covered by climatic data -----------------------
+
+# Extract average values of the different predictor sets and per niche
+# natclim
+unreal_col_pot_49_ens_natclim <- subset(unreal_col_pot_49_ens, unreal_col_pot_49_ens$predictor_set == 1)
+mean(unreal_col_pot_49_ens_natclim$unrealized_col_pot) # 0.68
+sd(unreal_col_pot_49_ens_natclim$unrealized_col_pot) # 0.33
+
+# globclim
+unreal_col_pot_49_ens_globclim <- subset(unreal_col_pot_49_ens, unreal_col_pot_49_ens$predictor_set == 3)
+mean(unreal_col_pot_49_ens_globclim$unrealized_col_pot) # 0.75
+sd(unreal_col_pot_49_ens_globclim$unrealized_col_pot) # 0.32
+
+# all
+mean(unreal_col_pot_49_ens$unrealized_col_pot) # 0.71
+sd(unreal_col_pot_49_ens$unrealized_col_pot) # 0.32
+
+
+
 
 
 

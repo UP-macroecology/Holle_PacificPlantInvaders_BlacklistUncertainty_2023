@@ -77,20 +77,20 @@ ggplot(blacklists_final_native_clim_comp, aes(x = species, y = blacklist, fill =
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: native, Predictor type: climate") +
+  ggtitle("Species data: native, Predictor type: climate") +
   labs(x = "Non-native species") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 17, face = "bold"),
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
         legend.key.width = unit(0.6, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(),
         axis.title.x = element_blank(), axis.text.y = element_blank()) +
-  guides(fill = FALSE) +
+  guides(fill = "none") +
   geom_text(label = blacklists_final_native_clim_comp$validation)
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_native_clim_comp.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_native_clim_comp.svg", width = 19, height = 3, unit = "cm")
 
 
 
@@ -145,20 +145,20 @@ ggplot(blacklists_final_native_clim, aes(x = species, y = blacklist, fill = rank
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: native, Predictor type: climate") +
+  ggtitle("Species data: native, Predictor type: climate") +
   labs(x = "Non-native species") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 17, face = "bold"),
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
         legend.key.width = unit(0.6, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(),
         axis.title.x = element_blank(), axis.text.y = element_blank()) +
-  guides(fill = FALSE) +
+  guides(fill = "none") +
   geom_text(label = blacklists_final_native_clim$validation)
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_native_clim.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_native_clim.svg",  width = 19, height = 3, unit = "cm")
 
 
 
@@ -218,13 +218,13 @@ ggplot(blacklists_final_native_edaclim, aes(x = species, y = blacklist, fill = r
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: native, Predictor type: climate + edaphic") +
+  ggtitle("Species data: native, Predictor type: climate + edaphic") +
   labs(x = "Non-native species", y = "Blacklist") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 17, face = "bold"),
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
         legend.key.width = unit(0.6, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(),
         axis.title.x = element_blank(), axis.text.y = element_blank()) +
   guides(fill = FALSE) +
@@ -232,7 +232,7 @@ ggplot(blacklists_final_native_edaclim, aes(x = species, y = blacklist, fill = r
   
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_native_edaclim.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_native_edaclim.svg", width = 19, height = 3, unit = "cm")
 
 
 
@@ -293,20 +293,20 @@ ggplot(blacklists_final_global_clim_comp, aes(x = species, y = blacklist, fill =
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: global, Predictor type: climate") +
+  ggtitle("Species data: global, Predictor type: climate") +
   labs(x = "Non-native species", y = "Blacklist") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
         legend.key.width = unit(0.6, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(),
         axis.title.x = element_blank(), axis.text.y = element_blank()) +
   guides(fill = FALSE) +
   geom_text(label = blacklists_final_global_clim_comp$validation)
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_global_clim_comp.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_global_clim_comp.svg", width = 19, height = 3, unit = "cm")
 
 
 
@@ -361,20 +361,20 @@ ggplot(blacklists_final_global_clim, aes(x = species, y = blacklist, fill = rank
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: global, Predictor type: climate") +
+  ggtitle("Species data: global, Predictor type: climate") +
   labs(x = "Non-native species", y = "Blacklist") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
-        legend.key.width = unit(0.8, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(), axis.text.y = element_blank(),
-        axis.title.x = element_text(size = 14), legend.direction = "horizontal", legend.position = c("bottom"), legend.text = element_text(size = 12), legend.title = element_text(size = 14),
-        legend.justification = "center") +
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+        legend.key.width = unit(0.6, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(),
+        axis.title.x = element_blank(), axis.text.y = element_blank()) +
+  guides(fill = FALSE) +
   geom_text(label = blacklists_final_global_clim$validation)
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_global_clim.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_global_clim.svg", width = 19, height = 3, unit = "cm")
 
 
 
@@ -435,21 +435,21 @@ ggplot(blacklists_final_global_edaclim, aes(x = species, y = blacklist, fill = r
   geom_tile(color = "black") +
   scale_fill_gradient(low = "firebrick4", high = "snow", name = "Ranking\nposition") +
   coord_fixed(ratio = 1.5) +
-  ggtitle("Niche: global, Predictor type: climate + edaphic") +
+  ggtitle("Species data: global, Predictor type: climate + edaphic") +
   labs(x = "Non-native species", y = "Blacklist") +
   scale_y_discrete(breaks=c("total_suitable_fraction", "mean_suitable_fraction", "number_suitable"),
                    labels=c("Total fraction", "Mean fraction", "Island groups")) +
   scale_x_discrete(breaks = c("1", "5", "10", "15", "20", "25", "30", "35", "40", 
                               "45", "50", "55", "60", "65", "70", "75", "80")) +
-  theme(axis.text = element_text(color = "black", size = 13), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+  theme(axis.text = element_text(color = "black", size = 10), legend.key.size = unit(0.8, "lines"), plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
         legend.key.width = unit(0.8, "cm"), text = element_text(family = "Calibri"), axis.title.y = element_blank(), axis.text.y = element_blank(),
-        axis.title.x = element_text(size = 14), legend.direction = "horizontal", legend.position = c("bottom"), legend.text = element_text(size = 12), legend.title = element_text(size = 14),
+        axis.title.x = element_blank(), legend.direction = "horizontal", legend.position = c("none"), legend.text = element_text(size = 8), legend.title = element_text(size = 9),
         legend.justification = "center") +
   #guides(fill = FALSE) +
   geom_text(label = blacklists_final_global_edaclim$validation)
 
 
-ggsave("output_data/plots/final_blacklisting/blacklists_final_global_edaclim.svg", width = 14, height = 4)
+ggsave("output_data/plots/final_blacklisting/blacklists_final_global_edaclim.svg", width = 19, height = 3, unit = "cm")
 
 
 

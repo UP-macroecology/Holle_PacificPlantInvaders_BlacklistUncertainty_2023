@@ -86,8 +86,8 @@ save(observed_occ_pacific_islands, file = "input_data/observed_occ_pacific_islan
 
 # Create a data frame for each species containing information if observed presences
 # and absences (Wohlwend et al. 2021) coincide with predicted presences and
-# absences on each island group. This is done calculating the False Positive Rate,
-# where
+# absences on each island group. This is done calculating the False Positive Rate.
+# Additionally the True Positives and False Positives are extracted, where: 
 
 # a: True Positive = Species occurs on the island group which is also predicted to be suitable
 # b: False Positive = Species does not occur on island group but it is predicted to be suitable -> predicted to potentially occur there
@@ -110,8 +110,8 @@ islandgroup_climate <- setdiff(islandgroup_climate, "Pacific")
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
 # Create a data frame to store the results
-unreal_col_pot_clim_native <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
+unreal_col_pot_clim_native <- data.frame(matrix(ncol = 10, nrow = 0))
+colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "TP", "FP", "TP_and_FP", "TN", "algorithm", "predictor_type", "niche", "predictor_set", "species")
 
 # Write a vector with the used algorithms and their ensemble
 algorithm <- c("GLM", "GAM", "RF", "BRT", "Ensemble")
@@ -181,16 +181,22 @@ for (sp in study_species) { # Start of the loop over all study species
     col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species$c)) # c
     col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species$d)) # d
     
-    false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    false_positive_rate <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    
+    # Extract other measures of interest
+    true_positives <- col_pot_a
+    false_positives <- col_pot_b
+    all_positives <- col_pot_a + col_pot_b
+    true_negatives <- col_pot_d
     
     # Create a vector with results
-    results_unreal_col_pot <- c(false_positives, a, "clim", "native", 1, sp)
+    results_unreal_col_pot <- c(false_positive_rate, true_positives, false_positives, all_positives, true_negatives, a, "clim", "native", 1, sp)
     
     # Add result to the data frame
     unreal_col_pot_clim_native <- rbind(unreal_col_pot_clim_native, results_unreal_col_pot)
     
     # Make sure the column names are correct
-    colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
+    colnames(unreal_col_pot_clim_native) <- c("unrealized_col_pot", "TP", "FP", "TP_and_FP", "TN", "algorithm", "predictor_type", "niche", "predictor_set", "species")
     
     
   } # Close the loop over all algorithms
@@ -222,8 +228,8 @@ islandgroup_climate_soil <- setdiff(islandgroup_climate_soil, "Pacific")
 study_species <- unique(as.character(occ_numbers_thinned_env_filtered$species)) 
 
 # Create a data frame to store the results
-unreal_col_pot_clim_native_comp <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
+unreal_col_pot_clim_native_comp <- data.frame(matrix(ncol = 10, nrow = 0))
+colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "TP", "FP", "TP_and_FP", "TN", "algorithm", "predictor_type", "niche", "predictor_set", "species")
 
 # Write a vector with the used algorithms and their ensemble
 algorithm <- c("GLM", "GAM", "RF", "BRT", "Ensemble")
@@ -294,16 +300,22 @@ for (sp in study_species) { # Start of the loop over all study species
     col_pot_c <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$c)) # c
     col_pot_d <- sum(as.numeric(unreal_col_pot_clim_native_species_comp$d)) # d
     
-    false_positives <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    false_positive_rate <- round(col_pot_b/(col_pot_b + col_pot_d), 2)
+    
+    # Extract other measures of interest
+    true_positives <- col_pot_a
+    false_positives <- col_pot_b
+    all_positives <- col_pot_a + col_pot_b
+    true_negatives <- col_pot_d
     
     # Create a vector with results
-    results_unreal_col_pot <- c(false_positives, a, "clim", "native", 1, sp)
+    results_unreal_col_pot <- c(false_positive_rate, true_positives, false_positives, all_positives, true_negatives, a, "clim", "native", 1, sp)
     
     # Add result to the data frame
     unreal_col_pot_clim_native_comp <- rbind(unreal_col_pot_clim_native_comp, results_unreal_col_pot)
     
     # Make sure the column names are correct
-    colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "algorithm", "predictor_type", "niche", "predictor_set", "species")
+    colnames(unreal_col_pot_clim_native_comp) <- c("unrealized_col_pot", "TP", "FP", "TP_and_FP", "TN", "algorithm", "predictor_type", "niche", "predictor_set", "species")
     
     
   } # End of the loop over algorithms
