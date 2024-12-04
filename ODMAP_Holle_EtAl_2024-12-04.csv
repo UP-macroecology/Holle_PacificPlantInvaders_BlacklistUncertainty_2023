@@ -1,0 +1,64 @@
+section,subsection,element,Value
+Overview,Authorship,Study title,Uncertainty in blacklisting potential Pacific plant invaders using species distribution models
+Overview,Authorship,Author names,Val�n Holle; Anna Roennfeldt; Katrin Schifferle; Hanno Seebens; Dylan Craven; Patrick Weigelt; Tiffany Knight; Juliano Sarmento Cabral; Damaris Zurell
+Overview,Authorship,Contact ,valen.holle@uni-potsdam.de
+Overview,Authorship,Study link,
+Overview,Model objective,Model objective,Mapping and interpolation
+Overview,Model objective,Target output,suitable vs. unsuitable habitat
+Overview,Focal Taxon,Focal Taxon,Vascular plant species
+Overview,Location,Location,Pacific region (up to 49 island groups)
+Overview,Scale of Analysis,Spatial extent,"130, -75, -40, 40 (xmin, xmax, ymin, ymax)"
+Overview,Scale of Analysis,Spatial resolution,1 km
+Overview,Scale of Analysis,Temporal extent,1900-2023
+Overview,Scale of Analysis,Temporal resolution,one studied time period (1900-2023)
+Overview,Scale of Analysis,Boundary,political; natural
+Overview,Biodiversity data,Observation type,citizen science
+Overview,Biodiversity data,Response data type,presence-only
+Overview,Predictors,Predictor types,climatic; edaphic
+Overview,Hypotheses,Hypotheses,The species distributions are mainly determined by climate and soil.
+Overview,Assumptions,Model assumptions,"We assumed that climate and soil are the key explanatory variables for species distributions, species are in equilibrium with environment, observation biases are insignificant."
+Overview,Algorithms,Modelling techniques,glm; gam; randomForest; brt
+Overview,Algorithms,Model complexity,We used an intermediate level of model complexity to prevent overfitting for species with smaller sample sizes and to ensure that predictions to new places remain robust.
+Overview,Algorithms,Model averaging,We used the arithmetic mean to combine all four model algorithms into one ensemble.
+Overview,Workflow,Model workflow,"We downloaded species data from GBIF and BIEN, cleaned the coordinates, and determined the biogeographical status of plant occurrences as either native or introduced based on three different sources: WCVP, GIFT,  and GIoNAF. We generated background data by randomly selecting points within a buffer distance of 200 km from the occurrence locations, using a presence-absence ratio of 1:10. To avoid spatial autocorrelation, we then thinned all presences and pseudo-absences using a 3 km threshold. We obtained climate data (CHELSA) and edaphic data (SoilGrids) at a 1 km resolution. Given that our study aimed to quantify the uncertainty in species input data and environmental input data for SDM-based blacklists, we intersected the two types of species data (native vs. global) with the two types of environmental data (climatic vs. edapho-climatic), resulting in four combinations of input data for each species. For each of these four SDM input datasets, we selected the four most important and weakly correlated predictor variables for model construction. SDMs were fitted using four statistical algorithms (GLM, GAM, RF, BRT). For the regression-based methods (GLM, GAM), we used a presence-absence ratio of 1:10 but applied equal weighting during model building. For the machine-learning methods, we used ten replicate sets of background data in a presence-absence ratio of 1:1, generating 10 different models which were then averaged. Additionally, model ensembles were constructed using the arithmetic mean of predictions over all four model algorithms.  The SDM performance was evaluated using a 5-fold cross-validation by computing AUC, TSS, sensitivity, specificity, and the Boyce index. Based on each model and their ensemble, we predicted potential presence and absence (using the maxSSS threshold) across the Pacific. Based on the quantified area of predicted suitable habitat in km², we separately constructed a blacklist for each combination of species input data, environmental input data and SDM algorithm, as well as a final blacklist with ensembles of SDM algorithms."
+Overview,Software,Software,"R 4.3.1 with terra 1.7.55, sf 1.0.16, sfheaders 0.4.3, ecospat 4.0.0, mgcv 1.8.42, randomForest 4.7.1.1, gbm 2.1.8.1, dismo 1.4.14, PresenceAbsence 1.1.11, tidyverse 2.0.0"
+Overview,Software,Code availability,All scripts are available in <<add DOI later>>.
+Overview,Software,Data availability,All data are publicly available and can be downloaded using the available scripts.
+Data,Biodiversity data,Taxon names,"Acacia auriculiformis, Acanthospermum australe, Alternathera brasiliana, Alysicarpus vaginalis, Anemone hupehensis, Anredera cordifolia, Arrhenatherum elatius, Asclepis curassavica, Bellis perennis, Botriochloa bladhii, Brachiara subquadripara, Brassica rapa, Breynia disticha, Caesalpinia decapetala, Calotropis gigantea, Capsicum frutescens, Cereus hildmannianus, Chloris radiata, Cirsium vulgare, Crassocephalum crepidioides, Crotalaria juncea, Crotalaria pallida, Delonix regia, Desmanthus pernambucanus, Dieffenbachia seguine, Digitaria eriantha, Digitaria horizontalis, Echinochloa esculenta, Emilia sonchifolia, Erigeron bonariensis, Eugenia uniflora, Euphorbia tirucalli, Ficus religiosa, Gamochaeta americana, Gnaphalium pensylvanicum, Gnaphalium purpureum, Grevillea banksii, Grevillea robusta, Haematoxylum campechianum, Justicia spicigera, Lablab purpureus, Lamarckia aurea, Laportea aestuans, Lespedeza cuneata, Lolium arundinaceum, Lophostemon confertus, Olea europea, Paraserianthes lophantha, Passiflora caerulea, Pentas lanceolata, Phleum pratense, Phoenix dactylifera, Physalis angulata, Picris hieracioides, Pistia stratiotes, Portulaca pilosa, Prunus persica, Psidium guajava, Rhodomyrtus tomentosa, Rubus ellipticus, Rumex spinosus, Schefflera arboricola, Senna pendula, Sigesbeckia orientalis, Sphagneticola trilobata, Stachys arvensis, Stylosanthes guianensis, Syzygium malaccense, Tagetes minuta, Tanacetum parthenium, Tecoma stans, Tillandsia usneoides, Tithonia diversifolia, Tragus berteronianus, Tribulus terrestris, Tridax procumbens, Vanilla planifolia, Verbena bonariensis, Verbena rigida, Verbesina encelioides, Vitis vinifera, Xanthium strumarium"
+Data,Biodiversity data,Taxonomic reference system,GBIF/BIEN backbone taxonomy
+Data,Biodiversity data,Ecological level,species
+Data,Biodiversity data,Data sources,GBIF and BIEN (accessed in June 2023)
+Data,Biodiversity data,Sampling design,opportunistic
+Data,Biodiversity data,Sample size,"For models based on native occurrences, we used a minimum number of presences n = 40. Final presences for the native models ranged from 42 to 39,486. For models based on global occurrences, we used a minimum number of n = 40 native presences and n = 40 non-native presences. Final presences for the global model ranged from 122 to 70,495."
+Data,Biodiversity data,Scaling,We spatially thinned the data to 3 km.
+Data,Biodiversity data,Cleaning,"We removed duplicate observations; observations with missing coordinates, equal coordinates, coordinate uncertainty; coordinates within a 1,000 m radius of country centroids, within a 10,000 m radius of capitals, within a 100 m radius of biodiversity institutions, within 1° radius of GBIF headquarters in Copenhagen."
+Data,Biodiversity data,Absence data,N/A
+Data,Biodiversity data,Background data,We generated background data within a 200 km buffer around presence locations while excluding those. We derived 10 times as many background points as presence points.
+Data,Biodiversity data,Errors and biases,
+Data,Data partitioning,Training data,"GLMs and GAMs were fitted based on all data points. For RFs and BRTs, 10 replicate models in a presence-absence ratio of 1:1 were fitted."
+Data,Data partitioning,Validation data,We used a 5-fold cross-validation.
+Data,Predictor variables,Predictor variables,"15 bioclimatic variables (bio1, bio2, bio3, bio4, bio5, bio6, bio7, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17); 14 edaphic variables (soil organic carbon content, total nitrogen,  coarse fragments, pH, cation exchange capacity, bulk density, sand content, clay content, silt content, soil water content at three different pressure heads)"
+Data,Predictor variables,Data sources,Chelsa Version 2.1; SoilGrids Version 2.0
+Data,Predictor variables,Spatial extent,global
+Data,Predictor variables,Spatial resolution,1 km
+Data,Predictor variables,Coordinate reference system,WGS 84 (EPSG:4326)
+Data,Predictor variables,Temporal extent,Chelsa: 1981-2010; SoilGrids: data collected up until 2017
+Data,Predictor variables,Temporal resolution,
+Data,Predictor variables,Data processing,We averaged the soil data over the three downloaded depth intervals (30 cm).
+Data,Predictor variables,Errors and biases,
+Data,Predictor variables,Dimension reduction,"We excluded bio8, bio8, bio18, and bio19 as these are variables that combine temperature and precipitation data. We pursued to avoid artefacts leading to discontinuities in interpolated surfaces."
+Model,Multicollinearity,Multicollinearity,"We checked for multi-collinearity and only retained the more important variable from highly correlated pairs with Spearman correlations |r| > 0.7. Variable importance was assessed using the Boyce index, determined based on univariate GLMs and a 5-fold cross-validation. We considered the four variables that were ranked most important in the list of weakly correlated predictors for modelling."
+Model,Model settings,Model settings (fitting),"glm: family (binomial), formula (linear and quadratic terms), weights (equal weights of presences and absences); gam: family (binomial), smoothTerms (non-parametric cubic smoothing splines (k =4)); randomForest: ntree (1000), maxnodes (20); brt: distribution (Bernoulli), interactionDepth (2), shrinkage (optimised learning rate to yield tree numbers between 1,000 and 5,000), bagFraction (0.75)"
+Model,Model estimates,Coefficients,N/A
+Model,Model selection - model averaging - ensembles,Model averaging,We used the arithmetic mean to average the predictions of the 10 replicate models of RFs and BRTs.
+Model,Model selection - model averaging - ensembles,Model ensembles,We used the arithmetic mean to average the predictions of the four different algorithms.
+Model,Analysis and Correction of non-independence,Spatial autocorrelation,N/A
+Model,Threshold selection,Threshold selection,maxSSS
+Assessment,Performance statistics,Performance on training data,N/A
+Assessment,Performance statistics,Performance on validation data,AUC; True positive rate; True negative rate; TSS; Boyce
+Assessment,Performance statistics,Performance on test data,N/A
+Assessment,Plausibility check,Response shapes,Partial response plots
+Assessment,Plausibility check,Expert judgement,N/A
+Prediction,Prediction output,Prediction unit,continuous habitat suitability; suitable vs. unsuitable habitat (binary measure)
+Prediction,Uncertainty quantification,Scenario uncertainty,N/A
+Prediction,Uncertainty quantification,Novel environments,N/A
