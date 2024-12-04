@@ -164,11 +164,13 @@ Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmen
 
 
 
-**input_data**
+# Define the folder tree as a string
+folder_tree <- "
+input_data
 ├── environmental_data
 ├── spatial_data
 
-**output_data**
+output_data
 ├── presences_thinned
 ├── absences_thinned
 │   ├── native
@@ -249,5 +251,12 @@ Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmen
     ├── unrealized_col_pot
     ├── final_blacklisting
     └── study_region
+"
 
-**scripts**
+# Create the Markdown content
+markdown_content <- c(
+  folder_tree
+)
+
+# Write to a Markdown file
+writeLines(markdown_content, "README.md")
