@@ -69,109 +69,14 @@ Final blacklist rankings were created for all three blacklist definitions based 
 ---------------------------------------------------------------
 **Required folder structure**
 ---------------------------------------------------------------
-**input_data** --------- environmental_data
-                   |
-                   |---- spatial data
-               
-**output_data** -------- presences_thinned
-                   |
-                   |---- absences_thinned ------------------------- native
-                   |                                  |------------ global 
-                   |                                   
-                   |---- distribution_data ------------------------ native 
-                   |                                  |------------ global
-                   |                                   
-                   |---- distribution_env_data -------------------- native ---------------------------- clim
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ edaclim
-                   |                                                                       
-                   |---- distribution_env_data_subset --------------native ---------------------------- clim
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- variable_selection ----------------------- native ---------------------------- clim
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- models ----------------------------------- native ---------------------------- clim
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- validation --------------------------------native ---------------------------- clim
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- model_predictions ------------------------ native ---------------------------- clim
-                   |                                  |                                   |------------ clim_comp
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ clim_comp
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- blacklists ------------------------------- native ---------------------------- clim
-                   |                                  |                                   |------------ clim_comp
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ clim_comp
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- uncertainty_quantification
-                   |
-                   |---- unrealized_col_pot ----------------------- native ---------------------------- clim
-                   |                                  |                                   |------------ clim_comp
-                   |                                  |                                   |------------ edaclim
-                   |                                  |------------ global ---------------------------- clim
-                   |                                                                      |------------ clim_comp
-                   |                                                                      |------------ edaclim
-                   |
-                   |---- final_blacklisting ----------------------- algorithm blacklisting
-                   |
-                   |---- plots ------------------------------------ presence_absence_plots
-                                                      |------------ validation
-                                                      |------------ response_plots
-                                                      |------------ uncertainty_quantification
-                                                      |------------ unrealized_col_pot
-                                                      |------------ final_blacklisting
-                                                      |------------ study_region
-                                                  
-               
-**scripts**
-
-
----------------------------------------------------------------
-**Required data**
----------------------------------------------------------------
-All data are publicly available:
-* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,).
-* Initial species selection, island group selection, and the used validation data are based on published data by [Wohlwend et al. (2021)](#2)
-* Climate data is available at [CHELSA](https://chelsa-climate.org)
-* Soil data is available at [SoilGrids](https://www.soilgrids.org)
-
-
-
-
-### References
-<a id="1"></a>
-Karger, D. N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R. W., Zimmermann, N. E., Linder, H. P., & Kessler, M. (2018). Data from: Climatologies at high resolution for the earth’s land surface areas (Version 1, p. 7266970904 bytes) [Dataset]. Dryad. https://doi.org/10.5061/DRYAD.KD1D4
-
-<a id="2"></a>
-Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmental drivers shape diversity of naturalized plants across the Pacific. Divers Distrib.; 27: 1120– 1133. https://doi.org/10.1111/ddi.13260
-
-
-## Folder Structure
 
 ```
 
-input_data
+**input_data**
 ├── environmental_data
 ├── spatial_data
 
-output_data
+**output_data**
 ├── presences_thinned
 ├── absences_thinned
 │   ├── native
@@ -253,4 +158,30 @@ output_data
     ├── final_blacklisting
     └── study_region
 
+**scripts**
+
 ```
+                                                  
+               
+
+
+
+---------------------------------------------------------------
+**Required data**
+---------------------------------------------------------------
+All data are publicly available:
+* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,).
+* Initial species selection, island group selection, and the used validation data are based on published data by [Wohlwend et al. (2021)](#2)
+* Climate data is available at [CHELSA](https://chelsa-climate.org)
+* Soil data is available at [SoilGrids](https://www.soilgrids.org)
+
+
+
+
+### References
+<a id="1"></a>
+Karger, D. N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R. W., Zimmermann, N. E., Linder, H. P., & Kessler, M. (2018). Data from: Climatologies at high resolution for the earth’s land surface areas (Version 1, p. 7266970904 bytes) [Dataset]. Dryad. https://doi.org/10.5061/DRYAD.KD1D4
+
+<a id="2"></a>
+Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmental drivers shape diversity of naturalized plants across the Pacific. Divers Distrib.; 27: 1120– 1133. https://doi.org/10.1111/ddi.13260
+
