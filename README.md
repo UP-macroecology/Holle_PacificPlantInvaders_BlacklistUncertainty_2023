@@ -163,9 +163,10 @@ Karger, D. N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R. W.
 Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmental drivers shape diversity of naturalized plants across the Pacific. Divers Distrib.; 27: 1120– 1133. https://doi.org/10.1111/ddi.13260
 
 
+## Folder Structure
 
-# Define the folder tree as a string
-folder_tree <- "
+```
+
 input_data
 ├── environmental_data
 ├── spatial_data
@@ -251,12 +252,5 @@ output_data
     ├── unrealized_col_pot
     ├── final_blacklisting
     └── study_region
-"
 
-# Create the Markdown content
-markdown_content <- c(
-  folder_tree
-)
-
-# Write to a Markdown file
-writeLines(markdown_content, "README.md")
+```
