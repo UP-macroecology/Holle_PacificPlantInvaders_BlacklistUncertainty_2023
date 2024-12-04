@@ -164,4 +164,90 @@ Wohlwend, MR, Craven, D, Weigelt, P, et al. (2021). Anthropogenic and environmen
 
 
 
-. ├── input_data │ ├── environmental_data │ ├── spatial_data ├── output_data │ ├── presences_thinned │ ├── absences_thinned │ │ ├── native │ │ ├── global │ ├── distribution_data │ │ ├── native │ │ ├── global │ ├── distribution_env_data │ │ ├── native │ │ │ ├── clim │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── edaclim │ ├── distribution_env_data_subset │ │ ├── native │ │ │ ├── clim │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── edaclim │ ├── variable_selection │ │ ├── native │ │ │ ├── clim │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── edaclim │ ├── models │ │ ├── native │ │ │ ├── clim │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── edaclim │ ├── validation │ │ ├── native │ │ │ ├── clim │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── edaclim │ ├── model_predictions │ │ ├── native │ │ │ ├── clim │ │ │ ├── clim_comp │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── clim_comp │ │ ├── edaclim │ ├── blacklists │ │ ├── native │ │ │ ├── clim │ │ │ ├── clim_comp │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── clim_comp │ │ ├── edaclim │ ├── uncertainty_quantification │ ├── unrealized_col_pot │ │ ├── native │ │ │ ├── clim │ │ │ ├── clim_comp │ │ │ ├── edaclim │ │ ├── global │ │ ├── clim │ │ ├── clim_comp │ │ ├── edaclim │ ├── final_blacklisting │ │ ├── algorithm blacklisting │ ├── plots │ ├── presence_absence_plots │ ├── validation │ ├── response_plots │ ├── uncertainty_quantification │ ├── unrealized_col_pot │ ├── final_blacklisting │ ├── study_region
+**input_data**
+├── environmental_data
+├── spatial_data
+
+**output_data**
+├── presences_thinned
+├── absences_thinned
+│   ├── native
+│   └── global
+├── distribution_data
+│   ├── native
+│   └── global
+├── distribution_env_data
+│   ├── native
+│   │   ├── clim
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       └── edaclim
+├── distribution_env_data_subset
+│   ├── native
+│   │   ├── clim
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       └── edaclim
+├── variable_selection
+│   ├── native
+│   │   ├── clim
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       └── edaclim
+├── models
+│   ├── native
+│   │   ├── clim
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       └── edaclim
+├── validation
+│   ├── native
+│   │   ├── clim
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       └── edaclim
+├── model_predictions
+│   ├── native
+│   │   ├── clim
+│   │   ├── clim_comp
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       ├── clim_comp
+│       └── edaclim
+├── blacklists
+│   ├── native
+│   │   ├── clim
+│   │   ├── clim_comp
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       ├── clim_comp
+│       └── edaclim
+├── uncertainty_quantification
+├── unrealized_col_pot
+│   ├── native
+│   │   ├── clim
+│   │   ├── clim_comp
+│   │   └── edaclim
+│   └── global
+│       ├── clim
+│       ├── clim_comp
+│       └── edaclim
+├── final_blacklisting
+│   └── algorithm_blacklisting
+└── plots
+    ├── presence_absence_plots
+    ├── validation
+    ├── response_plots
+    ├── uncertainty_quantification
+    ├── unrealized_col_pot
+    ├── final_blacklisting
+    └── study_region
+
+**scripts**
