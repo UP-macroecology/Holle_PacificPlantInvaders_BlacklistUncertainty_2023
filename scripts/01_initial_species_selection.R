@@ -50,7 +50,7 @@ species_Hawaii <- Wohlwend_data$Species
 # Load in cleaned the species occurrence data with coordinate information 
 # (downloaded from GBIF and BIEN 2023) and their biogeographical status 
 # of all naturalized plant species in the Pacific
-load("input_data/occ_status_resolved_new.RData")
+load("input_data/occ_status_resolved.RData")
 
 # Subset the data frame to only contain species occurring on the Hawaiian Islands
 occurrences_Hawaii <- occ_status_resolved_new[occ_status_resolved_new$species %in% species_Hawaii, ]
