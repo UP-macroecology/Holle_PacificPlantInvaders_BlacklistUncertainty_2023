@@ -72,11 +72,11 @@ Final blacklist rankings were created for all three blacklist definitions based 
 
 ```
 
-**input_data**
+input_data
 ├── environmental_data
 ├── spatial_data
 
-**output_data**
+output_data
 ├── presences_thinned
 ├── absences_thinned
 │   ├── native
@@ -158,13 +158,10 @@ Final blacklist rankings were created for all three blacklist definitions based 
     ├── final_blacklisting
     └── study_region
 
-**scripts**
+scripts
 
 ```
-                                                  
-               
-
-
+                                                
 
 ---------------------------------------------------------------
 **Required data**
@@ -176,9 +173,15 @@ All data are publicly available:
 * Soil data is available at [SoilGrids](https://www.soilgrids.org)
 
 
+---------------------------------------------------------------
+**Operating system info**
+---------------------------------------------------------------
+sessionInfo()
 
 
-### References
+---------------------------------------------------------------
+**References**
+---------------------------------------------------------------
 <a id="1"></a>
 Karger, D. N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R. W., Zimmermann, N. E., Linder, H. P., & Kessler, M. (2018). Data from: Climatologies at high resolution for the earth’s land surface areas (Version 1, p. 7266970904 bytes) [Dataset]. Dryad. https://doi.org/10.5061/DRYAD.KD1D4
 
