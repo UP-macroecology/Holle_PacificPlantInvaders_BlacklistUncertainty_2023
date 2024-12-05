@@ -39,7 +39,7 @@ We detail all data preparation and modelling steps following the [ODMAP protocol
 ### 0 - Data setup
 scripts [folder structure](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_create_folder_structure.R), [functions](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_functions.R), [spatial and environmental data prep](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_environmental_spatial_data_prep.R)
 
-The required folder structure is setup, the needed functions are listed, and the spatial and environmental data are prepared.
+The required folder structure is set up, the needed functions are listed, and the spatial and environmental data are prepared.
 
 
 ### 1 - Initial species selection
