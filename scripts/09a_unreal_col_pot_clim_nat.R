@@ -9,12 +9,6 @@
 #               native occurrences and purely climatic data              #
 # ---------------------------------------------------------------------- #
 
-# Set working directory
-setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
-
-# Required path 
-# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
-
 # Load needed packages
 library(readr)
 library(stringr)

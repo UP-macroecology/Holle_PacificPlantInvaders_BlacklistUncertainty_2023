@@ -8,12 +8,6 @@
 #                  03c. Subset of the background data                    #
 # ---------------------------------------------------------------------- #
 
-# Set working directory
-setwd("/import/ecoc9z/data-zurell/holle/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/")
-
-# Required path 
-# path_imp <- file.path("/import/ecoc9z/data-zurell/holle/uncertainty_paper")
-
 # Load needed packages
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
 
