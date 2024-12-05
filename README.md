@@ -36,6 +36,11 @@ From these species, we included an initial subset of known plant populations of 
 
 We detail all data preparation and modelling steps following the [ODMAP protocol](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/ODMAP_Holle_EtAl_2024-12-04.csv)
 
+### 0 - Data setup
+scripts [folder structure](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_create_folder_structure.R), [functions](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_functions.R), [spatial and environmental data prep](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_environmental_spatial_data_prep.R)
+
+The required folder structure is setup, the needed functions are listed, and the spatial and environmental data are prepared.
+
 
 ### 1 - Initial species selection
 scripts [01](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/01_initial_species_selection.R)
