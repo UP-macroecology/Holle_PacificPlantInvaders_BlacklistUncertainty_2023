@@ -35,7 +35,7 @@ The analysis built on the global occurrence data of the plant species listed in 
 From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands according to the [PIER](http://www.hear.org/pier/) database, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study.
 
 
-### 1 - Initial species selection
+### 1 - Initial species selection (scripts [01](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/01_initial_species_selection.R))
 The initial species selection was based on cleaned and thinned native occurrence numbers using two criteria to ensure the consideration of two different niches:  A lower limit of 40 native presences per species as well as a minimum difference of 40 between native and global occurrences. Additionally, species were excluded when having native assignments on the Hawaiian Islands. The spatial thinning of the occurrences pursued to avoid spatial autocorrelation using a thinning distance of 3 km. 
 
 ### 2 - Background data generation and thinning
