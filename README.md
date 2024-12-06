@@ -28,11 +28,11 @@ Preprint: **insert DOI**
 ---------------------------------------------------------------
 **Workflow**
 ---------------------------------------------------------------
-The analysis built on the global occurrence data of the plant species listed in the [PaciFLora](https://bdj.pensoft.net/article/67318/) dataset. Each occurrence point matched with a biogeographic status (native or introduced). Code for the data preparation can be found in a separate [repository](https://github.com/UP-macroecology/StatusAssignment).
+The analysis built on the global occurrence data of the plant species listed in the [PaciFLora](https://bdj.pensoft.net/article/67318/) dataset. Each occurrence point matched with a biogeographic status (native or introduced). Code for the data preparation can be found in a separate [repository](anonymous.4open.science/r/StatusAssignment-F356/).
 
 From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands according to the [PIER](http://www.hear.org/pier/) database, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study.
 
-We detail all data preparation and modelling steps following the [ODMAP protocol](anonymous.4open.science/r/StatusAssignment-F356/)
+We detail all data preparation and modelling steps following the [ODMAP protocol](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/ODMAP_protocol_BlacklistUncertainty.csv)
 
 ### 0 - Data setup
 scripts [folder structure](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_create_folder_structure.R), [functions](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_functions.R), [spatial and environmental data prep](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_environmental_spatial_data_prep.R)
@@ -195,7 +195,7 @@ scripts
 **Required data**
 ---------------------------------------------------------------
 All data are publicly available:
-* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data(occ_status_resolved.RData)
+* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](anonymous.4open.science/r/StatusAssignment-F356/)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data(occ_status_resolved.RData)
 * Initial species selection and the used validation data are based on published data by [Wohlwend et al. (2021)](#2) - store in input_data
 * Initial island group selection was based on published data by [Wohlwend et al. (2021)](#2) - store in input_data/spatial_data
 * Climate data is available at [CHELSA](https://chelsa-climate.org) - store in input_data/environmental_data/Chelsa_V2
