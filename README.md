@@ -15,8 +15,6 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>  Katrin Schifferle<sup>1</
 
 Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/3-1 to DZ)
 
-Code: **insert Zenodo DOI**
-
 Preprint: **insert DOI**
 
 
@@ -34,7 +32,7 @@ The analysis built on the global occurrence data of the plant species listed in 
 
 From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands according to the [PIER](http://www.hear.org/pier/) database, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study.
 
-We detail all data preparation and modelling steps following the [ODMAP protocol](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/ODMAP_protocol_BlacklistUncertainty.csv)
+We detail all data preparation and modelling steps following the [ODMAP protocol](anonymous.4open.science/r/StatusAssignment-F356/)
 
 ### 0 - Data setup
 scripts [folder structure](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_create_folder_structure.R), [functions](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_functions.R), [spatial and environmental data prep](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/00_environmental_spatial_data_prep.R)
