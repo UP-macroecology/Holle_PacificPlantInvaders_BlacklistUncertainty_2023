@@ -15,8 +15,6 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>  Katrin Schifferle<sup>1</
 
 Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/3-1 to DZ)
 
-Preprint: **insert DOI**
-
 
 ### ABSTRACT:
 1. Invasive alien species pose a growing threat to global biodiversity, necessitating evidence-based prevention measures. Species distribution models (SDMs) are a useful tool for quantifying the potential distribution of alien species in non-native areas and deriving blacklists based on establishment risk. Yet, uncertainties due to different modelling decisions may affect predictive accuracy and the robustness of such blacklists. We thus aim to assess the relevance of three distinct sources of uncertainty in SDM based blacklists: species data, environmental data and SDM algorithms.
@@ -28,7 +26,7 @@ Preprint: **insert DOI**
 ---------------------------------------------------------------
 **Workflow**
 ---------------------------------------------------------------
-The analysis built on the global occurrence data of the plant species listed in the [PaciFLora](https://bdj.pensoft.net/article/67318/) dataset. Each occurrence point matched with a biogeographic status (native or introduced). Code for the data preparation can be found in a separate [repository](https://anonymous.4open.science/r/StatusAssignment-F356/).
+The analysis built on the global occurrence data of the plant species listed in the [PaciFLora](https://bdj.pensoft.net/article/67318/) dataset. Each occurrence point matched with a biogeographic status (native or introduced). Code for the data preparation can be found in a separate [repository](https://github.com/UP-macroecology/StatusAssignment).
 
 From these species, we included an initial subset of known plant populations of 122 plant species that occur as most invasive on at least one of the Hawaiian Islands according to the [PIER](http://www.hear.org/pier/) database, derived from the compiled data set by [Wohlwend et al. (2021)](#2), in our study.
 
@@ -195,7 +193,7 @@ scripts
 **Required data**
 ---------------------------------------------------------------
 All data are publicly available:
-* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://anonymous.4open.science/r/StatusAssignment-F356/)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data(occ_status_resolved.RData)
+* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data(occ_status_resolved.RData)
 * Initial species selection and the used validation data are based on published data by [Wohlwend et al. (2021)](#2) - store in input_data
 * Initial island group selection was based on published data by [Wohlwend et al. (2021)](#2) - store in input_data/spatial_data
 * Climate data is available at [CHELSA](https://chelsa-climate.org) - store in input_data/environmental_data/Chelsa_V2
