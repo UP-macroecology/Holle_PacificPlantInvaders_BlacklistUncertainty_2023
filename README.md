@@ -193,7 +193,7 @@ scripts
 **Required data**
 ---------------------------------------------------------------
 All data are publicly available:
-* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data(occ_status_resolved.RData)
+* Data frame containing information on the biogeographic status of global occurrences for plant species listed in the [PaciFlora](https://bdj.pensoft.net/article/67318/) dataset (output of this separate [repository](https://github.com/UP-macroecology/StatusAssignment)) using plant species occurrences at [GBIF](https://www.gbif.org/) and [BIEN](https://bien.nceas.ucsb.edu/bien), and biogeographic status information at [WCVP](https://powo.science.kew.org), [GIFT]( https://gift.uni-goettingen.de/home) and [GIoNAF]( https://glonaf.org,) - store in input_data (occ_status_resolved.RData)
 * Initial species selection and the used validation data are based on published data by [Wohlwend et al. (2021)](#2) - store in input_data
 * Initial island group selection was based on published data by [Wohlwend et al. (2021)](#2) - store in input_data/spatial_data
 * Climate data is available at [CHELSA](https://chelsa-climate.org) - store in input_data/environmental_data/Chelsa_V2
