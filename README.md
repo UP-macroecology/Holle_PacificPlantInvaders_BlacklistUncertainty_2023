@@ -13,14 +13,16 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>  Katrin Schifferle<sup>1</
 9. Department of Science and Conservation, National Tropical Botanical Garden, Kalāheo, HI, USA
 10. School of Biosciences, College of Life and Environmental Sciences, University of Birmingham, Birmingham, B15 2TT, UK
 
-Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/3-1 to DZ)
-
 
 ### ABSTRACT:
 1. Invasive alien species pose a growing threat to global biodiversity, necessitating evidence-based prevention measures. Species distribution models (SDMs) are a useful tool for quantifying the potential distribution of alien species in non-native areas and deriving blacklists based on establishment risk. Yet, uncertainties due to different modelling decisions may affect predictive accuracy and the robustness of such blacklists. We thus aim to assess the relevance of three distinct sources of uncertainty in SDM based blacklists: species data, environmental data and SDM algorithms.
 2. Focusing on 82 of the most invasive plant species on the Hawaiian Islands, we built SDMs to quantify their establishment potential in the Pacific region. We considered two different species datasets (native vs. global occurrences), two environmental predictor sets (climatic vs. edapho-climatic), and four different SDM algorithms. Based on SDM predictions, we derived blacklists using three distinct blacklisting definitions and quantified the variance in blacklist rankings associated with each source of uncertainty.
 3. On average, SDMs showed fair predictive performance. SDM algorithm choice resulted in the largest variation in blacklist ranks while the relevance of species and environmental data was lower and varied across blacklist definitions. Nevertheless, using only native occurrences led to a clear underestimation of the establishment potential for certain species and to lower predictive performance, including high ranking species on blacklists.
-4. SDMs can serve as a robust decision support tool to plan preventive management strategies. To establish robust model-aided blacklists, we recommend ensemble models using multiple SDM algorithms that rely on global rather than native occurrences only. The relevance of environmental predictors additional to climate should be carefully considered and weighed against spatial coverage of those data to ensure sufficiently large sample sizes and predictive accuracy. We advocate for explicit assessment of uncertainty to increase confidence in blacklists and allow more reliable decision making.  
+4. SDMs can serve as a robust decision support tool to plan preventive management strategies. To establish robust model-aided blacklists, we recommend ensemble models using multiple SDM algorithms that rely on global rather than native occurrences only. The relevance of environmental predictors additional to climate should be carefully considered and weighed against spatial coverage of those data to ensure sufficiently large sample sizes and predictive accuracy. We advocate for explicit assessment of uncertainty to increase confidence in blacklists and allow more reliable decision making.
+
+Keywords: Blacklisting, ecological niche, ensemble predictions, habitat suitability models, islands, plant invasions, uncertainty
+
+Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/3-1 to DZ)
 
 
 ---------------------------------------------------------------
