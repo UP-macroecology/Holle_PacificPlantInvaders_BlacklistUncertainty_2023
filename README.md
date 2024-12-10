@@ -23,6 +23,9 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>  Katrin Schifferle<sup>1</
 
 Keywords: Blacklisting, ecological niche, ensemble predictions, habitat suitability models, islands, plant invasions, uncertainty
 
+This repository contains the R scripts needed to reproduce all results and plots.
+
+
 Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/3-1 to DZ)
 
 
