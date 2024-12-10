@@ -14,6 +14,7 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>  Katrin Schifferle<sup>1</
 10. School of Biosciences, College of Life and Environmental Sciences, University of Birmingham, Birmingham, B15 2TT, UK
 
 
+
 ### ABSTRACT:
 1. Invasive alien species pose a growing threat to global biodiversity, necessitating evidence-based prevention measures. Species distribution models (SDMs) are a useful tool for quantifying the potential distribution of alien species in non-native areas and deriving blacklists based on establishment risk. Yet, uncertainties due to different modelling decisions may affect predictive accuracy and the robustness of such blacklists. We thus aim to assess the relevance of three distinct sources of uncertainty in SDM based blacklists: species data, environmental data and SDM algorithms.
 2. Focusing on 82 of the most invasive plant species on the Hawaiian Islands, we built SDMs to quantify their establishment potential in the Pacific region. We considered two different species datasets (native vs. global occurrences), two environmental predictor sets (climatic vs. edapho-climatic), and four different SDM algorithms. Based on SDM predictions, we derived blacklists using three distinct blacklisting definitions and quantified the variance in blacklist rankings associated with each source of uncertainty.
