@@ -47,7 +47,7 @@ species_Hawaii <- Wohlwend_data$Species
 load("input_data/occ_status_resolved.RData")
 
 # Subset the data frame to only contain species occurring on the Hawaiian Islands
-occurrences_Hawaii <- occ_status_resolved_new[occ_status_resolved_new$species %in% species_Hawaii, ]
+occurrences_Hawaii <- occ_status_resolved[occ_status_resolved$species %in% species_Hawaii, ]
 
 # Insert a _ in species name
 occurrences_Hawaii$species <- str_replace_all(occurrences_Hawaii$species, " ", "_")
