@@ -23,7 +23,7 @@ library(ggplot2)
 world_mask <- terra::rast("input_data/spatial_data/world_mask.tif") # mask with 1 km resolution
 load("input_data/occurrence_numbers_thinned_filtered.RData") # data frame that contains study species names
 load("input_data/occurrences_Hawaii.RData") # data frame that contains coordinate and biogeographical status information
-source("scripts/functions.R") # thin function
+source("scripts/00_functions.R") # thin function
 
 
 #-------------------------------------------------------------------------------

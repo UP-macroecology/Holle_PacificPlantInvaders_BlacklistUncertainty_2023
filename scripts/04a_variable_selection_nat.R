@@ -13,7 +13,7 @@ library(dplyr)
 library(ecospat)
 
 # Load needed objects
-source("scripts/functions.R") # select07_cv function
+source("scripts/00_functions.R") # select07_cv function
 load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
 
 # Retrieve species names

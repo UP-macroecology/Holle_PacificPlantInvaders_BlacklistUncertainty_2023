@@ -24,18 +24,24 @@ algorithm <- c("glm", "gam", "rf", "brt", "ensemble")
 # Create a vector with the different predictor set
 predictor_set <- c("natclim", "natclim+eda", "globclim", "globclim+eda")
 
+# Create a vector with the different thresholding methods
+thresh_method <- c("maxTSS", "meanProb", "tenthPer")
+
+# Create a vector with the different performace measures
+perf_measure <- c("AUC", "TSS", "Sens", "Spec", "Boyce")
+
 
 
 #-------------------------------------------------------------------------------
 
-# 1. AUC -----------------------------------------------------------------------
+# 1. Performance measures ------------------------------------------------------
 
 
-# (a) Value extraction  --------------------------------------------------------
-
-# Create a data frame to store the AUC values of all models
-AUC_algorithm_comparison <- data.frame(matrix(ncol = 4, nrow = 0))
-colnames(AUC_algorithm_comparison) <- c("Species", "AUC", "Algorithm", "Predictor_set")
+# Value extractions  
+# Create a data frame to store the performance values of all models based
+# on the different algorithms, predictor sets and thresholding methods
+performance_algorithm_comparison <- data.frame(matrix(ncol = 6, nrow = 0))
+colnames(performance_algorithm_comparison) <- c("Species", "Perf_value", "Perf_method", "Algorithm", "Predictor_set", "Thresh_method")
 
 
 for (sp in study_species) { # Start of the loop over all species
@@ -44,48 +50,305 @@ for (sp in study_species) { # Start of the loop over all species
   
   for (pred in predictor_set) { # Start of the loop over the four predictor sets
     
-    # Load in the performance measures
-    if (pred == "natclim") { load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
-                             validation_alg_AUC <- comp_perf_clim_native
-                             validation_ens_AUC <- ensemble_perf_clim_native
-    } else if (pred == "natclim+eda") { load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
-                                        validation_alg_AUC <- comp_perf_edaclim_native
-                                        validation_ens_AUC <- ensemble_perf_edaclim_native
-    } else if (pred == "globclim") { load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
-                                     validation_alg_AUC <- comp_perf_clim_global
-                                     validation_ens_AUC <- ensemble_perf_clim_global
-    } else if (pred == "globclim+eda") { load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
-                                         validation_alg_AUC <- comp_perf_edaclim_global
-                                         validation_ens_AUC <- ensemble_perf_edaclim_global
-                                        
-    }                                    
+    print(pred)
     
-
+    for (t in thresh_method) { # Start of the loop over the three different thresholding methods
+      
+      print(t)
+      
+      # Load in the performance measures
+      if (pred == "natclim") { load(paste0("output_data/validation_rev/native/clim/validation_clim_native_",sp,".RData"))
+        validation_alg <- get(paste0("comp_perf_clim_native_", t))
+        validation_ens <- ensemble_perf_clim_native
+      } else if (pred == "natclim+eda") { load(paste0("output_data/validation_rev/native/edaclim/validation_edaclim_native_",sp,".RData"))
+        validation_alg <- get(paste0("comp_perf_edaclim_native_", t))
+        validation_ens <- ensemble_perf_edaclim_native
+      } else if (pred == "globclim") { load(paste0("output_data/validation_rev/global/clim/validation_clim_global_",sp,".RData"))
+        validation_alg <- get(paste0("comp_perf_clim_global_", t))
+        validation_ens <- ensemble_perf_clim_global
+      } else if (pred == "globclim+eda") { load(paste0("output_data/validation_rev/global/edaclim/validation_edaclim_global_",sp,".RData"))
+        validation_alg <- get(paste0("comp_perf_edaclim_global_", t))
+        validation_ens <- ensemble_perf_edaclim_global
+      }                                    
+      
+      
+      
+      for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
+        
+        print(alg)
+        
+        for (m in perf_measure) { # Start of the loop over the different performance measures
+          
+          print(m)
+          
+          # Extract the considered performance value
+          if (alg %in% c("glm", "gam", "rf", "brt")) { performance_value <- validation_alg[alg, m]
+          } else if (alg == "ensemble") { performance_value <- validation_ens[t, m]
+          }
+          
+          # Write a vector with extracted information
+          performance_results <- c(sp, performance_value, m, alg, pred, t)
+          
+          # Add the vector to the results data frame
+          performance_algorithm_comparison <- rbind(performance_algorithm_comparison, performance_results) 
+          
+        } # End of the loop over the different performance measures
+        
+      } # End of the loop over the algorithms
+      
+    } # End of the loop over the thresholding methods
     
-    for (alg in algorithm) { # Start of the loop over the algorithms and ensemble
-      
-      # Extract the considered performance value
-      if (alg %in% c("glm", "gam", "rf", "brt")) { AUC_alg <- validation_alg_AUC[alg, "AUC"]
-      } else if (alg == "ensemble") { AUC_alg <- validation_ens_AUC["mean_prob", "AUC"]
-      }
-      
-      # Write a vector with extracted information
-      AUC_info <- c(sp, AUC_alg, alg, pred)
-      
-      # Add the vector to the results data frame
-      AUC_algorithm_comparison <- rbind(AUC_algorithm_comparison, AUC_info) 
-      
-    } # End of the loop over the algorithms
-      
   } # End of the loop over the predictor sets
   
 } # End of the loop over the species
 
 # Make sure the column names are correct
-colnames(AUC_algorithm_comparison) <- c("Species", "AUC", "Algorithm", "Predictor_set")
+colnames(performance_algorithm_comparison) <- c("Species", "Perf_value", "Perf_method", "Algorithm", "Predictor_set", "Thresh_method")
 
 # Save the resulting data frame
-save(AUC_algorithm_comparison, file = "output_data/validation/AUC_algorithm_comparison.RData")
+save(performance_algorithm_comparison, file = "output_data/validation_rev/performance_algorithm_comparison.RData")
+
+
+
+#-------------------------------------------------------------------------------
+
+# 2. Visualisation -------------------------------------------------------------
+
+# (a) Grouped boxplot based on maxTSS threshold  -------------------------------
+
+# Subset the data frame containing the performance measures to only contain 
+# values based on the respective threshold
+performance_algorithm_comparison_maxTSS <- performance_algorithm_comparison[performance_algorithm_comparison$Thresh_method == "maxTSS", ]
+  
+# Convert performance values to numeric
+performance_algorithm_comparison_maxTSS$Perf_value <- as.numeric(as.character(performance_algorithm_comparison_maxTSS$Perf_value))
+
+# Bring the algorithm groups in the right order
+performance_algorithm_comparison_maxTSS$Algorithm <- factor(performance_algorithm_comparison_maxTSS$Algorithm, levels=c("glm", "gam", "rf", "brt", "ensemble"))
+
+# Change the entry Sens to Sensitivity and Spec to Specificity
+performance_algorithm_comparison_maxTSS$Perf_method[performance_algorithm_comparison_maxTSS$Perf_method == "Sens"] <- "Sensitivity"
+performance_algorithm_comparison_maxTSS$Perf_method[performance_algorithm_comparison_maxTSS$Perf_method == "Spec"] <- "Specificity"
+
+# Bring the performance measure groups in the right order
+performance_algorithm_comparison_maxTSS$Perf_method <- factor(performance_algorithm_comparison_maxTSS$Perf_method, levels=c("AUC", "Boyce", "TSS", "Sensitivity", "Specificity"))
+
+# Bring the predictor sets in the right order
+performance_algorithm_comparison_maxTSS$Predictor_set <- factor(performance_algorithm_comparison_maxTSS$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
+
+# Rename facet labels for plot in main manuscript text
+facet_labels <- c("Boyce" = "(a) Boyce Index", "TSS" = "(b) TSS")
+
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot TSS and Boyce values for the main manuscript text
+ggplot(performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_maxTSS$Perf_method %in% c("TSS", "Boyce"), ], aes(x = Predictor_set, y = Perf_value, fill = Algorithm)) + 
+  stat_boxplot(geom = "errorbar", width = 0.8) +
+  geom_boxplot(width = 0.8, outlier.colour = "black", outlier.shape = 16,
+               outlier.size = 1.4) +
+  facet_wrap(~ Perf_method, nrow = 2, ncol = 1, scales = "free_x", labeller = as_labeller(facet_labels)) +
+  ylab("Performance value") +
+  theme_bw() +
+  scale_y_continuous(limits = c(0, 1)) +
+  xlab("") +
+  theme(
+    plot.title = element_text(hjust = 0, size = 20),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.direction = "horizontal",
+    legend.position = "bottom",
+    legend.key.size = unit(0.5, "cm"),
+    axis.text = element_text(size = 9, color = "black"),
+    axis.title = element_text(size = 10, color = "black"),
+    legend.text = element_text(size = 8, color = "black"),
+    legend.title = element_text(size = 9),
+    text = element_text(family = "Calibri"),
+    strip.text = element_text(size = 12, face = "bold", color = "black"),
+    strip.background = element_rect(fill = "lightsteelblue3", color = "black")) +
+  scale_fill_brewer(
+    palette = "BuPu",
+    labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble")
+  ) +
+  guides(
+    fill = guide_legend(title.position = "top", nrow = 1, byrow = TRUE))
+
+
+ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_maxTSS_Boyce_TSS.svg", width = 9.5, height = 14, unit = "cm")
+
+# Plot AUC, Sensitivity, and Specificity values for the appendix
+ggplot(performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_maxTSS$Perf_method %in% c("AUC", "Sensitivity", "Specificity"), ], aes(x = Predictor_set, y = Perf_value, fill = Algorithm)) + 
+  stat_boxplot(geom = "errorbar", width = 0.8) +
+  geom_boxplot(width = 0.8, outlier.colour = "black", outlier.shape = 16,
+               outlier.size = 1.4) +
+  facet_wrap(~ Perf_method, nrow = 2, ncol = 2, scales = "free_x") +
+  ylab("Performance value") +
+  theme_bw() +
+  scale_y_continuous(limits = c(0, 1)) +
+  xlab("") +
+  theme(
+    plot.title = element_text(hjust = 0, size = 20),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.direction = "horizontal",
+    legend.position = "bottom",
+    legend.key.size = unit(0.5, "cm"),
+    axis.text = element_text(size = 9, color = "black"),
+    axis.title = element_text(size = 10, color = "black"),
+    legend.text = element_text(size = 8, color = "black"),
+    legend.title = element_text(size = 9),
+    text = element_text(family = "Calibri"),
+    strip.text = element_text(size = 12, face = "bold", color = "black"),
+    strip.background = element_rect(fill = "lightsteelblue3", color = "black")) +
+  scale_fill_brewer(
+    palette = "BuPu",
+    labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble")
+  ) +
+  guides(
+    fill = guide_legend(title.position = "top", nrow = 1, byrow = TRUE))
+
+
+ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_maxTSS_AUC_Sens_Spec.svg", width = 18, height = 14, unit = "cm")
+
+
+
+#-------------------------------------------------------------------------------
+
+# 3. Descriptive statistics ----------------------------------------------------
+
+
+
+
+# (b) Grouped boxplot based on meanProb threshold  -----------------------------
+
+# Subset the data frame containing the performance measures to only contain 
+# values based on the respective threshold
+performance_algorithm_comparison_meanProb <- performance_algorithm_comparison[performance_algorithm_comparison$Thresh_method == "meanProb", ]
+
+# Convert performance values to numeric
+performance_algorithm_comparison_meanProb$Perf_value <- as.numeric(as.character(performance_algorithm_comparison_meanProb$Perf_value))
+
+# Bring the algorithm groups in the right order
+performance_algorithm_comparison_meanProb$Algorithm <- factor(performance_algorithm_comparison_meanProb$Algorithm, levels=c("glm", "gam", "rf", "brt", "ensemble"))
+
+# Change the entry Sens to Sensitivity and Spec to Specificity
+performance_algorithm_comparison_meanProb$Perf_method[performance_algorithm_comparison_meanProb$Perf_method == "Sens"] <- "Sensitivity"
+performance_algorithm_comparison_meanProb$Perf_method[performance_algorithm_comparison_meanProb$Perf_method == "Spec"] <- "Specificity"
+
+# Bring the performance measure groups in the right order
+performance_algorithm_comparison_meanProb$Perf_method <- factor(performance_algorithm_comparison_meanProb$Perf_method, levels=c("AUC", "Boyce", "TSS", "Sensitivity", "Specificity"))
+
+# Bring the predictor sets in the right order
+performance_algorithm_comparison_meanProb$Predictor_set <- factor(performance_algorithm_comparison_meanProb$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
+
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot performance values
+ggplot(performance_algorithm_comparison_meanProb, aes(x = Predictor_set, y = Perf_value, fill = Algorithm)) + 
+  stat_boxplot(geom = "errorbar", width = 0.8) +
+  geom_boxplot(width = 0.8, outlier.colour = "black", outlier.shape = 16,
+               outlier.size = 1.4) +
+  facet_wrap(~ Perf_method, nrow = 3, ncol = 2, scales = "free_x") +
+  ylab("Performance value") +
+  theme_bw() +
+  scale_y_continuous(limits = c(0, 1)) +
+  xlab("") +
+  theme(
+    plot.title = element_text(hjust = 0, size = 20),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.direction = "horizontal",
+    legend.position = "bottom",
+    legend.key.size = unit(0.5, "cm"),
+    axis.text = element_text(size = 9, color = "black"),
+    axis.title = element_text(size = 10, color = "black"),
+    legend.text = element_text(size = 8, color = "black"),
+    legend.title = element_text(size = 9),
+    text = element_text(family = "Calibri"),
+    strip.text = element_text(size = 11, face = "bold", color = "black"),
+    strip.background = element_rect(fill = "lightsteelblue3", color = "black")) +
+  scale_fill_brewer(
+    palette = "BuPu",
+    labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble")
+  ) +
+  guides(
+    fill = guide_legend(title.position = "top", nrow = 1, byrow = TRUE))
+
+
+ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_meanProb.svg", width = 18, height = 19, unit = "cm")
+
+
+
+# (c) Grouped boxplot based on tenthPer threshold  -----------------------------
+
+# Subset the data frame containing the performance measures to only contain 
+# values based on the respective threshold
+performance_algorithm_comparison_tenthPer <- performance_algorithm_comparison[performance_algorithm_comparison$Thresh_method == "tenthPer", ]
+
+# Convert performance values to numeric
+performance_algorithm_comparison_tenthPer$Perf_value <- as.numeric(as.character(performance_algorithm_comparison_tenthPer$Perf_value))
+
+# Bring the algorithm groups in the right order
+performance_algorithm_comparison_tenthPer$Algorithm <- factor(performance_algorithm_comparison_tenthPer$Algorithm, levels=c("glm", "gam", "rf", "brt", "ensemble"))
+
+# Change the entry Sens to Sensitivity and Spec to Specificity
+performance_algorithm_comparison_tenthPer$Perf_method[performance_algorithm_comparison_tenthPer$Perf_method == "Sens"] <- "Sensitivity"
+performance_algorithm_comparison_tenthPer$Perf_method[performance_algorithm_comparison_tenthPer$Perf_method == "Spec"] <- "Specificity"
+
+# Bring the performance measure groups in the right order
+performance_algorithm_comparison_tenthPer$Perf_method <- factor(performance_algorithm_comparison_tenthPer$Perf_method, levels=c("AUC", "Boyce", "TSS", "Sensitivity", "Specificity"))
+
+# Bring the predictor sets in the right order
+performance_algorithm_comparison_tenthPer$Predictor_set <- factor(performance_algorithm_comparison_tenthPer$Predictor_set, levels=c("natclim", "natclim+eda", "globclim", "globclim+eda"), ordered = TRUE)
+
+
+
+# Load the Calibri font
+font_add(family = "Calibri", regular = "Calibri.ttf")
+showtext_auto()
+
+# Plot performance values
+ggplot(performance_algorithm_comparison_tenthPer, aes(x = Predictor_set, y = Perf_value, fill = Algorithm)) + 
+  stat_boxplot(geom = "errorbar", width = 0.8) +
+  geom_boxplot(width = 0.8, outlier.colour = "black", outlier.shape = 16,
+               outlier.size = 1.4) +
+  facet_wrap(~ Perf_method, nrow = 3, ncol = 2, scales = "free_x") +
+  ylab("Performance value") +
+  theme_bw() +
+  scale_y_continuous(limits = c(0, 1)) +
+  xlab("") +
+  theme(
+    plot.title = element_text(hjust = 0, size = 20),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.direction = "horizontal",
+    legend.position = "bottom",
+    legend.key.size = unit(0.5, "cm"),
+    axis.text = element_text(size = 9, color = "black"),
+    axis.title = element_text(size = 10, color = "black"),
+    legend.text = element_text(size = 8, color = "black"),
+    legend.title = element_text(size = 9),
+    text = element_text(family = "Calibri"),
+    strip.text = element_text(size = 11, face = "bold", color = "black"),
+    strip.background = element_rect(fill = "lightsteelblue3", color = "black")) +
+  scale_fill_brewer(
+    palette = "BuPu",
+    labels = c("glm" = "GLM", "gam" = "GAM", "rf" = "RF", "brt" = "BRT", "ensemble" = "Ensemble")
+  ) +
+  guides(
+    fill = guide_legend(title.position = "top", nrow = 1, byrow = TRUE))
+
+
+ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_tenthPer.svg", width = 18, height = 19, unit = "cm")
+
+
+
+
+
+
+
+
 
 
 

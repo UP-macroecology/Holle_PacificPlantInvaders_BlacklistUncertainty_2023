@@ -22,7 +22,7 @@ library(dplyr)
 library(readr)
 
 # Load needed objects
-source("scripts/functions.R") # thin function
+source("scripts/00_functions.R") # thin function
 world_mask <- terra::rast("input_data/spatial_data/world_mask.tif") # mask with 1 km resolution 
 
 
