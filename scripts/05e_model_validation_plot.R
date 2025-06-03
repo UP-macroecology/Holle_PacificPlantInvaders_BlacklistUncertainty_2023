@@ -110,6 +110,7 @@ save(performance_algorithm_comparison, file = "output_data/validation_rev/perfor
 
 
 
+
 #-------------------------------------------------------------------------------
 
 # 2. Visualisation -------------------------------------------------------------
@@ -210,11 +211,6 @@ ggplot(performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_
 
 ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_maxTSS_AUC_Sens_Spec.svg", width = 18, height = 14, unit = "cm")
 
-
-
-#-------------------------------------------------------------------------------
-
-# 3. Descriptive statistics ----------------------------------------------------
 
 
 
@@ -347,9 +343,208 @@ ggsave("output_data/plots/validation_rev/performance_algorithm_comparison_tenthP
 
 
 
+#-------------------------------------------------------------------------------
+
+# 3. Descriptive statistics based on maxTSS threshold --------------------------
+
+# Extract the validation results based on maxTSS threshold
+performance_algorithm_comparison_maxTSS <- performance_algorithm_comparison[performance_algorithm_comparison$Thresh_method == "maxTSS", ]
+
+
+# (a) AUC ----------------------------------------------------------------------
+# Extract validation results for respective validation measure
+performance_algorithm_comparison_maxTSS_AUC <- performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_maxTSS$Perf_method == "AUC", ]
+
+# GLM
+performance_algorithm_comparison_maxTSS_AUC_GLM <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm == "glm", ]
+performance_algorithm_comparison_maxTSS_AUC_GLM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_GLM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_GLM$Perf_value) # 0.79
+sd(performance_algorithm_comparison_maxTSS_AUC_GLM$Perf_value) # 0.065
+
+# GAM
+performance_algorithm_comparison_maxTSS_AUC_GAM <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm == "gam", ]
+performance_algorithm_comparison_maxTSS_AUC_GAM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_GAM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_GAM$Perf_value) # 0.80
+sd(performance_algorithm_comparison_maxTSS_AUC_GAM$Perf_value) # 0.065
+
+# RF
+performance_algorithm_comparison_maxTSS_AUC_RF <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm == "rf", ]
+performance_algorithm_comparison_maxTSS_AUC_RF$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_RF$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_RF$Perf_value) # 0.85
+sd(performance_algorithm_comparison_maxTSS_AUC_RF$Perf_value) # 0.056
+
+# BRT
+performance_algorithm_comparison_maxTSS_AUC_BRT <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm == "brt", ]
+performance_algorithm_comparison_maxTSS_AUC_BRT$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_BRT$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_BRT$Perf_value) # 0.84
+sd(performance_algorithm_comparison_maxTSS_AUC_BRT$Perf_value) # 0.06
+
+# Ensemble
+performance_algorithm_comparison_maxTSS_AUC_Ens <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm == "ensemble", ]
+performance_algorithm_comparison_maxTSS_AUC_Ens$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_Ens$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_Ens$Perf_value) # 0.84
+sd(performance_algorithm_comparison_maxTSS_AUC_Ens$Perf_value) # 0.057
+
+# Generally without ensemble
+performance_algorithm_comparison_maxTSS_AUC_noEns <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Algorithm != "ensemble", ]
+performance_algorithm_comparison_maxTSS_AUC_noEns$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_noEns$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_noEns$Perf_value) # 0.82
+sd(performance_algorithm_comparison_maxTSS_AUC_noEns$Perf_value) # 0.066
+
+# All algorithms + ensemble
+performance_algorithm_comparison_maxTSS_AUC$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC$Perf_value) # 0.82
+sd(performance_algorithm_comparison_maxTSS_AUC$Perf_value) # 0.065
+
+# natclim & natclim+eda
+performance_algorithm_comparison_maxTSS_AUC_native <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Predictor_set %in% c("natclim", "natclim+eda"), ]
+performance_algorithm_comparison_maxTSS_AUC_native$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_native$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_native$Perf_value) # 0.82
+sd(performance_algorithm_comparison_maxTSS_AUC_native$Perf_value) # 0.068
+
+# globclim & globclim+eda
+performance_algorithm_comparison_maxTSS_AUC_global <- performance_algorithm_comparison_maxTSS_AUC[performance_algorithm_comparison_maxTSS_AUC$Predictor_set %in% c("globclim", "globclim+eda"), ]
+performance_algorithm_comparison_maxTSS_AUC_global$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_AUC_global$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_AUC_global$Perf_value) # 0.83
+sd(performance_algorithm_comparison_maxTSS_AUC_global$Perf_value) # 0.061
 
 
 
+
+
+
+# (b) TSS ----------------------------------------------------------------------
+# Extract validation results for respective validation measure
+performance_algorithm_comparison_maxTSS_TSS <- performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_maxTSS$Perf_method == "TSS", ]
+
+# GLM
+performance_algorithm_comparison_maxTSS_TSS_GLM <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm == "glm", ]
+performance_algorithm_comparison_maxTSS_TSS_GLM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_GLM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_GLM$Perf_value) # 0.47
+sd(performance_algorithm_comparison_maxTSS_TSS_GLM$Perf_value) # 0.12
+
+# GAM
+performance_algorithm_comparison_maxTSS_TSS_GAM <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm == "gam", ]
+performance_algorithm_comparison_maxTSS_TSS_GAM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_GAM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_GAM$Perf_value) # 0.48
+sd(performance_algorithm_comparison_maxTSS_TSS_GAM$Perf_value) # 0.12
+
+# RF
+performance_algorithm_comparison_maxTSS_TSS_RF <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm == "rf", ]
+performance_algorithm_comparison_maxTSS_TSS_RF$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_RF$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_RF$Perf_value) # 0.57
+sd(performance_algorithm_comparison_maxTSS_TSS_RF$Perf_value) # 0.11
+
+# BRT
+performance_algorithm_comparison_maxTSS_TSS_BRT <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm == "brt", ]
+performance_algorithm_comparison_maxTSS_TSS_BRT$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_BRT$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_BRT$Perf_value) # 0.54
+sd(performance_algorithm_comparison_maxTSS_TSS_BRT$Perf_value) # 0.11
+
+# Ensemble
+performance_algorithm_comparison_maxTSS_TSS_Ens <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm == "ensemble", ]
+performance_algorithm_comparison_maxTSS_TSS_Ens$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_Ens$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_Ens$Perf_value) # 0.54
+sd(performance_algorithm_comparison_maxTSS_TSS_Ens$Perf_value) # 0.11
+
+# Generally without ensemble
+performance_algorithm_comparison_maxTSS_TSS_noEns <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Algorithm != "ensemble", ]
+performance_algorithm_comparison_maxTSS_TSS_noEns$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_noEns$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_noEns$Perf_value) # 0.51
+sd(performance_algorithm_comparison_maxTSS_TSS_noEns$Perf_value) # 0.12
+
+# All algorithms + ensemble
+performance_algorithm_comparison_maxTSS_TSS$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS$Perf_value) # 0.52
+sd(performance_algorithm_comparison_maxTSS_TSS$Perf_value) # 0.12
+
+# natclim & natclim+eda
+performance_algorithm_comparison_maxTSS_TSS_native <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Predictor_set %in% c("natclim", "natclim+eda"), ]
+performance_algorithm_comparison_maxTSS_TSS_native$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_native$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_native$Perf_value) # 0.51
+sd(performance_algorithm_comparison_maxTSS_TSS_native$Perf_value) # 0.12
+
+# globclim & globclim+eda
+performance_algorithm_comparison_maxTSS_TSS_global <- performance_algorithm_comparison_maxTSS_TSS[performance_algorithm_comparison_maxTSS_TSS$Predictor_set %in% c("globclim", "globclim+eda"), ]
+performance_algorithm_comparison_maxTSS_TSS_global$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_TSS_global$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_TSS_global$Perf_value) # 0.53
+sd(performance_algorithm_comparison_maxTSS_TSS_global$Perf_value) # 0.12
+
+
+
+
+# (b) Boyce --------------------------------------------------------------------
+# Extract validation results for respective validation measure
+performance_algorithm_comparison_maxTSS_Boyce <- performance_algorithm_comparison_maxTSS[performance_algorithm_comparison_maxTSS$Perf_method == "Boyce", ]
+
+# GLM
+performance_algorithm_comparison_maxTSS_Boyce_GLM <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm == "glm", ]
+performance_algorithm_comparison_maxTSS_Boyce_GLM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_GLM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_GLM$Perf_value) # 0.92
+sd(performance_algorithm_comparison_maxTSS_Boyce_GLM$Perf_value) # 0.094
+
+# GAM
+performance_algorithm_comparison_maxTSS_Boyce_GAM <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm == "gam", ]
+performance_algorithm_comparison_maxTSS_Boyce_GAM$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_GAM$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_GAM$Perf_value) # 0.93
+sd(performance_algorithm_comparison_maxTSS_Boyce_GAM$Perf_value) # 0.084
+
+# RF
+performance_algorithm_comparison_maxTSS_Boyce_RF <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm == "rf", ]
+performance_algorithm_comparison_maxTSS_Boyce_RF$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_RF$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_RF$Perf_value) # 0.96
+sd(performance_algorithm_comparison_maxTSS_Boyce_RF$Perf_value) # 0.069
+
+# BRT
+performance_algorithm_comparison_maxTSS_Boyce_BRT <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm == "brt", ]
+performance_algorithm_comparison_maxTSS_Boyce_BRT$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_BRT$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_BRT$Perf_value) # 0.95
+sd(performance_algorithm_comparison_maxTSS_Boyce_BRT$Perf_value) # 0.076
+
+# Ensemble
+performance_algorithm_comparison_maxTSS_Boyce_Ens <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm == "ensemble", ]
+performance_algorithm_comparison_maxTSS_Boyce_Ens$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_Ens$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_Ens$Perf_value) # 0.95
+sd(performance_algorithm_comparison_maxTSS_Boyce_Ens$Perf_value) # 0.068
+
+# Generally without ensemble
+performance_algorithm_comparison_maxTSS_Boyce_noEns <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Algorithm != "ensemble", ]
+performance_algorithm_comparison_maxTSS_Boyce_noEns$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_noEns$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_noEns$Perf_value) # 0.94
+sd(performance_algorithm_comparison_maxTSS_Boyce_noEns$Perf_value) # 0.083
+
+# All algorithms + ensemble
+performance_algorithm_comparison_maxTSS_Boyce$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce$Perf_value) # 0.94
+sd(performance_algorithm_comparison_maxTSS_Boyce$Perf_value) # 0.08
+
+# natclim & natclim+eda
+performance_algorithm_comparison_maxTSS_Boyce_native <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Predictor_set %in% c("natclim", "natclim+eda"), ]
+performance_algorithm_comparison_maxTSS_Boyce_native$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_native$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_native$Perf_value) # 0.91
+sd(performance_algorithm_comparison_maxTSS_Boyce_native$Perf_value) # 0.099
+
+# globclim & globclim+eda
+performance_algorithm_comparison_maxTSS_Boyce_global <- performance_algorithm_comparison_maxTSS_Boyce[performance_algorithm_comparison_maxTSS_Boyce$Predictor_set %in% c("globclim", "globclim+eda"), ]
+performance_algorithm_comparison_maxTSS_Boyce_global$Perf_value <- as.numeric(performance_algorithm_comparison_maxTSS_Boyce_global$Perf_value)
+mean(performance_algorithm_comparison_maxTSS_Boyce_global$Perf_value) # 0.97
+sd(performance_algorithm_comparison_maxTSS_Boyce_global$Perf_value) # 0.045
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------- Old -------------------------------------------------
 
 
 # (b) Grouped boxplot ----------------------------------------------------------

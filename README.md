@@ -16,8 +16,8 @@ Valén Holle<sup>1</sup>, Anna Rönnfeldt<sup>1</sup>, Katrin Schifferle<sup>1</
 
 
 ### ABSTRACT:
-1. Invasive alien species pose a growing threat to global biodiversity, necessitating evidence-based prevention measures. Species distribution models (SDMs) are a useful tool for quantifying the potential distribution of alien species in non-native areas and deriving blacklists based on establishment risk. Yet, uncertainties due to different modelling decisions may affect predictive accuracy and the robustness of such blacklists. We thus aim to assess the relevance of three distinct sources of uncertainty in SDM based blacklists: species data, environmental data and SDM algorithms.
-2. Focusing on 82 of the most invasive plant species on the Hawaiian Islands, we built SDMs to quantify their establishment potential in the Pacific region. We considered two different species datasets (native vs. global occurrences), two environmental predictor sets (climatic vs. edapho-climatic), and four different SDM algorithms. Based on SDM predictions, we derived blacklists using three distinct blacklisting definitions and quantified the variance in blacklist rankings associated with each source of uncertainty.
+1. Invasive alien species pose a growing threat to global biodiversity, necessitating evidence-based prevention measures. Species distribution models (SDMs) are a useful tool for quantifying the potential distribution of alien species in non-native areas and deriving blacklists based on establishment risk. Yet, uncertainties due to different modelling decisions may affect predictive accuracy and the robustness of such blacklists. We thus aim to assess the relevance of four distinct sources of uncertainty in SDM based blacklists: species data, environmental data, SDM algorithms, and thresholding.
+2. Focusing on 82 of the most invasive plant species on the Hawaiian Islands, we built SDMs to quantify their establishment potential in the Pacific region. We considered two different species datasets (native vs. global occurrences), two environmental predictor sets (climatic vs. edapho-climatic), four SDM algorithms, and three thresholding methods. Based on SDM predictions, we derived blacklists using three distinct blacklisting definitions and quantified the variance in both establishment risk indicators, the values underlying blacklist rankings, and the rankings themselves associated with each source of uncertainty.
 3. On average, SDMs showed fair predictive performance. SDM algorithm choice resulted in the largest variation in blacklist ranks while the relevance of species and environmental data was lower and varied across blacklist definitions. Nevertheless, using only native occurrences led to a clear underestimation of the establishment potential for certain species and to lower predictive performance, including high ranking species on blacklists.
 4. SDMs can serve as a robust decision support tool to plan preventive management strategies. To establish robust model-aided blacklists, we recommend ensemble models using multiple SDM algorithms that rely on global rather than native occurrences only. The relevance of environmental predictors additional to climate should be carefully considered and weighed against spatial coverage of those data to ensure sufficiently large sample sizes and predictive accuracy. We advocate for explicit assessment of uncertainty to increase confidence in blacklists and allow more reliable decision making.
 
@@ -67,22 +67,22 @@ For each of the four SDM input datasets, the four most important and weakly corr
 ### 5 - SDM fitting and validation
 scripts [05a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/05a_model_fitting_validation_clim_nat.R), [05b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/05b_model_fitting_validation_edaclim_nat.R), [05c](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/05c_model_fitting_validation_clim_glob.R), [05d](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/05d_model_fitting_validation_edaclim_glob.R), [05e](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/05e_model_validation_plot.R)
 
-Based on each of the four SDM input datasets, four different model algorithms were applied to fit the models: GLM, GAM, RF, and BRT. For each model, the performance was assessed using the 5-fold cross validation based on five different performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity, and the Boyce index. Additionally, the ensemble performance of the four different models using the same niche in the input occurrence data and environmental data was assessed.
+Based on each of the four SDM input datasets, four different modelling algorithms were applied to fit the models: GLM, GAM, RF, and BRT. For each model, the performance was assessed using 5-fold cross validation across five performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity, and the Boyce index. In line with our study objectives, three different thresholding methods were applied to derive threshold-dependent performance metrics (TSS, sensitivity, specificity). These included: the threshold that maximises TSS (maxTSS), the mean probability of training points (meanProb), and the 10th percentile of probabilities at training presences (tenthPer). Additionally, the ensemble performance of the models using the same niche in the input occurrence data, environmental data, and thresholding method was assessed.
 
 ### 6 - Model predictions
 scripts [06a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/06a_model_predictions_clim_nat.R), [06b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/06b_model_predictions_edaclim_nat.R), [06c](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/06c_model_predictions_clim_glob.R), [06d](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/06d_model_predictions_edaclim_glob.R)
 
-For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms per SDM input data set. Moreover, an ensemble model was established by combining the continuous predictions of each algorithm using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
+For each species, predictions were made to the investigated Pacific island groups considering models fitted with the four different algorithms for each SDM input dataset. Moreover, ensemble models were created by averaging the continuous predictions from the individual algorithms using the arithmetic mean. The predicted occurrence probabilities were then converted into binary predictions based on the three different thresholding methods, translating into predicted presences and absences. In a last step, the fraction of predicted suitable habitat in % per island group as well as Pacific-wide was quantified.
 
 ### 7 - Blacklist construction
 scripts [07a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/07a_blacklists_clim_nat.R), [07b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/07b_blacklists_edaclim_nat.R), [07c](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/07b_blacklists_edaclim_nat.R). [07d](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/07d_blacklists_edaclim_glob.R)
 
-Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different definitions: The total fraction of predicted suitable habitat, the mean suitable habitat fraction over all island groups, and the total number of island groups with suitable habitats. This was done considering the predictions of the different predictor sets as well as the applied algorithms, resulting in 16 blacklists each based on unique information.
+Blacklists, reflecting the species with the highest Pacific-wide establishment potential, were constructed using three different definitions: The total fraction of predicted suitable habitat, the mean suitable habitat fraction over all island groups, and the total number of island groups with suitable habitats. This was done considering the predictions of the different predictor sets, the applied algorithms, and thresholding methods, resulting in 48 blacklists each based on unique information.
 
 ### 8 - Quantification of uncertainty 
 scripts [08a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/08a_quantification_uncertainty.R), [08b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/08b_quantification_uncertainty_plot.R)
 
-Using random forest regression, it was assessed whether the blacklist rankings were associated with the considered niche in the input occurrence data (native and global), the used predictor type (purely climatic and combined climatic and edaphic), and the applied algorithms (GLM, GAM, RF, BRT). The output of variable importance was considered for the uncertainty quantification of the studied sources. This was separately done for all three blacklist definitions.
+First, Random Forest regression was used to assess whether the establishment risk indicators underlying blacklist rankings were associated with the studied key sources of uncertainty: the niche considered in the input occurrence data (native and global), the type of environmental predictor used (purely climatic and combined climatic and edaphic), the modelling algorithms (GLM, GAM, RF, BRT), and the thresholding methods applied (maxTSS, meanProb, tenthPer). Variable importance measures from the Random Forest models were used to quantify the relative contribution of each uncertainty source. This was separately done for all three blacklist definitions. Second, we directly evaluated the impact of each uncertainty factor on the blacklist rankings themselves. Specifically, we calculated the mean difference in species rankings attributable to each factor across the three blacklisting definitions. Additionally, we quantified the proportion of cases exhibiting stability or shifts in their ranking within decile bins (i.e., groups of 10).
 
 ### 9 - Unrealised colonisation potential
 scripts [09a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/09a_unreal_col_pot_clim_nat.R), [09b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/09b_unreal_col_pot_edaclim_nat.R), [09c](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/09c_unreal_col_pot_clim_glob.R), [09d](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/09d_unreal_col_pot_edaclim_glob.R), [09e](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/09e_unreal_col_pot_plot.R)
@@ -90,9 +90,9 @@ scripts [09a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_Blac
 Additionally, it was quantified how many non-native species could establish on currently unoccupied island groups. This was done by calculating the Pacific-wide predicted unrealised colonisation potential as the False Positive Rate for all study species, with an exclusive focus on the prediction results of ensemble models. The measure accounted for predicted presence and absence information as well as actual presence and absence information on the studied Pacific island groups. Here, the very complete occurrence data set, gathered within the study of Wohlwend et al. (2021), was used as independent validation data.
 
 ### 10 - Final blacklisting
-scripts [10a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/10a_final_blacklisting.R), [10b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/10b_final_blacklisting_plot.R), [10c](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/10c_algorithm_blacklisting_plot.R)
+scripts [10a](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/10a_final_blacklisting.R), [10b](https://github.com/UP-macroecology/Holle_PacificPlantInvaders_BlacklistUncertainty_2023/blob/main/scripts/10b_final_blacklisting_plot.R)
 
-Final blacklist rankings were created for all three blacklist definitions based on the ensemble predictions.
+Final blacklist rankings for all three blacklist definitions were generated considering ensemble model predictions based on the four different input datasets and the three different thresholding methods.
 
 
 ---------------------------------------------------------------
@@ -101,95 +101,147 @@ Final blacklist rankings were created for all three blacklist definitions based 
 
 ```
 
-input_data
-├── environmental_data
-│   ├── Chelsa_V2 (downloaded)
-│   ├── SoilGrids_V2_raw (downloaded)
-│   ├── SoilGrids_V2
-├── spatial_data
+input_data/
+├── environmental_data/
+│   ├── Chelsa_V2/
+│   ├── SoilGrids_V2_raw/
+│   └── SoilGrids_V2/
+├── spatial_data/
 
-output_data
-├── presences_thinned
-├── absences_thinned
-│   ├── native
-│   └── global
-├── distribution_data
-│   ├── native
-│   └── global
-├── distribution_env_data
-│   ├── native
-│   │   ├── clim
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       └── edaclim
-├── distribution_env_data_subset
-│   ├── native
-│   │   ├── clim
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       └── edaclim
-├── variable_selection
-│   ├── native
-│   │   ├── clim
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       └── edaclim
-├── models
-│   ├── native
-│   │   ├── clim
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       └── edaclim
-├── validation
-│   ├── native
-│   │   ├── clim
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       └── edaclim
-├── model_predictions
-│   ├── native
-│   │   ├── clim
-│   │   ├── clim_comp
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       ├── clim_comp
-│       └── edaclim
-├── blacklists
-│   ├── native
-│   │   ├── clim
-│   │   ├── clim_comp
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       ├── clim_comp
-│       └── edaclim
-├── uncertainty_quantification
-├── unrealized_col_pot
-│   ├── native
-│   │   ├── clim
-│   │   ├── clim_comp
-│   │   └── edaclim
-│   └── global
-│       ├── clim
-│       ├── clim_comp
-│       └── edaclim
-├── final_blacklisting
-│   └── algorithm_blacklisting
-└── plots
-    ├── presence_absence_plots
-    ├── validation
-    ├── response_plots
-    ├── uncertainty_quantification
-    ├── unrealized_col_pot
-    ├── final_blacklisting
-    └── study_region
-
+output_data/
+├── presences_thinned/
+├── absences_thinned/
+│   ├── native/
+│   └── global/
+├── distribution_data/
+│   ├── native/
+│   └── global/
+├── distribution_env_data/
+│   ├── native/
+│   │   ├── clim/
+│   │   └── edaclim/
+│   └── global/
+│       ├── clim/
+│       └── edaclim/
+├── distribution_env_data_subset/
+│   ├── native/
+│   │   ├── clim/
+│   │   └── edaclim/
+│   └── global/
+│       ├── clim/
+│       └── edaclim/
+├── variable_selection/
+│   ├── native/
+│   │   ├── clim/
+│   │   └── edaclim/
+│   └── global/
+│       ├── clim/
+│       └── edaclim/
+├── models/
+│   ├── native/
+│   │   ├── clim/
+│   │   └── edaclim/
+│   └── global/
+│       ├── clim/
+│       └── edaclim/
+├── validation/
+│   ├── native/
+│   │   ├── clim/
+│   │   └── edaclim/
+│   └── global/
+│       ├── clim/
+│       └── edaclim/
+├── model_predictions/
+│   ├── native/
+│   │   ├── clim/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   ├── clim_comp/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   └── edaclim/
+│   │       ├── maxTSS/
+│   │       ├── meanProb/
+│   │       └── tenthPer/
+│   └── global/
+│       ├── clim/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       ├── clim_comp/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       └── edaclim/
+│           ├── maxTSS/
+│           ├── meanProb/
+│           └── tenthPer/
+├── blacklists/
+│   ├── native/
+│   │   ├── clim/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   ├── clim_comp/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   └── edaclim/
+│   │       ├── maxTSS/
+│   │       ├── meanProb/
+│   │       └── tenthPer/
+│   └── global/
+│       ├── clim/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       ├── clim_comp/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       └── edaclim/
+│           ├── maxTSS/
+│           ├── meanProb/
+│           └── tenthPer/
+├── uncertainty_quantification/
+├── unrealized_col_pot/
+│   ├── native/
+│   │   ├── clim/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   ├── clim_comp/
+│   │   │   ├── maxTSS/
+│   │   │   ├── meanProb/
+│   │   │   └── tenthPer/
+│   │   └── edaclim/
+│   │       ├── maxTSS/
+│   │       ├── meanProb/
+│   │       └── tenthPer/
+│   └── global/
+│       ├── clim/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       ├── clim_comp/
+│       │   ├── maxTSS/
+│       │   ├── meanProb/
+│       │   └── tenthPer/
+│       └── edaclim/
+│           ├── maxTSS/
+│           ├── meanProb/
+│           └── tenthPer/
+├── final_blacklisting/
+└── plots/
+    ├── presence_absence_plots/
+    ├── validation/
+    ├── uncertainty_quantification/
+    ├── unrealized_col_pot/
+    ├── final_blacklisting/
+    └── study_region/
+    
 scripts
 
 ```

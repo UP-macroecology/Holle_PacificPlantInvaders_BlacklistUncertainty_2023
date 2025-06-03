@@ -444,6 +444,35 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
 } # Close the loop over the different thresholding methods
 
 
+
+
+
+#-------------------------------------------------------------------------------
+
+# 3. Descriptive statistics ----------------------------------------------------
+
+# (a) based on 25 island groups covered by climatic and edaphic data -----------
+
+# native
+unreal_col_pot_25_ens_native <- unreal_col_pot_25_ens[unreal_col_pot_25_ens$niche == "native", ]
+unreal_col_pot_25_ens_native$unrealized_col_pot <- as.numeric(unreal_col_pot_25_ens_native$unrealized_col_pot)
+mean(unreal_col_pot_25_ens_native$unrealized_col_pot) # 0.66
+sd(unreal_col_pot_25_ens_native$unrealized_col_pot) # 0.35
+
+# global
+unreal_col_pot_25_ens_global <- unreal_col_pot_25_ens[unreal_col_pot_25_ens$niche == "global", ]
+unreal_col_pot_25_ens_global$unrealized_col_pot <- as.numeric(unreal_col_pot_25_ens_global$unrealized_col_pot)
+mean(unreal_col_pot_25_ens_global$unrealized_col_pot) # 0.74
+sd(unreal_col_pot_25_ens_global$unrealized_col_pot) # 0.34
+
+
+
+
+
+#------------------------------- old -------------------------------------------
+
+
+
 #-------------------------------------------------------------------------------
 
 # 3. Calculate component uncertainties -----------------------------------------

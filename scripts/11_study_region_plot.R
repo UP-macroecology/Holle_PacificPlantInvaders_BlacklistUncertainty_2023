@@ -194,23 +194,23 @@ ggplot(study_region_plot, aes(x = new_lon, y = lat)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick3", linewidth = 0.5, alpha = 0.7) +
   geom_vline(xintercept = 180, linetype = "dashed", color = "firebrick3", linewidth = 0.5,  alpha = 0.7) +
   geom_point(aes(colour = factor(analysis), fill = observed_occurrences), shape = 21, size = 10, alpha = 0.8, position = "jitter", stroke = 1.3) +
-  theme_minimal() +
+  theme_bw() +
   labs(y= "Latitude", x = "Longitude") +
-  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -5.5, check_overlap = T, size = 3.4) +
+  geom_text(label=study_region_plot$island_group, nudge_x = 0, nudge_y = -5.5, check_overlap = T, size = 3.5) +
   #geom_text(label = study_region_plot$observed_occurrences, size = 3) +
   coord_sf(ylim=c(-53, 35), xlim=c(110, 320)) +
   scale_x_continuous(breaks=c(100, 150, 200, 250, 300),
                      labels=c("100°E", "150°E", "160°W", "110°W", "60°W"))+
   scale_y_continuous(breaks=c(-40, -20, 0, 20),
                      labels=c("40°S", "20°S", "0°N/S", "20°N"))  +
-  theme(legend.title = element_text(size = 10), legend.text = element_text(size = 8), plot.title = element_text(hjust = 0, size = 22), 
-        axis.title = element_text(size = 11, color = "black"), axis.text = element_text(color = "black", size = 9), text = element_text(family = "Calibri")) +
+  theme(legend.title = element_text(size = 11), legend.text = element_text(size = 10), plot.title = element_text(hjust = 0, size = 22), 
+        axis.title = element_text(size = 13, color = "black"), axis.text = element_text(color = "black", size = 11), text = element_text(family = "Calibri")) +
   scale_colour_manual(values=c("navyblue", "firebrick4"), name = "Predictor availablility") +
   scale_fill_viridis(name = "Observed non-native\nspecies richness", option = "G", limits=c(0,82), direction = -1) 
 
 
 # Save the plot
-ggsave("output_data/plots/study_region/study_region_plot.svg", width = 16, height = 5, unit = "cm")
+ggsave("output_data/plots/study_region/study_region_plot_rev.svg", width = 16, height = 10, unit = "cm")
 
 
 
