@@ -57,7 +57,7 @@ Model,Threshold selection,Threshold selection,"threshold that maximises the true
 Assessment,Performance statistics,Performance on training data,N/A
 Assessment,Performance statistics,Performance on validation data,AUC; True positive rate; True negative rate; TSS; Boyce
 Assessment,Performance statistics,Performance on test data,N/A
-Assessment,Plausibility check,Response shapes,Partial response plots
+Assessment,Plausibility check,Response shapes,N/A
 Assessment,Plausibility check,Expert judgement,N/A
 Prediction,Prediction output,Prediction unit,continuous habitat suitability; suitable vs. unsuitable habitat (binary measure)
 Prediction,Uncertainty quantification,Scenario uncertainty,N/A
