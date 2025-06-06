@@ -25,7 +25,7 @@ library(randomForest)
 print("Quantify blacklist uncertainty based on 25 island groups")
 
 # Load needed objects
-load("output_data/uncertainty_quantification_rev/models_uncertainty_RF_comp.RData") # Random forest models
+load("output_data/uncertainty_quantification/models_uncertainty_RF_comp.RData") # Random forest models
 
 
 # (a) Total suitable habitat fraction ------------------------------------------
@@ -144,7 +144,7 @@ ggplot(data = imp_blacklists_comp, aes(x = factor, y = standardised, fill = blac
 
 
 # Save the plot
-ggsave("output_data/plots/uncertainty_quantification_rev/uncertainty_quantification_comp.svg", width = 12.0, height = 8.5, unit = "cm")
+ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification_comp.svg", width = 12.0, height = 8.5, unit = "cm")
 
 
 
@@ -159,7 +159,7 @@ ggsave("output_data/plots/uncertainty_quantification_rev/uncertainty_quantificat
 print("Quantify blacklist uncertainty based on 49 island groups")
 
 # Load needed objects
-load("output_data/uncertainty_quantification_rev/models_uncertainty_RF.RData") # Random forest models
+load("output_data/uncertainty_quantification/models_uncertainty_RF.RData") # Random forest models
 
 
 # (a) Total Suitable habitat fraction ------------------------------------------
@@ -270,7 +270,7 @@ ggplot(data = imp_blacklists, aes(x = factor, y = standardised, fill = blacklist
 
 
 # Save the plot
-ggsave("output_data/plots/uncertainty_quantification_rev/uncertainty_quantification.svg", width = 12, height = 6.8, unit = "cm")
+ggsave("output_data/plots/uncertainty_quantification/uncertainty_quantification.svg", width = 12, height = 6.8, unit = "cm")
   
   
 

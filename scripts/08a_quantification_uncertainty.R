@@ -45,22 +45,22 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   
   # Load needed objects
   # Ranking based on the Pacific-wide total suitable habitat fraction
-  load(paste0("output_data/blacklists_rev/native/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_native_comp.RData"))
-  load(paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_global_comp.RData"))
-  load(paste0("output_data/blacklists_rev/global/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_native_comp.RData"))
+  load(paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_global_comp.RData"))
+  load(paste0("output_data/blacklists/global/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_global.RData"))
   
   # Ranking based on the mean suitable habitat fraction over all island groups
-  load(paste0("output_data/blacklists_rev/native/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_native_comp.RData"))
-  load(paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global_comp.RData"))
-  load(paste0("output_data/blacklists_rev/global/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_native_comp.RData"))
+  load(paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global_comp.RData"))
+  load(paste0("output_data/blacklists/global/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_global.RData"))
   
   # Ranking based on predicted suitable number of island groups
-  load(paste0("output_data/blacklists_rev/native/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_native_comp.RData"))
-  load(paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_global_comp.RData"))
-  load(paste0("output_data/blacklists_rev/global/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_native_comp.RData"))
+  load(paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_global_comp.RData"))
+  load(paste0("output_data/blacklists/global/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_global.RData"))
   
   
   
@@ -175,7 +175,7 @@ model_number_suitable_RF_comp <- randomForest(x = results_rank_number_suitable_i
   
 # Save the models
 save(model_suitable_fraction_RF_comp, model_mean_suitable_fraction_RF_comp, model_number_suitable_RF_comp,
-     file = "output_data/uncertainty_quantification_rev/models_uncertainty_RF_comp.RData")  
+     file = "output_data/uncertainty_quantification/models_uncertainty_RF_comp.RData")  
   
 
 
@@ -209,16 +209,16 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   
   # Load needed objects
   # Ranking based on the Pacific-wide total suitable habitat fraction
-  load(paste0("output_data/blacklists_rev/native/clim/",t,"/results_rank_suitable_habitat_fraction_clim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_suitable_habitat_fraction_clim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim/",t,"/results_rank_suitable_habitat_fraction_clim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim/",t,"/results_rank_suitable_habitat_fraction_clim_global.RData"))
   
   # Ranking based on the mean suitable habitat fraction over all island groups
-  load(paste0("output_data/blacklists_rev/native/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global.RData"))
   
   # Ranking based on predicted suitable number of island groups
-  load(paste0("output_data/blacklists_rev/native/clim/",t,"/results_rank_number_suitable_islandgroups_clim_native.RData"))
-  load(paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_number_suitable_islandgroups_clim_global.RData"))
+  load(paste0("output_data/blacklists/native/clim/",t,"/results_rank_number_suitable_islandgroups_clim_native.RData"))
+  load(paste0("output_data/blacklists/global/clim/",t,"/results_rank_number_suitable_islandgroups_clim_global.RData"))
   
   
   
@@ -324,7 +324,7 @@ model_number_suitable_RF <- randomForest(x = results_rank_number_suitable_island
 
 # Save the models
 save(model_suitable_fraction_RF, model_mean_suitable_fraction_RF, model_number_suitable_RF,
-     file = "output_data/uncertainty_quantification_rev/models_uncertainty_RF.RData")
+     file = "output_data/uncertainty_quantification/models_uncertainty_RF.RData")
 
 
 
@@ -450,7 +450,7 @@ rownames(summary_ranking_differences_factors_comp) <- c("Total fraction", "Mean 
 
 
 # (e) Save results data frame  -------------------------------------------------
-save(summary_ranking_differences_factors_comp, file = "output_data/uncertainty_quantification_rev/summary_ranking_differences_factors_comp.RData")
+save(summary_ranking_differences_factors_comp, file = "output_data/uncertainty_quantification/summary_ranking_differences_factors_comp.RData")
 
 
 
@@ -553,7 +553,7 @@ rownames(summary_ranking_differences_factors) <- c("Total fraction", "Mean fract
 
 
 # (e) Save results data frame  -------------------------------------------------
-save(summary_ranking_differences_factors, file = "output_data/uncertainty_quantification_rev/summary_ranking_differences_factors.RData")
+save(summary_ranking_differences_factors, file = "output_data/uncertainty_quantification/summary_ranking_differences_factors.RData")
 
 
 
@@ -890,7 +890,7 @@ summary_ranking_group_differences_factors_comp <- rbind(summary_table_total_suit
 
 
 # (e) Save results data frame  -----------------------------------------------
-save(summary_ranking_group_differences_factors_comp, file = "output_data/uncertainty_quantification_rev/summary_ranking_group_differences_factors_comp.RData")
+save(summary_ranking_group_differences_factors_comp, file = "output_data/uncertainty_quantification/summary_ranking_group_differences_factors_comp.RData")
 
 
 
@@ -1174,7 +1174,7 @@ summary_ranking_group_differences_factors <- rbind(summary_table_total_suitable_
 
 
 # (e) Save results data frame  -----------------------------------------------
-save(summary_ranking_group_differences_factors, file = "output_data/uncertainty_quantification_rev/summary_ranking_group_differences_factors.RData")
+save(summary_ranking_group_differences_factors, file = "output_data/uncertainty_quantification/summary_ranking_group_differences_factors.RData")
 
 
 

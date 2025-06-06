@@ -46,7 +46,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   print("native; climate")
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_native_clim_comp_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_native_clim_comp_",t,".RData"))
   
   # Assign ranking groups based on the ranks
   blacklists_final_native_clim_comp <-  blacklists_final_native_clim_comp %>%
@@ -73,7 +73,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/native/clim/validation_clim_native_",sp,".RData"))
+    load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_clim_native[t,"Boyce"]
@@ -100,7 +100,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
 # (b) based on native occurrences and climatic-edaphic data --------------------
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_native_edaclim_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_native_edaclim_",t,".RData"))
   
   print("native; climate + edaphic")
   
@@ -129,7 +129,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/native/edaclim/validation_edaclim_native_",sp,".RData"))
+    load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_edaclim_native[t,"Boyce"]
@@ -156,7 +156,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
 # (c) based on global occurrences and purely climatic data ---------------------
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_global_clim_comp_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_global_clim_comp_",t,".RData"))
   
   print("global; climate")
   
@@ -185,7 +185,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/global/clim/validation_clim_global_",sp,".RData"))
+    load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_clim_global[t,"Boyce"]
@@ -210,7 +210,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
 # (d) based on global occurrences and climatic-edaphic data --------------------
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_global_edaclim_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_global_edaclim_",t,".RData"))
   
   print("global; climate + edaphic")
   
@@ -239,7 +239,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/global/edaclim/validation_edaclim_global_",sp,".RData"))
+    load(paste0("output_data/validation/global/edaclim/validation_edaclim_global_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_edaclim_global[t,"Boyce"]
@@ -295,7 +295,7 @@ blacklists_final_maxTSS_comp$rank_group <- factor(blacklists_final_maxTSS_comp$r
 
 # Make sure that the first appearing blacklist and predictor set determines the
 # fixed species order per plot
-load("output_data/final_blacklisting_rev/blacklists_final_global_clim_comp_maxTSS.RData")
+load("output_data/final_blacklisting/blacklists_final_global_clim_comp_maxTSS.RData")
 blacklist_df <- blacklists_final_global_clim_comp[blacklists_final_global_clim_comp$blacklist == "total_suitable_fraction", ]
 species_order <- blacklist_df$species[order(blacklist_df$rank)]
 
@@ -340,7 +340,7 @@ ggplot(blacklists_final_maxTSS_comp, aes(x = species, y = blacklist, fill = rank
   facet_wrap(~predictor_set, nrow = 4)
 
 # Save the plot
-ggsave("output_data/plots/final_blacklisting_rev/blacklists_final_maxTSS_comp.svg", width = 19, height = 12, unit = "cm")
+ggsave("output_data/plots/final_blacklisting/blacklists_final_maxTSS_comp.svg", width = 19, height = 12, unit = "cm")
 
 
 
@@ -378,7 +378,7 @@ blacklists_final_all_comp$thresh_method <- factor(blacklists_final_all_comp$thre
 
 # Make sure that the first appearing blacklist and predictor set determines the
 # fixed species order per plot
-load("output_data/final_blacklisting_rev/blacklists_final_global_clim_comp_maxTSS.RData")
+load("output_data/final_blacklisting/blacklists_final_global_clim_comp_maxTSS.RData")
 blacklist_df <- blacklists_final_global_clim_comp[blacklists_final_global_clim_comp$blacklist == "total_suitable_fraction", ]
 species_order <- blacklist_df$species[order(blacklist_df$rank)]
 
@@ -446,7 +446,7 @@ ggplot(blacklists_final_all_comp, aes(x = species, y = blacklist, fill = rank_gr
   facet_wrap(~ facet_label, ncol = 1)
 
 # Save the plot
-ggsave("output_data/plots/final_blacklisting_rev/blacklists_final_allthresh_comp.svg", width = 20, height = 24, unit = "cm")
+ggsave("output_data/plots/final_blacklisting/blacklists_final_allthresh_comp.svg", width = 20, height = 24, unit = "cm")
 
 
 
@@ -470,7 +470,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   print("native; climate")
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_native_clim_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_native_clim_",t,".RData"))
   
   # Assign ranking groups based on the ranks
   blacklists_final_native_clim <-  blacklists_final_native_clim %>%
@@ -497,7 +497,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/native/clim/validation_clim_native_",sp,".RData"))
+    load(paste0("output_data/validation/native/clim/validation_clim_native_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_clim_native[t,"Boyce"]
@@ -521,7 +521,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
 # (b) based on global occurrences and purely climatic data ---------------------
   
   # Load needed data
-  load(paste0("output_data/final_blacklisting_rev/blacklists_final_global_clim_",t,".RData"))
+  load(paste0("output_data/final_blacklisting/blacklists_final_global_clim_",t,".RData"))
   
   print("global; climate")
   
@@ -550,7 +550,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   for (sp in study_species) { # Start the loop over all species
     
     # Load in the ensemble validation outcomes
-    load(paste0("output_data/validation_rev/global/clim/validation_clim_global_",sp,".RData"))
+    load(paste0("output_data/validation/global/clim/validation_clim_global_",sp,".RData"))
     
     # Check the Boyce value
     check_Boyce <- ensemble_perf_clim_global[t,"Boyce"]
@@ -619,7 +619,7 @@ blacklists_final_all$thresh_method <- factor(blacklists_final_all$thresh_method,
 
 # Make sure that the first appearing blacklist and predictor set determines the
 # fixed species order per plot
-load("output_data/final_blacklisting_rev/blacklists_final_global_clim_maxTSS.RData")
+load("output_data/final_blacklisting/blacklists_final_global_clim_maxTSS.RData")
 blacklist_df <- blacklists_final_global_clim[blacklists_final_global_clim$blacklist == "total_suitable_fraction", ]
 species_order <- blacklist_df$species[order(blacklist_df$rank)]
 
@@ -675,11 +675,11 @@ ggplot(blacklists_final_all, aes(x = species, y = blacklist, fill = rank_group))
     axis.title.x = element_blank(), 
     axis.text.y = element_blank(),
     legend.position = "bottom",
-    strip.text = element_markdown(size = 10, face = "plain", color = "black")  # Renders HTML
+    strip.text = element_markdown(size = 10, face = "plain", color = "black") 
   ) +
   guides(fill = "legend") +
   geom_text(label = blacklists_final_all$validation) +
   facet_wrap(~ facet_label, ncol = 1)
 
 # Save the plot
-ggsave("output_data/plots/final_blacklisting_rev/blacklists_final_allthresh.svg", width = 19, height = 18, unit = "cm")
+ggsave("output_data/plots/final_blacklisting/blacklists_final_allthresh.svg", width = 19, height = 18, unit = "cm")

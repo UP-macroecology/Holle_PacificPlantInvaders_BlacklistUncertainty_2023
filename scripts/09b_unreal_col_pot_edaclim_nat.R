@@ -98,7 +98,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   
   
   # Load needed objects
-  load(paste0("output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData")) # Data frame with prediction results of all species based on 25 island groups
+  load(paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData")) # Data frame with prediction results of all species based on 25 island groups
   load("input_data/observed_occ_pacific_islands.RData") # observed occurrences
   load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
   
@@ -207,7 +207,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
   
   # Save the results data frame containing the unrealized colonization potential 
   # of all study species
-  save(unreal_col_pot_edaclim_native, file = paste0("output_data/unrealized_col_pot_rev/native/edaclim/",t,"/unreal_col_pot_edaclim_native.RData"))
+  save(unreal_col_pot_edaclim_native, file = paste0("output_data/unrealized_col_pot/native/edaclim/",t,"/unreal_col_pot_edaclim_native.RData"))
   
   
   

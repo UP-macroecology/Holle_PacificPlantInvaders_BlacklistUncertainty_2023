@@ -32,7 +32,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   print(t)
   
   # Load needed objects
-  load(paste0("output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData")) # Contains area calculations based on predictions to 25 island groups
+  load(paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData")) # Contains area calculations based on predictions to 25 island groups
   
   
 #-------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_suitable_habitat_fraction_edaclim_native) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the final data frame with ranks
-  save(results_rank_suitable_habitat_fraction_edaclim_native, file = paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_native.RData"))
+  save(results_rank_suitable_habitat_fraction_edaclim_native, file = paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_suitable_habitat_fraction_edaclim_native.RData"))
   
   
   
@@ -157,7 +157,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_mean_suitable_habitat_fraction_edaclim_native) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the resulting data frame
-  save(results_rank_mean_suitable_habitat_fraction_edaclim_native, file = paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData"))
+  save(results_rank_mean_suitable_habitat_fraction_edaclim_native, file = paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_mean_suitable_habitat_fraction_edaclim_native.RData"))
   
   
   
@@ -258,7 +258,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_number_suitable_islandgroups_edaclim_native) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # save the resulting data frame
-  save(results_rank_number_suitable_islandgroups_edaclim_native, file = paste0("output_data/blacklists_rev/native/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_native.RData"))
+  save(results_rank_number_suitable_islandgroups_edaclim_native, file = paste0("output_data/blacklists/native/edaclim/",t,"/results_rank_number_suitable_islandgroups_edaclim_native.RData"))
   
   
 } # Close the loop over the different thresholding methods

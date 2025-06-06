@@ -19,20 +19,18 @@ library(tidyr)
 library(stringr)
 library(dismo)
 
-# Define directory path for cluster usage
-dir <- file.path("/import", "ecoc9z", "data-zurell", "holle", "Holle_PacificPlantInvaders_BlacklistUncertainty_2023")
 
 # Load needed objects
-load(paste0(dir, "/input_data/occ_numbers_thinned_env_filtered.RData")) # Contains names of study species
-load(paste0(dir, "/input_data/spatial_data/islandgroups_edaclim.RData")) # Contains names of island groups suitable for the analysis using combined climatic data and edaphic data
-load(paste0(dir, "/input_data/spatial_data/pacific_islands_extent.RData")) # Contains the spatial extents of the island groups
-Chelsa <- terra::rast(str_sort(list.files(paste0(dir, "/input_data/environmental_data/Chelsa_V2"), 
+load("input_data/occ_numbers_thinned_env_filtered.RData") # Contains names of study species
+load("input_data/spatial_data/islandgroups_edaclim.RData") # Contains names of island groups suitable for the analysis using combined climatic data and edaphic data
+load("/input_data/spatial_data/pacific_islands_extent.RData") # Contains the spatial extents of the island groups
+Chelsa <- terra::rast(str_sort(list.files("input_data/environmental_data/Chelsa_V2", 
                                           pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Climate variable rasters
-SoilGrids <- terra::rast(str_sort(list.files(paste0(dir, "/input_data/environmental_data/SoilGrids_V2"), 
+SoilGrids <- terra::rast(str_sort(list.files("input_data/environmental_data/SoilGrids_V2", 
                                              pattern = ".tif", full.names = TRUE), numeric = TRUE)) # Edaphic variable rasters
-load(paste0(dir, "/input_data/spatial_data/geoentities_plus_newname.RData")) # Island group shapefiles
-fiji_1 <- terra::vect(paste0(dir, "/input_data/spatial_data/fiji_1.shp")) # Modified shapefile of Fiji - first part
-fiji_2 <- terra::vect(paste0(dir, "/input_data/spatial_data/fiji_2.shp")) # Modified shapefile of Fiji - second part
+load("input_data/spatial_data/geoentities_plus_newname.RData") # Island group shapefiles
+fiji_1 <- terra::vect("input_data/spatial_data/fiji_1.shp") # Modified shapefile of Fiji - first part
+fiji_2 <- terra::vect("input_data/spatial_data/fiji_2.shp") # Modified shapefile of Fiji - second part
 
 # Create a vector containing the different thresholding methods for binarising predictions
 threshold_methods <- c("maxTSS", "meanProb", "tenthPer")
@@ -82,7 +80,7 @@ for (sp in study_species) { # Start of the loop over all species
         print(t)
         
         # Check if prediction results already exist
-        file_exists <- file.exists(paste0(dir, "/output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
+        file_exists <- file.exists(paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
         
         if (file_exists == FALSE) { # just continue with model predictions if output 
           # with prediction results does not exist yet
@@ -90,9 +88,9 @@ for (sp in study_species) { # Start of the loop over all species
           print("start of model predictions")
           
           # Load the needed objects for each species
-          load(paste0(dir, "/output_data/models_rev/native/edaclim/models_edaclim_native_",sp,".RData")) # the four different models
-          load(paste0(dir, "/output_data/validation_rev/native/edaclim/validation_edaclim_native_",sp,".RData")) # validation outcomes
-          load(paste0(dir, "/output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData")) # predictor variables
+          load(paste0("output_data/models/native/edaclim/models_edaclim_native_",sp,".RData")) # the four different models
+          load(paste0("output_data/validation/native/edaclim/validation_edaclim_native_",sp,".RData")) # validation outcomes
+          load(paste0("output_data/variable_selection/native/edaclim/pred_sel_edaclim_native_",sp,".RData")) # predictor variables
           
           # Dynamically get the validation data corresponding to the respective thresholding method
           comp_perf_edaclim_native <- get(paste0("comp_perf_edaclim_native_", t))
@@ -471,7 +469,7 @@ for (sp in study_species) { # Start of the loop over all species
           islandgroups_results_edaclim_native_spec[, 2:4] <- apply(islandgroups_results_edaclim_native_spec[, 2:4], 2, as.numeric)
           
           # Save the results data frame per species
-          save(islandgroups_results_edaclim_native_spec, file = paste0(dir, "/output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
+          save(islandgroups_results_edaclim_native_spec, file = paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
           
           
           
@@ -504,13 +502,13 @@ for (t in threshold_methods) { # Start the loop over the three thresholding meth
         print(sp)
         
         # Check if prediction results already exist
-        file_exists <- file.exists(paste0(dir, "/output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
+        file_exists <- file.exists(paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
         
         if (file_exists == TRUE) { # just continue with model predictions if output 
           # with prediction results exists
           
           # Load the file with predictions results
-          load(paste0(dir, "/output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
+          load(paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native_spec_",sp,".RData"))
           
           # Add the data frame for each species to the data frame containing all results for all species
           islandgroups_results_edaclim_native <- rbind(islandgroups_results_edaclim_native, islandgroups_results_edaclim_native_spec)
@@ -529,7 +527,7 @@ for (t in threshold_methods) { # Start the loop over the three thresholding meth
     islandgroups_results_edaclim_native[, 2:4] <- apply(islandgroups_results_edaclim_native[, 2:4], 2, as.numeric)
     
     # Save the data frame containing all prediction results
-    save(islandgroups_results_edaclim_native, file = paste0(dir, "/output_data/model_predictions_rev/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData"))
+    save(islandgroups_results_edaclim_native, file = paste0("output_data/model_predictions/native/edaclim/",t,"/islandgroups_results_edaclim_native.RData"))
     
   })} # end of try and for loop over thresholding methods
 

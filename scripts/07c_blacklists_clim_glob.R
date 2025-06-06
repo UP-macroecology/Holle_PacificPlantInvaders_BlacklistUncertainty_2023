@@ -32,8 +32,8 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   
   
   # Load needed objects
-  load(paste0("output_data/model_predictions_rev/global/clim/",t,"/islandgroups_results_clim_global.RData")) # Contains area calculations based on predictions using 49 island groups
-  load(paste0("output_data/model_predictions_rev/global/clim_comp/",t,"/islandgroups_results_clim_global_comp.RData")) # Contains area calculations based on predictions using 25 island groups
+  load(paste0("output_data/model_predictions/global/clim/",t,"/islandgroups_results_clim_global.RData")) # Contains area calculations based on predictions using 49 island groups
+  load(paste0("output_data/model_predictions/global/clim_comp/",t,"/islandgroups_results_clim_global_comp.RData")) # Contains area calculations based on predictions using 25 island groups
   
   
 #-------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_suitable_habitat_fraction_clim_global) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the final data frame with ranks
-  save(results_rank_suitable_habitat_fraction_clim_global, file = paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_suitable_habitat_fraction_clim_global.RData"))
+  save(results_rank_suitable_habitat_fraction_clim_global, file = paste0("output_data/blacklists/global/clim/",t,"/results_rank_suitable_habitat_fraction_clim_global.RData"))
   
   
   
@@ -128,7 +128,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_suitable_habitat_fraction_clim_global_comp) <- c("suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the final data frame with ranks
-  save(results_rank_suitable_habitat_fraction_clim_global_comp, file = paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_global_comp.RData"))
+  save(results_rank_suitable_habitat_fraction_clim_global_comp, file = paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_suitable_habitat_fraction_clim_global_comp.RData"))
   
   
   
@@ -202,7 +202,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_mean_suitable_habitat_fraction_clim_global) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the resulting data frame
-  save(results_rank_mean_suitable_habitat_fraction_clim_global, file = paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global.RData"))
+  save(results_rank_mean_suitable_habitat_fraction_clim_global, file = paste0("output_data/blacklists/global/clim/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global.RData"))
   
   
   
@@ -273,7 +273,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_mean_suitable_habitat_fraction_clim_global_comp) <- c("mean_suitable_habitat_fraction", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the resulting data frame
-  save(results_rank_mean_suitable_habitat_fraction_clim_global_comp, file = paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global_comp.RData"))
+  save(results_rank_mean_suitable_habitat_fraction_clim_global_comp, file = paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_mean_suitable_habitat_fraction_clim_global_comp.RData"))
   
   
   
@@ -373,7 +373,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_number_suitable_islandgroups_clim_global) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # save the resulting data frame
-  save(results_rank_number_suitable_islandgroups_clim_global, file = paste0("output_data/blacklists_rev/global/clim/",t,"/results_rank_number_suitable_islandgroups_clim_global.RData"))
+  save(results_rank_number_suitable_islandgroups_clim_global, file = paste0("output_data/blacklists/global/clim/",t,"/results_rank_number_suitable_islandgroups_clim_global.RData"))
   
   
   
@@ -470,7 +470,7 @@ for (t in threshold_methods) { # Start the loop over the different thresholding 
   colnames(results_rank_number_suitable_islandgroups_clim_global_comp) <- c("number_suitable_islandgroups", "algorithm", "predictor_type", "niche", "species", "rank")
   
   # Save the resulting data frame
-  save(results_rank_number_suitable_islandgroups_clim_global_comp, file = paste0("output_data/blacklists_rev/global/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_global_comp.RData"))
+  save(results_rank_number_suitable_islandgroups_clim_global_comp, file = paste0("output_data/blacklists/global/clim_comp/",t,"/results_rank_number_suitable_islandgroups_clim_global_comp.RData"))
   
   
   
