@@ -54,7 +54,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_native_clim_comp$blacklist <- as.factor(blacklists_final_native_clim_comp$blacklist)
@@ -110,7 +110,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_native_edaclim$blacklist <- as.factor(blacklists_final_native_edaclim$blacklist)
@@ -166,7 +166,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_global_clim_comp$blacklist <- as.factor(blacklists_final_global_clim_comp$blacklist)
@@ -220,7 +220,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_global_edaclim$blacklist <- as.factor(blacklists_final_global_edaclim$blacklist)
@@ -291,7 +291,7 @@ blacklists_final_maxTSS_comp$predictor_set <- factor(blacklists_final_maxTSS_com
 
 # Make sure the ranking groups occurr in the correct order in the legend
 blacklists_final_maxTSS_comp$rank_group <- factor(blacklists_final_maxTSS_comp$rank_group, 
-                                                 levels = c("Top 10", "Top 20", "Top 30", "Remaining"))
+                                                 levels = c("Top 10", "Top 20", "Top 30", "Lower priority"))
 
 # Make sure that the first appearing blacklist and predictor set determines the
 # fixed species order per plot
@@ -313,9 +313,9 @@ showtext_auto()
 ggplot(blacklists_final_maxTSS_comp, aes(x = species, y = blacklist, fill = rank_group)) +
   geom_tile(color = "black") +
   scale_fill_manual(values = c("Top 10" = "brown3", 
-                               "Top 20" = "goldenrod3", 
-                               "Top 30" = "steelblue", 
-                               "Remaining" = "seagreen"), 
+                               "Top 20" = "#FC8D59", 
+                               "Top 30" = "#91BFDB", 
+                               "Lower priority" = "#4575B4"), 
                     name = "Ranking group") +
   theme_bw() +
   coord_fixed(ratio = 1.5) +
@@ -338,6 +338,7 @@ ggplot(blacklists_final_maxTSS_comp, aes(x = species, y = blacklist, fill = rank
   guides(fill = "legend") +
   geom_text(label = blacklists_final_maxTSS_comp$validation) +
   facet_wrap(~predictor_set, nrow = 4)
+
 
 # Save the plot
 ggsave("output_data/plots/final_blacklisting/blacklists_final_maxTSS_comp.svg", width = 19, height = 12, unit = "cm")
@@ -370,7 +371,7 @@ blacklists_final_all_comp$predictor_set <- factor(blacklists_final_all_comp$pred
 
 # Make sure the ranking groups occurr in the correct order in the legend
 blacklists_final_all_comp$rank_group <- factor(blacklists_final_all_comp$rank_group, 
-                                               levels = c("Top 10", "Top 20", "Top 30", "Remaining"))
+                                               levels = c("Top 10", "Top 20", "Top 30", "Lower priority"))
 
 # Make sure the thresholding methods appear in the correct order
 blacklists_final_all_comp$thresh_method <- factor(blacklists_final_all_comp$thresh_method, 
@@ -419,9 +420,9 @@ showtext_auto()
 ggplot(blacklists_final_all_comp, aes(x = species, y = blacklist, fill = rank_group)) +
   geom_tile(color = "black") +
   scale_fill_manual(values = c("Top 10" = "brown3", 
-                               "Top 20" = "goldenrod3", 
-                               "Top 30" = "steelblue", 
-                               "Remaining" = "seagreen"), 
+                               "Top 20" = "#FC8D59", 
+                               "Top 30" = "#91BFDB", 
+                               "Lower priority" = "#4575B4"), 
                     name = "Ranking group") +
   theme_bw() +
   coord_fixed(ratio = 1.5) +
@@ -478,7 +479,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_native_clim$blacklist <- as.factor(blacklists_final_native_clim$blacklist)
@@ -531,7 +532,7 @@ for (t in threshold_methods) { # Start of the loop over the three different thre
       rank >= 1 & rank <= 10 ~ "Top 10",
       rank >= 11 & rank <= 20 ~ "Top 20",
       rank >= 21 & rank <= 30 ~ "Top 30",
-      rank >= 31 & rank <= 82 ~ "Remaining"))
+      rank >= 31 & rank <= 82 ~ "Lower priority"))
   
   # Make sure blacklists and species are factors
   blacklists_final_global_clim$blacklist <- as.factor(blacklists_final_global_clim$blacklist)
@@ -611,7 +612,7 @@ blacklists_final_all$predictor_set <- factor(blacklists_final_all$predictor_set,
 
 # Make sure the ranking groups occurr in the correct order in the legend
 blacklists_final_all$rank_group <- factor(blacklists_final_all$rank_group, 
-                                          levels = c("Top 10", "Top 20", "Top 30", "Remaining"))
+                                          levels = c("Top 10", "Top 20", "Top 30", "Lower priority"))
 
 # Make sure the thresholding methods appear in the correct order
 blacklists_final_all$thresh_method <- factor(blacklists_final_all$thresh_method, 
@@ -654,9 +655,9 @@ showtext_auto()
 ggplot(blacklists_final_all, aes(x = species, y = blacklist, fill = rank_group)) +
   geom_tile(color = "black") +
   scale_fill_manual(values = c("Top 10" = "brown3", 
-                               "Top 20" = "goldenrod3", 
-                               "Top 30" = "steelblue", 
-                               "Remaining" = "seagreen"), 
+                               "Top 20" = "#FC8D59", 
+                               "Top 30" = "#91BFDB", 
+                               "Lower priority" = "#4575B4"), 
                     name = "Ranking group") +
   theme_bw() +
   coord_fixed(ratio = 1.5) +
