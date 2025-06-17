@@ -267,7 +267,8 @@ All data are publicly available:
 * Running under: Windows 10 x64 (build 19045)
 
 * Attached packages:
-[1] terra_1.7-55  [2] tidyverse_2.0.0  [3] sf_1.0-16  [4] sfheaders_0.4.3  [5] ecospat_4.0.0  [6] mgcv_1.8-42  [7] randomForest_4.7-1.1  [8] dismo_1.3-14  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.8.1  [11] viridis_0.6.4  [12] maps_3.4.1  [13] ggplot2_3.5.1   
+[1] dismo_1.3-14  [2] doParallel_1.0.17  [3] ecospat_4.0.0 [4] foreach_1.5.2  [5] gbm_2.1.8.1  [6] ggplot2_3.5.1  [7] ggtext_0.1.2  [8] maps_3.4.1  [9] mgcv_1.8-42  [10] PresenceAbsence_1.1.11  [11] randomForest_4.7-1.1  [12] readr_2.1.4  [13] sf_1.0-16  [14] sfheaders_0.4.3  [15] showtext_0.9-7  [16] terra_1.7-55  [17] tidyverse_2.0.0  [18] viridis_0.6.4
+
 
 
 ---------------------------------------------------------------
